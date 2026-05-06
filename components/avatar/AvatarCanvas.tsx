@@ -144,7 +144,7 @@ function drawHuman(
 
   // Eyes
   const eyeY = -25 * s;
-  const blinkScale = state.blinkProgress;
+  const blinkScale = Math.max(0.01, state.blinkProgress);
 
   ctx.fillStyle = "#fff";
   ctx.beginPath();
@@ -262,7 +262,7 @@ function drawDog(
   ctx.fill();
 
   // Eyes
-  const blinkScale = state.blinkProgress;
+  const blinkScale = Math.max(0.01, state.blinkProgress);
   ctx.fillStyle = "#fff";
   ctx.beginPath();
   ctx.ellipse(-14 * s, -22 * s, 9 * s, 9 * blinkScale * s, 0, 0, Math.PI * 2);
@@ -346,7 +346,7 @@ function drawOrange(
   ctx.stroke();
 
   // Eyes
-  const blinkScale = state.blinkProgress;
+  const blinkScale = Math.max(0.01, state.blinkProgress);
   ctx.fillStyle = "#fff";
   ctx.beginPath();
   ctx.ellipse(-16 * s, -5 * s, 10 * s, 10 * blinkScale * s, 0, 0, Math.PI * 2);
@@ -440,7 +440,7 @@ function drawCup(
   }
 
   // Eyes
-  const blinkScale = state.blinkProgress;
+  const blinkScale = Math.max(0.01, state.blinkProgress);
   ctx.fillStyle = "#fff";
   ctx.beginPath();
   ctx.ellipse(-10 * s, -5 * s, 9 * s, 9 * blinkScale * s, 0, 0, Math.PI * 2);

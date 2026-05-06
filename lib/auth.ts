@@ -24,25 +24,22 @@ export async function getDbUser(): Promise<User | null> {
   let user = await prisma.user.findUnique({ where: { id: userId } });
 
   if (!user) {
-    // Check if email already exists (e.g. from seed) — update its id to Clerk's userId
+    // If email exists with different id, just use that user
     const byEmail = await prisma.user.findUnique({ where: { email } });
     if (byEmail) {
-      // Update existing record to use Clerk userId
-      user = await prisma.user.update({
-        where: { email },
-        data: { id: userId, name, image },
-      });
+      // Return existing user as-is (don't change primary key)
+      user = byEmail;
     } else {
-      // Create fresh
+      // Create fresh with Clerk userId as id
       user = await prisma.user.create({
-        data: { id: userId, email, name, image, emailVerified: new Date(), plan: "starter" },
+        data: { id: userId, email, name: name ?? null, image: image ?? null, emailVerified: new Date(), plan: "starter" },
       });
     }
   } else {
-    // Refresh name/image
+    // Update name/image only
     user = await prisma.user.update({
       where: { id: userId },
-      data: { name, image },
+      data: { name: name ?? null, image: image ?? null },
     });
   }
 

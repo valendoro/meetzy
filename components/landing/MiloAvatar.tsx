@@ -267,7 +267,7 @@ function drawMilo(
   const LEX = -18; // left eye x
   const REX = 18;  // right eye x
   const eyeH = 12; // eye radius
-  const blinkH = eyeH * (1 - state.blinkProgress); // shrinks to 0 when blinking
+  const blinkH = Math.max(0.5, eyeH * (1 - state.blinkProgress)); // never goes to 0 (avoids negative radius)
 
   // Eye whites
   ctx.fillStyle = "#ffffff";

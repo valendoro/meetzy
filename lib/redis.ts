@@ -1,46 +1,39 @@
 import { Redis } from "@upstash/redis";
 import { Ratelimit } from "@upstash/ratelimit";
 
-let _redis: Redis | null = null;
+const hasRedis = !!(process.env.REDIS_URL && process.env.REDIS_TOKEN);
 
+let _redis: Redis | null = null;
 function getRedis(): Redis {
   if (!_redis) {
-    _redis = new Redis({
-      url: process.env.REDIS_URL ?? "",
-      token: process.env.REDIS_TOKEN ?? "",
-    });
+    _redis = new Redis({ url: process.env.REDIS_URL!, token: process.env.REDIS_TOKEN! });
   }
   return _redis;
 }
 
-let _chatRatelimit: Ratelimit | null = null;
-let _scrapeRatelimit: Ratelimit | null = null;
+// No-op ratelimit for when Redis is not configured
+const noopRatelimit = {
+  limit: async (_id: string) => ({ success: true, limit: 999, remaining: 999, reset: 0, pending: Promise.resolve() }),
+};
 
-export function getChatRatelimit(): Ratelimit {
-  if (!_chatRatelimit) {
-    _chatRatelimit = new Ratelimit({
-      redis: getRedis(),
-      limiter: Ratelimit.slidingWindow(60, "1 h"),
-      analytics: true,
-      prefix: "meetzy:chat",
-    });
+let _chatRL: Ratelimit | null = null;
+function getChatRatelimit(): typeof noopRatelimit | Ratelimit {
+  if (!hasRedis) return noopRatelimit;
+  if (!_chatRL) {
+    _chatRL = new Ratelimit({ redis: getRedis(), limiter: Ratelimit.slidingWindow(60, "1 h"), analytics: true, prefix: "meetzy:chat" });
   }
-  return _chatRatelimit;
+  return _chatRL;
 }
 
-export function getScrapeRatelimit(): Ratelimit {
-  if (!_scrapeRatelimit) {
-    _scrapeRatelimit = new Ratelimit({
-      redis: getRedis(),
-      limiter: Ratelimit.slidingWindow(10, "1 h"),
-      analytics: true,
-      prefix: "meetzy:scrape",
-    });
+let _scrapeRL: Ratelimit | null = null;
+function getScrapeRatelimit(): typeof noopRatelimit | Ratelimit {
+  if (!hasRedis) return noopRatelimit;
+  if (!_scrapeRL) {
+    _scrapeRL = new Ratelimit({ redis: getRedis(), limiter: Ratelimit.slidingWindow(10, "1 h"), analytics: true, prefix: "meetzy:scrape" });
   }
-  return _scrapeRatelimit;
+  return _scrapeRL;
 }
 
-// Legacy named exports using lazy getters
 export const chatRatelimit = new Proxy({} as Ratelimit, {
   get(_t, prop) {
     return (getChatRatelimit() as unknown as Record<string | symbol, unknown>)[prop];

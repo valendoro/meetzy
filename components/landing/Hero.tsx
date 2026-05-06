@@ -101,7 +101,7 @@ export default function Hero({ tracker }: { tracker: BehaviorTrackerResult }) {
             <div style={{ position: "relative", display: "flex", justifyContent: "center" }}>
               <div className="milo-halo" />
               <div
-                style={{ position: "relative", zIndex: 1, cursor: "none" }}
+                style={{ position: "relative", zIndex: 1, cursor: "pointer" }}
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
                 onClick={() => { setChatOpen(true); tracker.clearTrigger(); }}

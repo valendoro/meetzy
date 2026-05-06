@@ -31,11 +31,11 @@ export default function DashboardNav({ user: _ }: Props) {
         </nav>
 
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <Link href="/dashboard/new" className="btn-primary" style={{ padding: "8px 16px", fontSize: "0.8rem", textDecoration: "none" }} className="hidden-mobile">
+          <Link href="/dashboard/new" className="btn-primary hidden-mobile" style={{ padding: "8px 16px", fontSize: "0.8rem", textDecoration: "none" }}>
             + Nuevo
           </Link>
           <Show when="signed-in">
-            <UserButton afterSignOutUrl="/" />
+            <UserButton />
           </Show>
         </div>
       </div>

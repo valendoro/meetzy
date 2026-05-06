@@ -57,7 +57,7 @@ export default function Navbar() {
             <Link href="/dashboard" className="btn-primary" style={{ padding: "8px 18px", fontSize: "0.8rem", textDecoration: "none" }}>
               Dashboard
             </Link>
-            <UserButton afterSignOutUrl="/" />
+            <UserButton />
           </Show>
         </div>
       </div>

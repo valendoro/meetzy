@@ -13,7 +13,7 @@ export default function SignInPage() {
           </p>
           <p className="text-sm mt-1" style={{ color: "rgba(236,234,229,0.4)" }}>Entrá a tu cuenta</p>
         </div>
-        <SignIn redirectUrl="/dashboard" signUpUrl="/sign-up" />
+        <SignIn />
       </div>
     </div>
   );

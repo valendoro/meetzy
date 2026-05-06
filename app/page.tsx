@@ -9,6 +9,7 @@ import AvatarShowcase from "@/components/landing/AvatarShowcase";
 import HowItWorks from "@/components/landing/HowItWorks";
 import Pricing from "@/components/landing/Pricing";
 import LandingOrchestrator from "@/components/landing/LandingOrchestrator";
+import WidgetDemo from "@/components/landing/WidgetDemo";
 
 /* ── Count-up number ─────────────────────────────────────── */
 function CountUp({ end, suffix = "" }: { end: number; suffix?: string }) {
@@ -93,6 +94,7 @@ export default function HomePage() {
     <main style={{ minHeight: "100vh", width: "100%", backgroundColor: "var(--c-bg)" }}>
       <Navbar />
       <LandingOrchestrator />
+      <WidgetDemo />
       <Stats />
       <Problem />
       <Features />

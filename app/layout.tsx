@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Syne, DM_Sans } from "next/font/google";
+import { ClerkProvider, Show, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
 import "./globals.css";
 
 const syne = Syne({
@@ -22,17 +24,9 @@ export const metadata: Metadata = {
     template: "%s | Meetzy",
   },
   description:
-    "Meetzy observa lo que cada visitante hace en tu sitio, infiere lo que está pensando, y responde con precisión antes de que tenga que preguntar.",
+    "Meetzy observa lo que cada visitante hace en tu sitio y responde con precisión antes de que tenga que preguntar.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "https://meetzy.ai"),
-  openGraph: {
-    title: "Meetzy — Tu web observa. Entiende. Responde.",
-    description:
-      "La primera web del mundo que entiende a cada visitante en tiempo real.",
-    type: "website",
-  },
 };
-
-import CustomCursor from "@/components/landing/CustomCursor";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -41,10 +35,28 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${syne.variable} ${dmSans.variable}`}
       suppressHydrationWarning
     >
-      <body style={{ backgroundColor: "#07070a", color: "#eceae5", fontFamily: "var(--font-dm, 'DM Sans', sans-serif)" }}>
-        <CustomCursor />
-        {children}
+      <body style={{ backgroundColor: "#07070a", color: "#eceae5", fontFamily: "var(--font-dm-sans, 'DM Sans', sans-serif)" }}>
+        <ClerkProvider
+          appearance={{
+            baseTheme: dark,
+            variables: {
+              colorPrimary: "#6366f1",
+              colorBackground: "#0e0e12",
+              colorInputBackground: "#111118",
+              colorInputText: "#eceae5",
+              colorText: "#eceae5",
+              colorTextSecondary: "rgba(236,234,229,0.5)",
+              borderRadius: "12px",
+              fontFamily: "DM Sans, sans-serif",
+            },
+          }}
+        >
+          {children}
+        </ClerkProvider>
       </body>
     </html>
   );
 }
+
+// Re-export for use in nav components
+export { Show, UserButton, SignInButton, SignUpButton };

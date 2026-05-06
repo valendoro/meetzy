@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { getDbUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
@@ -21,7 +21,6 @@ const UpdateSiteSchema = z.object({
   avatarConfig: z.record(z.string(), z.unknown()).nullable().optional(),
   voiceEnabled: z.boolean().optional(),
   voiceId: z.string().nullable().optional(),
-  simliAvatarId: z.string().nullable().optional(),
   calBookingUrl: z.string().nullable().optional(),
   webhookUrl: z.string().nullable().optional(),
   agentType: z.enum(["vendedor", "guia", "soporte", "recepcionista"]).optional(),
@@ -31,119 +30,57 @@ const UpdateSiteSchema = z.object({
   widgetPosition: z.enum(["bottom-right", "bottom-left"]).optional(),
 });
 
-async function getSiteForUser(siteId: string, userId: string) {
-  return prisma.site.findFirst({
-    where: { siteId, userId },
-  });
+async function findSite(siteId: string, userId: string) {
+  return prisma.site.findFirst({ where: { siteId, userId } });
 }
 
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: Promise<{ siteId: string }> }
-) {
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ siteId: string }> }) {
   try {
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+    const dbUser = await getDbUser();
+    if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { siteId } = await params;
-    const site = await getSiteForUser(siteId, session.user.id);
-
-    if (!site) {
-      return NextResponse.json({ error: "Site not found" }, { status: 404 });
-    }
-
-    const [totalConversations, recentConversations] = await Promise.all([
+    const site = await findSite(siteId, dbUser.id);
+    if (!site) return NextResponse.json({ error: "Site not found" }, { status: 404 });
+    const [total, today] = await Promise.all([
       prisma.conversation.count({ where: { siteId: site.id } }),
-      prisma.conversation.count({
-        where: {
-          siteId: site.id,
-          createdAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) },
-        },
-      }),
+      prisma.conversation.count({ where: { siteId: site.id, createdAt: { gte: new Date(Date.now() - 86400000) } } }),
     ]);
-
-    return NextResponse.json({
-      site,
-      metrics: { totalConversations, recentConversations },
-    });
-  } catch (error) {
-    console.error("GET /api/sites/[siteId] error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-  }
+    return NextResponse.json({ site, metrics: { totalConversations: total, recentConversations: today } });
+  } catch (e) { console.error(e); return NextResponse.json({ error: "Internal server error" }, { status: 500 }); }
 }
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: Promise<{ siteId: string }> }
-) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ siteId: string }> }) {
   try {
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+    const dbUser = await getDbUser();
+    if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { siteId } = await params;
-    const site = await getSiteForUser(siteId, session.user.id);
-
-    if (!site) {
-      return NextResponse.json({ error: "Site not found" }, { status: 404 });
-    }
-
+    const site = await findSite(siteId, dbUser.id);
+    if (!site) return NextResponse.json({ error: "Site not found" }, { status: 404 });
     const body = await req.json();
     const parsed = UpdateSiteSchema.safeParse(body);
-
-    if (!parsed.success) {
-      return NextResponse.json(
-        { error: "Validation error", details: parsed.error.issues },
-        { status: 400 }
-      );
-    }
-
-    const { avatarConfig, ...restData } = parsed.data;
+    if (!parsed.success) return NextResponse.json({ error: "Validation error" }, { status: 400 });
+    const { avatarConfig, ...rest } = parsed.data;
     const updated = await prisma.site.update({
       where: { id: site.id },
       data: {
-        ...restData,
+        ...rest,
         ...(avatarConfig !== undefined
           ? { avatarConfig: avatarConfig === null ? Prisma.JsonNull : (avatarConfig as Prisma.JsonObject) }
           : {}),
       },
     });
-
     return NextResponse.json({ site: updated });
-  } catch (error) {
-    console.error("PATCH /api/sites/[siteId] error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-  }
+  } catch (e) { console.error(e); return NextResponse.json({ error: "Internal server error" }, { status: 500 }); }
 }
 
-export async function DELETE(
-  _req: NextRequest,
-  { params }: { params: Promise<{ siteId: string }> }
-) {
+export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ siteId: string }> }) {
   try {
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+    const dbUser = await getDbUser();
+    if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const { siteId } = await params;
-    const site = await getSiteForUser(siteId, session.user.id);
-
-    if (!site) {
-      return NextResponse.json({ error: "Site not found" }, { status: 404 });
-    }
-
-    await prisma.site.update({
-      where: { id: site.id },
-      data: { isActive: false },
-    });
-
+    const site = await findSite(siteId, dbUser.id);
+    if (!site) return NextResponse.json({ error: "Site not found" }, { status: 404 });
+    await prisma.site.update({ where: { id: site.id }, data: { isActive: false } });
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("DELETE /api/sites/[siteId] error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-  }
+  } catch (e) { console.error(e); return NextResponse.json({ error: "Internal server error" }, { status: 500 }); }
 }

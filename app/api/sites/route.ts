@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { getDbUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { PLANS, type PlanKey } from "@/lib/stripe";
 import { z } from "zod";
+import { Prisma } from "@prisma/client";
 
 const CreateSiteSchema = z.object({
   name: z.string().min(1).max(100),
@@ -33,75 +34,48 @@ const CreateSiteSchema = z.object({
 
 export async function GET() {
   try {
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const dbUser = await getDbUser();
+    if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const sites = await prisma.site.findMany({
-      where: { userId: session.user.id },
+      where: { userId: dbUser.id },
       orderBy: { createdAt: "desc" },
-      include: {
-        _count: {
-          select: { conversations: true },
-        },
-      },
+      include: { _count: { select: { conversations: true } } },
     });
 
     return NextResponse.json({ sites });
   } catch (error) {
-    console.error("GET /api/sites error:", error);
+    console.error("GET /api/sites:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const dbUser = await getDbUser();
+    if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body = await req.json();
     const parsed = CreateSiteSchema.safeParse(body);
+    if (!parsed.success) return NextResponse.json({ error: "Validation error", details: parsed.error.issues }, { status: 400 });
 
-    if (!parsed.success) {
-      return NextResponse.json(
-        { error: "Validation error", details: parsed.error.issues },
-        { status: 400 }
-      );
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
+    const userWithCount = await prisma.user.findUnique({
+      where: { id: dbUser.id },
       include: { _count: { select: { sites: true } } },
     });
+    if (!userWithCount) return NextResponse.json({ error: "User not found" }, { status: 404 });
 
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    const userPlan = user.plan as PlanKey;
-    const planLimits = PLANS[userPlan] ?? PLANS.starter;
-
-    if (
-      planLimits.sites !== -1 &&
-      user._count.sites >= planLimits.sites
-    ) {
-      return NextResponse.json(
-        {
-          error: `Tu plan ${userPlan} solo permite ${planLimits.sites} sitio(s). Actualizá tu plan para crear más.`,
-        },
-        { status: 403 }
-      );
+    const planLimits = PLANS[dbUser.plan as PlanKey] ?? PLANS.starter;
+    if (planLimits.sites !== -1 && userWithCount._count.sites >= planLimits.sites) {
+      return NextResponse.json({ error: `Tu plan ${dbUser.plan} solo permite ${planLimits.sites} sitio(s).` }, { status: 403 });
     }
 
     const site = await prisma.site.create({
       data: {
         name: parsed.data.name,
         url: parsed.data.url,
-        userId: session.user.id,
-        plan: user.plan,
+        userId: dbUser.id,
+        plan: dbUser.plan,
         systemPrompt: parsed.data.systemPrompt,
         agentName: parsed.data.agentName,
         agentRole: parsed.data.agentRole,
@@ -122,13 +96,13 @@ export async function POST(req: NextRequest) {
         proactiveFrequency: parsed.data.proactiveFrequency,
         exitIntentEnabled: parsed.data.exitIntentEnabled,
         widgetPosition: parsed.data.widgetPosition,
-        avatarConfig: parsed.data.avatarConfig as import("@prisma/client").Prisma.JsonObject | undefined,
+        avatarConfig: parsed.data.avatarConfig as Prisma.JsonObject | undefined,
       },
     });
 
     return NextResponse.json({ site }, { status: 201 });
   } catch (error) {
-    console.error("POST /api/sites error:", error);
+    console.error("POST /api/sites:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

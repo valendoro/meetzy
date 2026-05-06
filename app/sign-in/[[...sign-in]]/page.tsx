@@ -1,5 +1,4 @@
 import { SignIn } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
 
 export default function SignInPage() {
   return (
@@ -9,7 +8,7 @@ export default function SignInPage() {
         <a href="/" style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.5rem", letterSpacing: "-0.03em", color: "#eceae5", textDecoration: "none", display: "block", marginBottom: 32 }}>
           MEET<span style={{ color: "#6366f1" }}>ZY</span>
         </a>
-        <SignIn appearance={{ baseTheme: dark }} />
+        <SignIn />
       </div>
     </div>
   );

@@ -1,5 +1,4 @@
 import { SignUp } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
 
 export default function SignUpPage() {
   return (
@@ -9,7 +8,7 @@ export default function SignUpPage() {
         <a href="/" style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.5rem", letterSpacing: "-0.03em", color: "#eceae5", textDecoration: "none", display: "block", marginBottom: 32 }}>
           MEET<span style={{ color: "#6366f1" }}>ZY</span>
         </a>
-        <SignUp appearance={{ baseTheme: dark }} />
+        <SignUp />
       </div>
     </div>
   );

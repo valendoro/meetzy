@@ -1,5 +1,4 @@
 import { SignIn } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
 
 export default function SignInPage() {
   return (
@@ -14,11 +13,7 @@ export default function SignInPage() {
           </p>
           <p className="text-sm mt-1" style={{ color: "rgba(236,234,229,0.4)" }}>Entrá a tu cuenta</p>
         </div>
-        <SignIn
-          appearance={{ baseTheme: dark }}
-          redirectUrl="/dashboard"
-          signUpUrl="/sign-up"
-        />
+        <SignIn redirectUrl="/dashboard" signUpUrl="/sign-up" />
       </div>
     </div>
   );

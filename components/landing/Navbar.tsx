@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Show, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -58,7 +57,7 @@ export default function Navbar() {
             <Link href="/dashboard" className="btn-primary" style={{ padding: "8px 18px", fontSize: "0.8rem", textDecoration: "none" }}>
               Dashboard
             </Link>
-            <UserButton appearance={{ baseTheme: dark }} afterSignOutUrl="/" />
+            <UserButton afterSignOutUrl="/" />
           </Show>
         </div>
       </div>

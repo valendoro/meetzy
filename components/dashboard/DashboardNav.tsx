@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { UserButton, Show } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
 
 interface Props {
   user: { name?: string | null; email?: string | null; image?: string | null };
@@ -36,7 +35,7 @@ export default function DashboardNav({ user: _ }: Props) {
             + Nuevo
           </Link>
           <Show when="signed-in">
-            <UserButton appearance={{ baseTheme: dark }} afterSignOutUrl="/" />
+            <UserButton afterSignOutUrl="/" />
           </Show>
         </div>
       </div>

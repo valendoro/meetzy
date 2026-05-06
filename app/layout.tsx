@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Syne, DM_Sans } from "next/font/google";
 import { ClerkProvider, Show, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs";
-import { dark } from "@clerk/themes";
 import "./globals.css";
 
 const syne = Syne({
@@ -38,7 +37,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body style={{ backgroundColor: "#07070a", color: "#eceae5", fontFamily: "var(--font-dm-sans, 'DM Sans', sans-serif)" }}>
         <ClerkProvider
           appearance={{
-            baseTheme: dark,
             variables: {
               colorPrimary: "#6366f1",
               colorBackground: "#0e0e12",

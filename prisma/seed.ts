@@ -147,8 +147,8 @@ Si está listo para empezar, facilitalo.`;
   });
   console.log(`✓ Site landing: ${siteLanding.name} (${siteLanding.siteId})`);
 
-  // TEMP: keep old block below for backwards compat
-  const _siteLandingOld = await prisma.site.upsert({
+  // Back-compat placeholder site (inactive)
+  await prisma.site.upsert({
     where: { siteId: "meetzy-landing-old" },
     update: {},
     create: {
@@ -194,7 +194,6 @@ TU MISIÓN COMO MILO:
       avatarSubtype: "male",
     },
   });
-  console.log(`✓ Site landing: ${siteLanding.name} (${siteLanding.siteId})`);
 
   const site2 = await prisma.site.upsert({
     where: { siteId: "demo-site-002" },

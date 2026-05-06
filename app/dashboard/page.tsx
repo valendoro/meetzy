@@ -41,6 +41,10 @@ export default async function DashboardPage() {
   const dbUser = await getDbUser();
   if (!dbUser) redirect("/sign-in");
 
+  // "Last 24h" cutoff — Server Component request scope (not a React client render).
+  // eslint-disable-next-line react-hooks/purity -- Date bound to this HTTP request
+  const since24h = new Date(Date.now() - 86400000);
+
   const [userData, sites] = await Promise.all([
     prisma.user.findUnique({ where: { id: dbUser.id }, select: { plan: true } }),
     prisma.site.findMany({
@@ -53,7 +57,7 @@ export default async function DashboardPage() {
   const recentCounts = await Promise.all(
     sites.map(site =>
       prisma.conversation.count({
-        where: { siteId: site.id, createdAt: { gte: new Date(Date.now() - 86400000) } },
+        where: { siteId: site.id, createdAt: { gte: since24h } },
       })
     )
   );

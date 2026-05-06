@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 
 export interface MiloAvatarProps {
   size?: number;
@@ -396,88 +396,7 @@ export default function MiloAvatar({
 }: MiloAvatarProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const stateRef = useRef<MiloState>(createMiloState());
-  const rafRef = useRef<number>(0);
   const lastScrollY = useRef(0);
-
-  const animate = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const dpr = window.devicePixelRatio || 1;
-    const st = stateRef.current;
-    st.frame++;
-
-    // ── Breathe ────────────────────────────────────────
-    st.breathePhase += 0.018;
-
-    // ── Blink ──────────────────────────────────────────
-    st.blinkTimer--;
-    if (st.blinkTimer <= 0) {
-      st.blinkTimer = 150 + Math.random() * 100;
-      st.isBlinking = true;
-    }
-    if (st.isBlinking) {
-      if (st.blinkProgress < 1) {
-        st.blinkProgress = Math.min(1, st.blinkProgress + 0.18);
-      } else {
-        st.blinkProgress = Math.max(0, st.blinkProgress - 0.12);
-        if (st.blinkProgress === 0) st.isBlinking = false;
-      }
-    }
-
-    // ── Head tilt ──────────────────────────────────────
-    st.headTiltTimer--;
-    if (st.headTiltTimer <= 0) {
-      st.headTiltTimer = 180 + Math.random() * 140;
-      st.headTiltTarget = (Math.random() - 0.5) * 6;
-    }
-    st.headTilt += (st.headTiltTarget - st.headTilt) * 0.04;
-
-    // ── Eye tracking (mouse follow) ─────────────────────
-    if (mousePosition && containerRef?.current) {
-      const rect = containerRef.current.getBoundingClientRect();
-      const canvasRect = canvas.getBoundingClientRect();
-      const charX = canvasRect.left + canvasRect.width / 2;
-      const charY = canvasRect.top + canvasRect.height * 0.25; // head position
-
-      const dx = mousePosition.x - charX;
-      const dy = mousePosition.y - charY;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-      const maxInfluence = 400;
-      const factor = Math.min(1, dist / maxInfluence) * (dist < maxInfluence ? 1 : 0);
-      st.eyeOffsetXTarget = (dx / Math.max(dist, 1)) * 4 * factor;
-      st.eyeOffsetYTarget = (dy / Math.max(dist, 1)) * 3 * factor;
-    } else {
-      st.eyeOffsetXTarget = 0;
-      st.eyeOffsetYTarget = 0;
-    }
-    st.eyeOffsetX += (st.eyeOffsetXTarget - st.eyeOffsetX) * 0.08;
-    st.eyeOffsetY += (st.eyeOffsetYTarget - st.eyeOffsetY) * 0.08;
-
-    // ── Speaking mouth ─────────────────────────────────
-    if (isSpeaking) {
-      st.mouthOpenness = 0.4 + Math.sin(st.frame * 0.22) * 0.35;
-    } else {
-      st.mouthOpenness = Math.max(0, st.mouthOpenness - 0.06);
-    }
-
-    // ── Scroll reaction ────────────────────────────────
-    const scrollNow = window.scrollY;
-    const scrollDelta = Math.abs(scrollNow - lastScrollY.current);
-    if (scrollDelta > 30) {
-      st.headTiltTarget = scrollDelta > 80 ? (Math.random() > 0.5 ? 4 : -4) : 0;
-      st.headTiltTimer = 60;
-    }
-    lastScrollY.current = scrollNow;
-
-    // ── Brow raise on speaking ─────────────────────────
-    st.browRaise += ((isSpeaking ? 0.5 : 0) - st.browRaise) * 0.05;
-
-    drawMilo(ctx, st, dpr);
-    rafRef.current = requestAnimationFrame(animate);
-  }, [isSpeaking, mousePosition, containerRef]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -489,9 +408,81 @@ export default function MiloAvatar({
     canvas.style.width = `${size}px`;
     canvas.style.height = `${size * (CH / CW)}px`;
 
-    rafRef.current = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [animate, size]);
+    let rafId = 0;
+    function animate() {
+      const canvasEl = canvasRef.current;
+      if (!canvasEl) return;
+      const ctx = canvasEl.getContext("2d");
+      if (!ctx) return;
+
+      const st = stateRef.current;
+      st.frame++;
+
+      st.breathePhase += 0.018;
+
+      st.blinkTimer--;
+      if (st.blinkTimer <= 0) {
+        st.blinkTimer = 150 + Math.random() * 100;
+        st.isBlinking = true;
+      }
+      if (st.isBlinking) {
+        if (st.blinkProgress < 1) {
+          st.blinkProgress = Math.min(1, st.blinkProgress + 0.18);
+        } else {
+          st.blinkProgress = Math.max(0, st.blinkProgress - 0.12);
+          if (st.blinkProgress === 0) st.isBlinking = false;
+        }
+      }
+
+      st.headTiltTimer--;
+      if (st.headTiltTimer <= 0) {
+        st.headTiltTimer = 180 + Math.random() * 140;
+        st.headTiltTarget = (Math.random() - 0.5) * 6;
+      }
+      st.headTilt += (st.headTiltTarget - st.headTilt) * 0.04;
+
+      if (mousePosition && containerRef?.current) {
+        const canvasRect = canvasEl.getBoundingClientRect();
+        const charX = canvasRect.left + canvasRect.width / 2;
+        const charY = canvasRect.top + canvasRect.height * 0.25;
+
+        const dx = mousePosition.x - charX;
+        const dy = mousePosition.y - charY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const maxInfluence = 400;
+        const factor = Math.min(1, dist / maxInfluence) * (dist < maxInfluence ? 1 : 0);
+        st.eyeOffsetXTarget = (dx / Math.max(dist, 1)) * 4 * factor;
+        st.eyeOffsetYTarget = (dy / Math.max(dist, 1)) * 3 * factor;
+      } else {
+        st.eyeOffsetXTarget = 0;
+        st.eyeOffsetYTarget = 0;
+      }
+      st.eyeOffsetX += (st.eyeOffsetXTarget - st.eyeOffsetX) * 0.08;
+      st.eyeOffsetY += (st.eyeOffsetYTarget - st.eyeOffsetY) * 0.08;
+
+      if (isSpeaking) {
+        st.mouthOpenness = 0.4 + Math.sin(st.frame * 0.22) * 0.35;
+      } else {
+        st.mouthOpenness = Math.max(0, st.mouthOpenness - 0.06);
+      }
+
+      const scrollNow = window.scrollY;
+      const scrollDelta = Math.abs(scrollNow - lastScrollY.current);
+      if (scrollDelta > 30) {
+        st.headTiltTarget = scrollDelta > 80 ? (Math.random() > 0.5 ? 4 : -4) : 0;
+        st.headTiltTimer = 60;
+      }
+      lastScrollY.current = scrollNow;
+
+      st.browRaise += ((isSpeaking ? 0.5 : 0) - st.browRaise) * 0.05;
+
+      drawMilo(ctx, st, dpr);
+      rafId = requestAnimationFrame(animate);
+    }
+
+    rafId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafId);
+  }, [isSpeaking, mousePosition, containerRef, size]);
 
   const h = Math.round(size * (CH / CW));
 

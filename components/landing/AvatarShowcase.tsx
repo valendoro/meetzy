@@ -1,153 +1,165 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import ScrollReveal from "./ScrollReveal";
 
 // Mini canvas avatars
 function MiniDog({ color, speaking }: { color: string; speaking: boolean }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const frame = useRef(0);
-  const raf = useRef(0);
 
-  const draw = useCallback(() => {
-    const c = ref.current;
-    if (!c) return;
-    const ctx = c.getContext("2d")!;
-    const f = frame.current++;
-    ctx.clearRect(0, 0, 80, 80);
-    const blink = Math.max(0.01, f % 200 < 6 ? 1 - (f % 200) / 3 : 1);
-    const mouth = speaking ? 0.3 + Math.sin(f * 0.3) * 0.4 : 0;
+  useEffect(() => {
+    let rafId = 0;
+    function draw() {
+      const c = ref.current;
+      if (!c) return;
+      const ctx = c.getContext("2d")!;
+      const f = frame.current++;
+      ctx.clearRect(0, 0, 80, 80);
+      const blink = Math.max(0.01, f % 200 < 6 ? 1 - (f % 200) / 3 : 1);
+      const mouth = speaking ? 0.3 + Math.sin(f * 0.3) * 0.4 : 0;
 
-    ctx.fillStyle = color; ctx.beginPath(); ctx.ellipse(40, 55, 22, 18, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#8B5E3C"; ctx.beginPath(); ctx.ellipse(26, 28, 9, 14, -0.3, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(54, 28, 9, 14, 0.3, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#c4895f"; ctx.beginPath(); ctx.ellipse(40, 30, 22, 20, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#e0b080"; ctx.beginPath(); ctx.ellipse(40, 36, 13, 10, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#111"; ctx.beginPath(); ctx.ellipse(40, 33, 5, 4, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#fff";
-    ctx.beginPath(); ctx.ellipse(30, 26, 7, 7 * blink, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(50, 26, 7, 7 * blink, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#2c1a0a";
-    ctx.beginPath(); ctx.ellipse(30, 26, 4, 4 * blink, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(50, 26, 4, 4 * blink, 0, 0, Math.PI * 2); ctx.fill();
-    if (mouth > 0.05) {
-      ctx.fillStyle = "#c05000"; ctx.beginPath(); ctx.ellipse(40, 40 + mouth * 3, 7, 3 + mouth * 5, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = color; ctx.beginPath(); ctx.ellipse(40, 55, 22, 18, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#8B5E3C"; ctx.beginPath(); ctx.ellipse(26, 28, 9, 14, -0.3, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(54, 28, 9, 14, 0.3, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#c4895f"; ctx.beginPath(); ctx.ellipse(40, 30, 22, 20, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#e0b080"; ctx.beginPath(); ctx.ellipse(40, 36, 13, 10, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#111"; ctx.beginPath(); ctx.ellipse(40, 33, 5, 4, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#fff";
+      ctx.beginPath(); ctx.ellipse(30, 26, 7, 7 * blink, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(50, 26, 7, 7 * blink, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#2c1a0a";
+      ctx.beginPath(); ctx.ellipse(30, 26, 4, 4 * blink, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(50, 26, 4, 4 * blink, 0, 0, Math.PI * 2); ctx.fill();
+      if (mouth > 0.05) {
+        ctx.fillStyle = "#c05000"; ctx.beginPath(); ctx.ellipse(40, 40 + mouth * 3, 7, 3 + mouth * 5, 0, 0, Math.PI * 2); ctx.fill();
+      }
+      rafId = requestAnimationFrame(draw);
     }
-    raf.current = requestAnimationFrame(draw);
+    rafId = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(rafId);
   }, [color, speaking]);
 
-  useEffect(() => { raf.current = requestAnimationFrame(draw); return () => cancelAnimationFrame(raf.current); }, [draw]);
   return <canvas ref={ref} width={80} height={80} style={{ width: 80, height: 80 }} />;
 }
 
 function MiniOrange({ speaking }: { speaking: boolean }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const frame = useRef(0);
-  const raf = useRef(0);
 
-  const draw = useCallback(() => {
-    const c = ref.current;
-    if (!c) return;
-    const ctx = c.getContext("2d")!;
-    const f = frame.current++;
-    ctx.clearRect(0, 0, 80, 80);
-    const bounce = speaking ? Math.abs(Math.sin(f * 0.25)) * 5 : 0;
-    const blink = Math.max(0.01, f % 220 < 6 ? 1 - (f % 220) / 3 : 1);
+  useEffect(() => {
+    let rafId = 0;
+    function draw() {
+      const c = ref.current;
+      if (!c) return;
+      const ctx = c.getContext("2d")!;
+      const f = frame.current++;
+      ctx.clearRect(0, 0, 80, 80);
+      const bounce = speaking ? Math.abs(Math.sin(f * 0.25)) * 5 : 0;
+      const blink = Math.max(0.01, f % 220 < 6 ? 1 - (f % 220) / 3 : 1);
 
-    ctx.save(); ctx.translate(0, -bounce);
-    const g = ctx.createRadialGradient(30, 25, 5, 40, 42, 30);
-    g.addColorStop(0, "#ffa030"); g.addColorStop(1, "#e05800");
-    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(40, 45, 28, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#2ea032"; ctx.beginPath(); ctx.ellipse(46, 18, 5, 12, 0.5, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = "#4a2c0a"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(40, 20); ctx.quadraticCurveTo(44, 12, 42, 8); ctx.stroke();
-    ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.ellipse(30, 40, 7, 7 * blink, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(50, 40, 7, 7 * blink, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#111"; ctx.beginPath(); ctx.ellipse(30, 40, 4, 4 * blink, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(50, 40, 4, 4 * blink, 0, 0, Math.PI * 2); ctx.fill();
-    const m = speaking ? 0.3 + Math.sin(f * 0.3) * 0.4 : 0;
-    if (m > 0.05) { ctx.fillStyle = "#c05000"; ctx.beginPath(); ctx.ellipse(40, 54, 7, 3 + m * 5, 0, 0, Math.PI * 2); ctx.fill(); }
-    else { ctx.strokeStyle = "#c05000"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(40, 52, 8, 0.2, Math.PI - 0.2); ctx.stroke(); }
-    ctx.restore();
-    raf.current = requestAnimationFrame(draw);
+      ctx.save(); ctx.translate(0, -bounce);
+      const g = ctx.createRadialGradient(30, 25, 5, 40, 42, 30);
+      g.addColorStop(0, "#ffa030"); g.addColorStop(1, "#e05800");
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(40, 45, 28, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#2ea032"; ctx.beginPath(); ctx.ellipse(46, 18, 5, 12, 0.5, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = "#4a2c0a"; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(40, 20); ctx.quadraticCurveTo(44, 12, 42, 8); ctx.stroke();
+      ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.ellipse(30, 40, 7, 7 * blink, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(50, 40, 7, 7 * blink, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#111"; ctx.beginPath(); ctx.ellipse(30, 40, 4, 4 * blink, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(50, 40, 4, 4 * blink, 0, 0, Math.PI * 2); ctx.fill();
+      const m = speaking ? 0.3 + Math.sin(f * 0.3) * 0.4 : 0;
+      if (m > 0.05) { ctx.fillStyle = "#c05000"; ctx.beginPath(); ctx.ellipse(40, 54, 7, 3 + m * 5, 0, 0, Math.PI * 2); ctx.fill(); }
+      else { ctx.strokeStyle = "#c05000"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(40, 52, 8, 0.2, Math.PI - 0.2); ctx.stroke(); }
+      ctx.restore();
+      rafId = requestAnimationFrame(draw);
+    }
+    rafId = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(rafId);
   }, [speaking]);
 
-  useEffect(() => { raf.current = requestAnimationFrame(draw); return () => cancelAnimationFrame(raf.current); }, [draw]);
   return <canvas ref={ref} width={80} height={80} style={{ width: 80, height: 80 }} />;
 }
 
 function MiniCup({ color, speaking }: { color: string; speaking: boolean }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const frame = useRef(0);
-  const raf = useRef(0);
 
-  const draw = useCallback(() => {
-    const c = ref.current;
-    if (!c) return;
-    const ctx = c.getContext("2d")!;
-    const f = frame.current++;
-    ctx.clearRect(0, 0, 80, 80);
-    const blink = Math.max(0.01, f % 180 < 6 ? 1 - (f % 180) / 3 : 1);
+  useEffect(() => {
+    let rafId = 0;
+    function draw() {
+      const c = ref.current;
+      if (!c) return;
+      const ctx = c.getContext("2d")!;
+      const f = frame.current++;
+      ctx.clearRect(0, 0, 80, 80);
+      const blink = Math.max(0.01, f % 180 < 6 ? 1 - (f % 180) / 3 : 1);
 
-    ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(14, 20); ctx.lineTo(16, 68); ctx.quadraticCurveTo(40, 75, 64, 68); ctx.lineTo(66, 20); ctx.closePath(); ctx.fill();
-    ctx.fillStyle = color; ctx.beginPath(); ctx.ellipse(40, 20, 26, 7, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = color; ctx.lineWidth = 6; ctx.beginPath(); ctx.arc(62, 44, 14, -0.7, 0.7); ctx.stroke();
+      ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(14, 20); ctx.lineTo(16, 68); ctx.quadraticCurveTo(40, 75, 64, 68); ctx.lineTo(66, 20); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = color; ctx.beginPath(); ctx.ellipse(40, 20, 26, 7, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = color; ctx.lineWidth = 6; ctx.beginPath(); ctx.arc(62, 44, 14, -0.7, 0.7); ctx.stroke();
 
-    // Steam
-    const so = (f * 1.5) % 20;
-    ctx.strokeStyle = "rgba(255,255,255,0.2)"; ctx.lineWidth = 2;
-    [-8, 0, 8].forEach(ox => {
-      ctx.beginPath(); ctx.moveTo(40 + ox, 14 - so); ctx.quadraticCurveTo(40 + ox + 5, 7 - so, 40 + ox, 2 - so); ctx.stroke();
-    });
+      const so = (f * 1.5) % 20;
+      ctx.strokeStyle = "rgba(255,255,255,0.2)"; ctx.lineWidth = 2;
+      [-8, 0, 8].forEach(ox => {
+        ctx.beginPath(); ctx.moveTo(40 + ox, 14 - so); ctx.quadraticCurveTo(40 + ox + 5, 7 - so, 40 + ox, 2 - so); ctx.stroke();
+      });
 
-    ctx.fillStyle = "#fff";
-    ctx.beginPath(); ctx.ellipse(30, 42, 7, 7 * blink, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(50, 42, 7, 7 * blink, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#111";
-    ctx.beginPath(); ctx.ellipse(30, 42, 4, 4 * blink, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(50, 42, 4, 4 * blink, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#fff";
+      ctx.beginPath(); ctx.ellipse(30, 42, 7, 7 * blink, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(50, 42, 7, 7 * blink, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#111";
+      ctx.beginPath(); ctx.ellipse(30, 42, 4, 4 * blink, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(50, 42, 4, 4 * blink, 0, 0, Math.PI * 2); ctx.fill();
 
-    const m = speaking ? 0.3 + Math.sin(f * 0.3) * 0.3 : 0;
-    if (m > 0.05) { ctx.fillStyle = "rgba(0,0,0,0.4)"; ctx.beginPath(); ctx.ellipse(40, 56, 7, 3 + m * 4, 0, 0, Math.PI * 2); ctx.fill(); }
-    else { ctx.strokeStyle = "rgba(255,255,255,0.6)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(40, 54, 8, 0.2, Math.PI - 0.2); ctx.stroke(); }
+      const m = speaking ? 0.3 + Math.sin(f * 0.3) * 0.3 : 0;
+      if (m > 0.05) { ctx.fillStyle = "rgba(0,0,0,0.4)"; ctx.beginPath(); ctx.ellipse(40, 56, 7, 3 + m * 4, 0, 0, Math.PI * 2); ctx.fill(); }
+      else { ctx.strokeStyle = "rgba(255,255,255,0.6)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(40, 54, 8, 0.2, Math.PI - 0.2); ctx.stroke(); }
 
-    raf.current = requestAnimationFrame(draw);
+      rafId = requestAnimationFrame(draw);
+    }
+    rafId = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(rafId);
   }, [color, speaking]);
 
-  useEffect(() => { raf.current = requestAnimationFrame(draw); return () => cancelAnimationFrame(raf.current); }, [draw]);
   return <canvas ref={ref} width={80} height={80} style={{ width: 80, height: 80 }} />;
 }
 
 function MiniHuman({ color, speaking }: { color: string; speaking: boolean }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const frame = useRef(0);
-  const raf = useRef(0);
-  const draw = useCallback(() => {
-    const c = ref.current;
-    if (!c) return;
-    const ctx = c.getContext("2d")!;
-    const f = frame.current++;
-    ctx.clearRect(0, 0, 80, 80);
-    const breathe = 1 + Math.sin(f * 0.02) * 0.008;
-    const blink = Math.max(0.01, f % 200 < 6 ? 1 - (f % 200) / 3 : 1);
 
-    ctx.save(); ctx.translate(40, 55); ctx.scale(breathe, breathe); ctx.translate(-40, -55);
-    ctx.fillStyle = color; ctx.beginPath(); ctx.roundRect(18, 42, 44, 30, 6); ctx.fill();
-    ctx.fillStyle = "#d4956a"; ctx.beginPath(); ctx.roundRect(30, 34, 20, 12, 4); ctx.fill();
-    ctx.fillStyle = "#1a1008"; ctx.beginPath(); ctx.ellipse(40, 22, 20, 16, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#d4956a"; ctx.beginPath(); ctx.ellipse(40, 24, 18, 16, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#fff";
-    ctx.beginPath(); ctx.ellipse(34, 22, 6, 6 * blink, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(46, 22, 6, 6 * blink, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = "#2c1a0a";
-    ctx.beginPath(); ctx.ellipse(34, 22, 3.5, 3.5 * blink, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(46, 22, 3.5, 3.5 * blink, 0, 0, Math.PI * 2); ctx.fill();
-    const m = speaking ? 0.4 + Math.sin(f * 0.3) * 0.4 : 0;
-    if (m > 0.05) { ctx.fillStyle = "#8a3020"; ctx.beginPath(); ctx.ellipse(40, 32, 7, 3 + m * 4, 0, 0, Math.PI * 2); ctx.fill(); }
-    else { ctx.strokeStyle = "#8a4030"; ctx.lineWidth = 1.5; ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(34, 32); ctx.quadraticCurveTo(40, 37, 46, 32); ctx.stroke(); }
-    ctx.restore();
-    raf.current = requestAnimationFrame(draw);
+  useEffect(() => {
+    let rafId = 0;
+    function draw() {
+      const c = ref.current;
+      if (!c) return;
+      const ctx = c.getContext("2d")!;
+      const f = frame.current++;
+      ctx.clearRect(0, 0, 80, 80);
+      const breathe = 1 + Math.sin(f * 0.02) * 0.008;
+      const blink = Math.max(0.01, f % 200 < 6 ? 1 - (f % 200) / 3 : 1);
+
+      ctx.save(); ctx.translate(40, 55); ctx.scale(breathe, breathe); ctx.translate(-40, -55);
+      ctx.fillStyle = color; ctx.beginPath(); ctx.roundRect(18, 42, 44, 30, 6); ctx.fill();
+      ctx.fillStyle = "#d4956a"; ctx.beginPath(); ctx.roundRect(30, 34, 20, 12, 4); ctx.fill();
+      ctx.fillStyle = "#1a1008"; ctx.beginPath(); ctx.ellipse(40, 22, 20, 16, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#d4956a"; ctx.beginPath(); ctx.ellipse(40, 24, 18, 16, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#fff";
+      ctx.beginPath(); ctx.ellipse(34, 22, 6, 6 * blink, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(46, 22, 6, 6 * blink, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = "#2c1a0a";
+      ctx.beginPath(); ctx.ellipse(34, 22, 3.5, 3.5 * blink, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.ellipse(46, 22, 3.5, 3.5 * blink, 0, 0, Math.PI * 2); ctx.fill();
+      const m = speaking ? 0.4 + Math.sin(f * 0.3) * 0.4 : 0;
+      if (m > 0.05) { ctx.fillStyle = "#8a3020"; ctx.beginPath(); ctx.ellipse(40, 32, 7, 3 + m * 4, 0, 0, Math.PI * 2); ctx.fill(); }
+      else { ctx.strokeStyle = "#8a4030"; ctx.lineWidth = 1.5; ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(34, 32); ctx.quadraticCurveTo(40, 37, 46, 32); ctx.stroke(); }
+      ctx.restore();
+      rafId = requestAnimationFrame(draw);
+    }
+    rafId = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(rafId);
   }, [color, speaking]);
-  useEffect(() => { raf.current = requestAnimationFrame(draw); return () => cancelAnimationFrame(raf.current); }, [draw]);
   return <canvas ref={ref} width={80} height={80} style={{ width: 80, height: 80 }} />;
 }
 

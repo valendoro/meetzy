@@ -25,21 +25,24 @@ export default function MiloDemo({ tracker }: MiloDemoProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [started, setStarted] = useState(false);
-  const openerRef = useRef("");
-
-  useEffect(() => {
-    openerRef.current = buildDemoOpener(tracker);
-  }, []); // eslint-disable-line
+  const [chatOpener, setChatOpener] = useState("");
+  const demoStartedRef = useRef(false);
 
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
     const obs = new IntersectionObserver(([entry]) => {
-      if (entry?.isIntersecting && !started) setTimeout(() => setStarted(true), 500);
+      if (entry?.isIntersecting && !demoStartedRef.current) {
+        demoStartedRef.current = true;
+        setTimeout(() => {
+          setChatOpener(buildDemoOpener(tracker));
+          setStarted(true);
+        }, 500);
+      }
     }, { threshold: 0.3 });
     obs.observe(el);
     return () => obs.disconnect();
-  }, [started]);
+  }, [tracker]);
 
   return (
     <section id="demo" data-section="demo" ref={sectionRef} className="py-32 relative overflow-hidden">
@@ -138,7 +141,7 @@ export default function MiloDemo({ tracker }: MiloDemoProps) {
               }}>
               {started ? (
                 <MiloChat
-                  initialMessage={openerRef.current || buildDemoOpener(tracker)}
+                  initialMessage={chatOpener || buildDemoOpener(tracker)}
                   context={tracker.context}
                   onSpeakingChange={setIsSpeaking}
                 />

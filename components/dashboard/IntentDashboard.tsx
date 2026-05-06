@@ -191,7 +191,7 @@ export default function IntentDashboard({ siteId }: { siteId: string }) {
                     )}
                   </div>
                   <p className="text-xs text-[#6b6b6b] truncate mb-2">
-                    "{lead.lastMessage}"
+                    &ldquo;{lead.lastMessage}&rdquo;
                   </p>
                   <IntentBar score={lead.intentScore} />
                 </div>

@@ -54,10 +54,14 @@ export default function HowItWorks() {
               El script más simple del mundo
             </p>
             <pre style={{ fontFamily: "monospace", fontSize: "0.78rem", color: "rgba(236,234,229,0.6)", lineHeight: 1.8, overflow: "auto" }}>
-{`<script>
-  window.MEETZYCONFIG = { siteId: `}<span style={{ color: "#86efac" }}>"tu-id"</span>{` };
+              {`<script>
+  window.MEETZYCONFIG = { siteId: `}
+              <span style={{ color: "#86efac" }}>{'"tu-id"'}</span>
+              {` };
 </script>
-<script src=`}<span style={{ color: "rgba(99,102,241,0.85)" }}>"https://meetzy.ai/widget.js"</span>{` async></script>`}
+<script src=`}
+              <span style={{ color: "rgba(99,102,241,0.85)" }}>{'"https://meetzy.ai/widget.js"'}</span>
+              {` async></script>`}
             </pre>
           </div>
         </ScrollReveal>

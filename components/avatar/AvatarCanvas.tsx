@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect } from "react";
 
 export interface AvatarConfig {
   type: string;
@@ -304,8 +304,9 @@ function drawOrange(
   cy: number,
   size: number,
   state: AvatarState,
-  _config: AvatarConfig
+  config: AvatarConfig
 ) {
+  void config;
   const s = size / 200;
   const bounce = state.mouthOpen > 0.2 ? Math.abs(Math.sin(state.frame * 0.3)) * 6 : 0;
 
@@ -490,78 +491,6 @@ export default function AvatarCanvas({
     wobbleDir: 1,
     frame: 0,
   });
-  const animFrameRef = useRef<number>(0);
-
-  const draw = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const state = stateRef.current;
-    const dpr = window.devicePixelRatio || 1;
-    const w = canvas.width / dpr;
-    const h = canvas.height / dpr;
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    const cx = w / 2;
-    const cy = h / 2;
-
-    // Update animations
-    state.frame++;
-    state.breathePhase = Math.sin(state.frame * 0.02);
-
-    // Blink
-    state.blinkTimer--;
-    if (state.blinkTimer <= 0) {
-      state.blinkTimer = 180 + Math.random() * 120;
-    }
-    if (state.blinkTimer < 10) {
-      state.blinkProgress = state.blinkTimer < 5
-        ? state.blinkTimer / 5
-        : (10 - state.blinkTimer) / 5;
-    } else {
-      state.blinkProgress = 1;
-    }
-
-    // Head wobble (subtle)
-    state.headWobble += state.wobbleDir * 0.04;
-    if (Math.abs(state.headWobble) > 1.5) state.wobbleDir *= -1;
-
-    // Talking mouth
-    if (config.isTalking) {
-      state.mouthOpen = 0.3 + Math.sin(state.frame * 0.25) * 0.4;
-    } else {
-      state.mouthOpen = Math.max(0, state.mouthOpen - 0.08);
-    }
-
-    switch (config.type) {
-      case "human":
-        drawHuman(ctx, cx, cy, size, state, config);
-        break;
-      case "animal":
-        if (config.subtype === "perro" || config.subtype === "dog") {
-          drawDog(ctx, cx, cy, size, state, config);
-        } else {
-          drawDog(ctx, cx, cy, size, state, config);
-        }
-        break;
-      case "object":
-        if (config.subtype === "naranja" || config.subtype === "orange") {
-          drawOrange(ctx, cx, cy, size, state, config);
-        } else if (config.subtype === "taza" || config.subtype === "cup") {
-          drawCup(ctx, cx, cy, size, state, config);
-        } else {
-          drawOrange(ctx, cx, cy, size, state, config);
-        }
-        break;
-      default:
-        drawHuman(ctx, cx, cy, size, state, config);
-    }
-
-    animFrameRef.current = requestAnimationFrame(draw);
-  }, [config, size]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -570,12 +499,79 @@ export default function AvatarCanvas({
     const dpr = window.devicePixelRatio || 1;
     canvas.width = size * dpr;
     canvas.height = size * dpr;
-    const ctx = canvas.getContext("2d");
-    if (ctx) ctx.scale(dpr, dpr);
+    const ctxSetup = canvas.getContext("2d");
+    if (ctxSetup) ctxSetup.scale(dpr, dpr);
 
-    animFrameRef.current = requestAnimationFrame(draw);
-    return () => cancelAnimationFrame(animFrameRef.current);
-  }, [draw, size]);
+    let rafId = 0;
+    function draw() {
+      const canvasEl = canvasRef.current;
+      if (!canvasEl) return;
+      const ctx = canvasEl.getContext("2d");
+      if (!ctx) return;
+
+      const state = stateRef.current;
+      const w = canvasEl.width / dpr;
+      const h = canvasEl.height / dpr;
+
+      ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+
+      const cx = w / 2;
+      const cy = h / 2;
+
+      state.frame++;
+      state.breathePhase = Math.sin(state.frame * 0.02);
+
+      state.blinkTimer--;
+      if (state.blinkTimer <= 0) {
+        state.blinkTimer = 180 + Math.random() * 120;
+      }
+      if (state.blinkTimer < 10) {
+        state.blinkProgress = state.blinkTimer < 5
+          ? state.blinkTimer / 5
+          : (10 - state.blinkTimer) / 5;
+      } else {
+        state.blinkProgress = 1;
+      }
+
+      state.headWobble += state.wobbleDir * 0.04;
+      if (Math.abs(state.headWobble) > 1.5) state.wobbleDir *= -1;
+
+      if (config.isTalking) {
+        state.mouthOpen = 0.3 + Math.sin(state.frame * 0.25) * 0.4;
+      } else {
+        state.mouthOpen = Math.max(0, state.mouthOpen - 0.08);
+      }
+
+      switch (config.type) {
+        case "human":
+          drawHuman(ctx, cx, cy, size, state, config);
+          break;
+        case "animal":
+          if (config.subtype === "perro" || config.subtype === "dog") {
+            drawDog(ctx, cx, cy, size, state, config);
+          } else {
+            drawDog(ctx, cx, cy, size, state, config);
+          }
+          break;
+        case "object":
+          if (config.subtype === "naranja" || config.subtype === "orange") {
+            drawOrange(ctx, cx, cy, size, state, config);
+          } else if (config.subtype === "taza" || config.subtype === "cup") {
+            drawCup(ctx, cx, cy, size, state, config);
+          } else {
+            drawOrange(ctx, cx, cy, size, state, config);
+          }
+          break;
+        default:
+          drawHuman(ctx, cx, cy, size, state, config);
+      }
+
+      rafId = requestAnimationFrame(draw);
+    }
+
+    rafId = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(rafId);
+  }, [config, size]);
 
   return (
     <canvas

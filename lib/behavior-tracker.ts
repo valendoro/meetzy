@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 export interface VisitorContext {
   timeOnSite: number;
@@ -137,9 +137,8 @@ export interface BehaviorTrackerResult {
   mousePosition: { x: number; y: number };
 }
 
-export function useBehaviorTracker(): BehaviorTrackerResult {
-  const startTime = useRef(Date.now());
-  const ctxRef = useRef<VisitorContext>({
+function createInitialContext(): VisitorContext {
+  return {
     timeOnSite: 0,
     currentPage: typeof window !== "undefined" ? window.location.pathname : "/",
     pagesVisited: [typeof window !== "undefined" ? window.location.pathname : "/"],
@@ -155,18 +154,32 @@ export function useBehaviorTracker(): BehaviorTrackerResult {
     scrollSpeed: "normal",
     inferredIntent: "exploring",
     triggeredMessages: [],
-  });
+  };
+}
+
+export function useBehaviorTracker(): BehaviorTrackerResult {
+  const baseline = useMemo(() => createInitialContext(), []);
+  const ctxRef = useRef<VisitorContext>(structuredClone(baseline));
+  const [context, setContext] = useState<VisitorContext>(() => structuredClone(baseline));
+  const startTime = useRef(0);
+  const minTriggerTime = useRef(0);
+  const triggerShowingRef = useRef(false);
 
   const [triggerMessage, setTriggerMessage] = useState<string | null>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const triggeredRef = useRef<Set<string>>(new Set());
-  const minTriggerTime = useRef(Date.now() + 15000); // 15s min before first trigger
-  const activeSections = useRef<Map<string, number>>(new Map()); // id → timestamp when entered
+  const activeSections = useRef<Map<string, number>>(new Map());
 
-  const clearTrigger = useCallback(() => setTriggerMessage(null), []);
+  const clearTrigger = useCallback(() => {
+    triggerShowingRef.current = false;
+    setTriggerMessage(null);
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+    startTime.current = Date.now();
+    minTriggerTime.current = Date.now() + 15000;
+
     localStorage.setItem("mz_visited", "true");
 
     // ── Time tracker ─────────────────────────────────────
@@ -180,6 +193,7 @@ export function useBehaviorTracker(): BehaviorTrackerResult {
         }
         ctxRef.current.sectionsViewed[id]!.time = elapsed;
       });
+      setContext(structuredClone(ctxRef.current));
     }, 1000);
 
     // ── IntersectionObserver ──────────────────────────────
@@ -263,7 +277,7 @@ export function useBehaviorTracker(): BehaviorTrackerResult {
       ctxRef.current.inferredIntent = inferIntent(ctxRef.current);
 
       if (Date.now() < minTriggerTime.current) return;
-      if (triggerMessage) return; // already showing one
+      if (triggerShowingRef.current) return;
 
       for (const trigger of TRIGGERS) {
         if (triggeredRef.current.has(trigger.id)) continue;
@@ -274,7 +288,10 @@ export function useBehaviorTracker(): BehaviorTrackerResult {
             typeof trigger.message === "function"
               ? trigger.message(ctxRef.current)
               : trigger.message;
-          setTimeout(() => setTriggerMessage(msg), trigger.delay);
+          setTimeout(() => {
+            triggerShowingRef.current = true;
+            setTriggerMessage(msg);
+          }, trigger.delay);
           break;
         }
       }
@@ -289,11 +306,10 @@ export function useBehaviorTracker(): BehaviorTrackerResult {
       window.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("visibilitychange", onVisibility);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {
-    context: ctxRef.current,
+    context,
     triggerMessage,
     clearTrigger,
     mousePosition,

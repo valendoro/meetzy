@@ -13,7 +13,7 @@ function getRedis(): Redis {
 
 // No-op ratelimit for when Redis is not configured
 const noopRatelimit = {
-  limit: async (_id: string) => ({ success: true, limit: 999, remaining: 999, reset: 0, pending: Promise.resolve() }),
+  limit: async () => ({ success: true, limit: 999, remaining: 999, reset: 0, pending: Promise.resolve() }),
 };
 
 let _chatRL: Ratelimit | null = null;

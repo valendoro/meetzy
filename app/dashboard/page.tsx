@@ -6,6 +6,37 @@ import SiteCard from "@/components/dashboard/SiteCard";
 
 export const metadata = { title: "Dashboard" };
 
+/** Plain props for the client `SiteCard` (only JSON-serializable fields). */
+function siteCardProps(
+  site: {
+    id: string;
+    siteId: string;
+    name: string;
+    url: string;
+    plan: string;
+    isActive: boolean;
+    agentName: string;
+    brandColor: string;
+    avatarType: string | null;
+    _count: { conversations: number };
+  },
+  conversationsToday: number
+) {
+  return {
+    id: site.id,
+    siteId: site.siteId,
+    name: site.name,
+    url: site.url,
+    plan: site.plan,
+    isActive: site.isActive,
+    agentName: site.agentName,
+    brandColor: site.brandColor,
+    avatarType: site.avatarType,
+    conversationsToday,
+    _count: site._count,
+  };
+}
+
 export default async function DashboardPage() {
   const dbUser = await getDbUser();
   if (!dbUser) redirect("/sign-in");
@@ -27,10 +58,9 @@ export default async function DashboardPage() {
     )
   );
 
-  const sitesWithMetrics = sites.map((site, i) => ({
-    ...site,
-    conversationsToday: recentCounts[i] ?? 0,
-  }));
+  const sitesWithMetrics = sites.map((site, i) =>
+    siteCardProps(site, recentCounts[i] ?? 0)
+  );
 
   return (
     <div>

@@ -3,6 +3,7 @@ builder = "nixpacks"
 buildCommand = "npm run build"
 
 [deploy]
+preDeployCommand = ["npx prisma migrate deploy"]
 startCommand = "npm start"
 healthcheckPath = "/"
 healthcheckTimeout = 60

@@ -1,25 +1,31 @@
 "use client";
 
-import Script from "next/script";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+
+const SITE_ID = "meetzy-landing";
 
 export default function WidgetDemo() {
-  const [ready, setReady] = useState(false);
-
   useEffect(() => {
-    // Set config before script loads
+    // Guard: don't load twice
+    if (document.getElementById("meetzy-widget")) return;
+
+    // Set config BEFORE loading the script
     (window as Window & { MEETZYCONFIG?: { siteId: string } }).MEETZYCONFIG = {
-      siteId: "meetzy-landing",
+      siteId: SITE_ID,
     };
-    setReady(true);
+
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+    const script = document.createElement("script");
+    script.src = `${appUrl}/widget.js`;
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      // Clean up widget on unmount (dev HMR)
+      const host = document.getElementById("meetzy-widget");
+      if (host) host.remove();
+    };
   }, []);
 
-  if (!ready) return null;
-
-  return (
-    <Script
-      src={`${process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"}/widget.js`}
-      strategy="lazyOnload"
-    />
-  );
+  return null;
 }

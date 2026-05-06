@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Show, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs";
+import { SignInButton, SignUpButton, UserButton, useAuth } from "@clerk/nextjs";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const { isSignedIn } = useAuth();
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 24);
@@ -17,7 +18,7 @@ export default function Navbar() {
   return (
     <nav style={{
       position: "fixed", top: 0, left: 0, right: 0, zIndex: 50,
-      transition: "background-color 0.3s ease, border-color 0.3s ease",
+      transition: "background-color 0.3s, border-color 0.3s",
       ...(scrolled ? {
         backgroundColor: "rgba(7,7,10,0.9)",
         backdropFilter: "blur(20px)",
@@ -26,13 +27,16 @@ export default function Navbar() {
       } : {}),
     }}>
       <div className="wrap" style={{ height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <Link href="/" style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.2rem", letterSpacing: "-0.02em", color: "#eceae5", textDecoration: "none" }}>
+        <Link href="/" style={{
+          fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.2rem",
+          letterSpacing: "-0.02em", color: "#eceae5", textDecoration: "none",
+        }}>
           MEET<span style={{ color: "#6366f1" }}>ZY</span>
         </Link>
 
         <div style={{ display: "flex", alignItems: "center", gap: 32 }} className="nav-links">
           {[["Cómo funciona", "#como-funciona"], ["Para quién", "#para-quien"], ["Precios", "#precios"]].map(([l, h]) => (
-            <a key={l} href={h} style={{ fontSize: "0.875rem", color: "rgba(236,234,229,0.45)", textDecoration: "none", transition: "color 0.15s" }}
+            <a key={l} href={h} style={{ fontSize: "0.875rem", color: "rgba(236,234,229,0.45)", textDecoration: "none" }}
               onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "#eceae5"}
               onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(236,234,229,0.45)"}
             >{l}</a>
@@ -40,31 +44,41 @@ export default function Navbar() {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <Show when="signed-out">
-            <SignInButton mode="modal">
-              <button style={{ fontSize: "0.875rem", color: "rgba(236,234,229,0.5)", background: "none", border: "none", cursor: "pointer", padding: "6px 4px" }}>
-                Iniciar sesión
-              </button>
-            </SignInButton>
-            <SignUpButton mode="modal">
-              <button className="btn-primary" style={{ padding: "8px 18px", fontSize: "0.8rem" }}>
-                Crear mi agente
-              </button>
-            </SignUpButton>
-          </Show>
-
-          <Show when="signed-in">
-            <Link href="/dashboard" className="btn-primary" style={{ padding: "8px 18px", fontSize: "0.8rem", textDecoration: "none" }}>
-              Dashboard
-            </Link>
-            <UserButton />
-          </Show>
+          {isSignedIn ? (
+            <>
+              <Link href="/dashboard" style={{
+                display: "inline-flex", alignItems: "center", gap: 6,
+                background: "#6366f1", color: "#fff", textDecoration: "none",
+                fontWeight: 600, fontSize: "0.8rem", padding: "8px 18px",
+                borderRadius: 12,
+              }}>
+                Dashboard
+              </Link>
+              <UserButton />
+            </>
+          ) : (
+            <>
+              <SignInButton mode="modal">
+                <button style={{ fontSize: "0.875rem", color: "rgba(236,234,229,0.5)", background: "none", border: "none", cursor: "pointer" }}>
+                  Iniciar sesión
+                </button>
+              </SignInButton>
+              <SignUpButton mode="modal">
+                <button style={{
+                  display: "inline-flex", alignItems: "center",
+                  background: "#6366f1", color: "#fff", border: "none",
+                  fontWeight: 600, fontSize: "0.8rem", padding: "8px 18px",
+                  borderRadius: 12, cursor: "pointer",
+                }}>
+                  Crear mi agente
+                </button>
+              </SignUpButton>
+            </>
+          )}
         </div>
       </div>
 
-      <style>{`
-        @media (max-width: 768px) { .nav-links { display: none !important; } }
-      `}</style>
+      <style>{`@media (max-width: 768px) { .nav-links { display: none !important; } }`}</style>
     </nav>
   );
 }

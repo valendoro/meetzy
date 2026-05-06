@@ -1,29 +1,20 @@
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { getDbUser } from "@/lib/auth";
 import OnboardingWizard from "@/components/dashboard/OnboardingWizard";
 
 export const metadata = { title: "Nuevo agente" };
 
 export default async function NewSitePage() {
-  const session = await auth();
-  if (!session?.user) return null;
-
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { plan: true },
-  });
-
+  const dbUser = await getDbUser();
+  if (!dbUser) return null;
   return (
     <div>
       <div className="mb-8">
-        <h1 className="font-syne font-bold text-2xl text-[#F0EDE8]">
-          Crear nuevo agente
-        </h1>
-        <p className="text-sm text-[#6b6b6b] mt-1">
-          3 pasos y tu agente estará listo para instalar.
+        <h1 className="font-syne font-bold text-2xl text-[#eceae5]">Crear nuevo agente</h1>
+        <p className="text-sm mt-1" style={{ color: "rgba(236,234,229,0.4)" }}>
+          Configurá tu agente en minutos.
         </p>
       </div>
-      <OnboardingWizard userPlan={user?.plan ?? "starter"} />
+      <OnboardingWizard userPlan={dbUser.plan} />
     </div>
   );
 }

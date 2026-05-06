@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { getDbUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
@@ -6,26 +6,15 @@ import AvatarConfigurator from "@/components/dashboard/AvatarConfigurator";
 
 export const metadata = { title: "Avatar" };
 
-export default async function AvatarPage({
-  params,
-}: {
-  params: Promise<{ siteId: string }>;
-}) {
-  const session = await auth();
-  if (!session?.user) return null;
+export default async function AvatarPage({ params }: { params: Promise<{ siteId: string }> }) {
+  const dbUser = await getDbUser();
+  if (!dbUser) return null;
 
   const { siteId } = await params;
-
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { plan: true },
-  });
-
-  const site = await prisma.site.findFirst({
-    where: { siteId, userId: session.user.id },
-  });
-
+  const site = await prisma.site.findFirst({ where: { siteId, userId: dbUser.id } });
   if (!site) notFound();
+
+  const isPro = dbUser.plan === "pro" || dbUser.plan === "elite";
 
   const tabs = [
     { label: "Resumen", href: `/dashboard/${siteId}`, active: false },
@@ -34,47 +23,36 @@ export default async function AvatarPage({
     { label: "Configuración", href: `/dashboard/${siteId}/settings`, active: false },
   ];
 
-  const isPro = (user?.plan ?? "starter") === "pro" || (user?.plan ?? "starter") === "elite";
-
   return (
     <div>
-      <div className="flex items-center gap-2 text-sm text-[#6b6b6b] mb-6">
-        <Link href="/dashboard" className="hover:text-[#F0EDE8] transition-colors">Mis sitios</Link>
+      <div className="flex items-center gap-2 text-sm mb-6" style={{ color: "rgba(236,234,229,0.4)" }}>
+        <Link href="/dashboard">Mis sitios</Link>
         <span>/</span>
-        <Link href={`/dashboard/${siteId}`} className="hover:text-[#F0EDE8] transition-colors">{site.name}</Link>
+        <Link href={`/dashboard/${siteId}`}>{site.name}</Link>
         <span>/</span>
-        <span className="text-[#F0EDE8]">Avatar</span>
+        <span className="text-[#eceae5]">Avatar</span>
       </div>
 
-      <div className="flex gap-1 border-b border-[#1e1e1e] mb-8">
-        {tabs.map((tab) => (
-          <Link
-            key={tab.label}
-            href={tab.href}
+      <div className="flex gap-1 border-b mb-8" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
+        {tabs.map(tab => (
+          <Link key={tab.label} href={tab.href}
             className={`px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px ${
-              tab.active
-                ? "border-accent text-[#F0EDE8]"
-                : "border-transparent text-[#6b6b6b] hover:text-[#F0EDE8]"
+              tab.active ? "border-accent text-[#eceae5]" : "border-transparent hover:text-[#eceae5]"
             }`}
-          >
+            style={{ color: tab.active ? undefined : "rgba(236,234,229,0.4)" }}>
             {tab.label}
           </Link>
         ))}
       </div>
 
       {!isPro ? (
-        <div className="bg-[#111] border border-accent/20 rounded-2xl p-8 text-center max-w-lg mx-auto">
+        <div className="bg-[#0e0e12] border border-accent/20 rounded-2xl p-8 text-center max-w-lg mx-auto">
           <p className="text-3xl mb-4">🎭</p>
-          <h3 className="font-syne font-bold text-lg text-[#F0EDE8] mb-2">
-            Avatar disponible en Plan Pro
-          </h3>
-          <p className="text-[#6b6b6b] text-sm mb-6">
+          <h3 className="font-syne font-bold text-lg text-[#eceae5] mb-2">Avatar disponible en Plan Pro</h3>
+          <p className="text-sm mb-6" style={{ color: "rgba(236,234,229,0.4)" }}>
             El avatar 2D animado con identidad de marca está disponible a partir del Plan Pro ($79/mes).
           </p>
-          <Link
-            href="/pricing"
-            className="inline-block bg-accent text-white font-medium px-6 py-2.5 rounded-xl hover:bg-accent/90 transition-colors"
-          >
+          <Link href="/pricing" className="btn-primary" style={{ textDecoration: "none", display: "inline-flex" }}>
             Ver planes →
           </Link>
         </div>

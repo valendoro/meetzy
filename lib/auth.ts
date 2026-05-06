@@ -1,4 +1,5 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { isDynamicServerError } from "next/dist/client/components/hooks-server-context";
 import { prisma } from "@/lib/prisma";
 import type { User } from "@prisma/client";
 
@@ -10,38 +11,40 @@ export async function getDbUser(): Promise<User | null> {
     return null;
   }
 
-  const { userId } = await auth();
-  if (!userId) return null;
+  try {
+    const { userId } = await auth();
+    if (!userId) return null;
 
-  const clerkUser = await currentUser();
-  if (!clerkUser) return null;
+    const clerkUser = await currentUser();
+    if (!clerkUser) return null;
 
-  const email = clerkUser.emailAddresses[0]?.emailAddress ?? `${userId}@clerk.local`;
-  const name = [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(" ") || null;
-  const image = clerkUser.imageUrl || null;
+    const email = clerkUser.emailAddresses[0]?.emailAddress ?? `${userId}@clerk.local`;
+    const name = [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(" ") || null;
+    const image = clerkUser.imageUrl || null;
 
-  // Try to find by Clerk userId first
-  let user = await prisma.user.findUnique({ where: { id: userId } });
+    // Try to find by Clerk userId first
+    let user = await prisma.user.findUnique({ where: { id: userId } });
 
-  if (!user) {
-    // If email exists with different id, just use that user
-    const byEmail = await prisma.user.findUnique({ where: { email } });
-    if (byEmail) {
-      // Return existing user as-is (don't change primary key)
-      user = byEmail;
+    if (!user) {
+      const byEmail = await prisma.user.findUnique({ where: { email } });
+      if (byEmail) {
+        user = byEmail;
+      } else {
+        user = await prisma.user.create({
+          data: { id: userId, email, name: name ?? null, image: image ?? null, emailVerified: new Date(), plan: "starter" },
+        });
+      }
     } else {
-      // Create fresh with Clerk userId as id
-      user = await prisma.user.create({
-        data: { id: userId, email, name: name ?? null, image: image ?? null, emailVerified: new Date(), plan: "starter" },
+      user = await prisma.user.update({
+        where: { id: userId },
+        data: { name: name ?? null, image: image ?? null },
       });
     }
-  } else {
-    // Update name/image only
-    user = await prisma.user.update({
-      where: { id: userId },
-      data: { name: name ?? null, image: image ?? null },
-    });
-  }
 
-  return user;
+    return user;
+  } catch (e) {
+    if (isDynamicServerError(e)) throw e;
+    console.error("[auth] getDbUser failed:", e);
+    return null;
+  }
 }

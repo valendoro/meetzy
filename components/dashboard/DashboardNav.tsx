@@ -1,14 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { UserButton } from "@clerk/nextjs";
+import { UserButton, useUser } from "@clerk/nextjs";
 
-interface Props {
-  user: { name?: string | null; email?: string | null; image?: string | null };
-}
-
-export default function DashboardNav({ user }: Props) {
-  const displayName = user.name || user.email || "Usuario";
+export default function DashboardNav() {
+  const { user } = useUser();
+  const displayName =
+    user?.fullName || user?.primaryEmailAddress?.emailAddress || user?.username || "Usuario";
 
   return (
     <header style={{

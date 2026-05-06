@@ -1,11 +1,12 @@
 import { getDbUser } from "@/lib/auth";
 import OnboardingWizard from "@/components/dashboard/OnboardingWizard";
+import { redirect } from "next/navigation";
 
 export const metadata = { title: "Nuevo agente" };
 
 export default async function NewSitePage() {
   const dbUser = await getDbUser();
-  if (!dbUser) return null;
+  if (!dbUser) redirect("/sign-in");
   return (
     <div>
       <div className="mb-8">

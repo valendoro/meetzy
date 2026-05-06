@@ -1,6 +1,6 @@
 import { getDbUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import InstallScript from "@/components/dashboard/InstallScript";
 import IntentDashboard from "@/components/dashboard/IntentDashboard";
@@ -9,7 +9,7 @@ export const metadata = { title: "Detalle del sitio" };
 
 export default async function SiteDetailPage({ params }: { params: Promise<{ siteId: string }> }) {
   const dbUser = await getDbUser();
-  if (!dbUser) return null;
+  if (!dbUser) redirect("/sign-in");
 
   const { siteId } = await params;
   const site = await prisma.site.findFirst({

@@ -24,6 +24,11 @@ const CreateSiteSchema = z.object({
   webhookUrl: z.string().url().optional().or(z.literal("")),
   embedMode: z.enum(["widget", "fullpage"]).optional(),
   primaryQuestion: z.string().max(200).optional(),
+  agentType: z.enum(["vendedor", "guia", "soporte", "recepcionista"]).optional(),
+  proactiveEnabled: z.boolean().optional(),
+  proactiveFrequency: z.enum(["conservador", "normal", "proactivo"]).optional(),
+  exitIntentEnabled: z.boolean().optional(),
+  widgetPosition: z.enum(["bottom-right", "bottom-left"]).optional(),
 });
 
 export async function GET() {
@@ -112,6 +117,11 @@ export async function POST(req: NextRequest) {
         webhookUrl: parsed.data.webhookUrl || null,
         embedMode: parsed.data.embedMode,
         primaryQuestion: parsed.data.primaryQuestion,
+        agentType: parsed.data.agentType,
+        proactiveEnabled: parsed.data.proactiveEnabled,
+        proactiveFrequency: parsed.data.proactiveFrequency,
+        exitIntentEnabled: parsed.data.exitIntentEnabled,
+        widgetPosition: parsed.data.widgetPosition,
         avatarConfig: parsed.data.avatarConfig as import("@prisma/client").Prisma.JsonObject | undefined,
       },
     });

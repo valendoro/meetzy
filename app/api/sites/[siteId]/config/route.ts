@@ -26,6 +26,11 @@ export async function GET(
         isActive: true,
         embedMode: true,
         primaryQuestion: true,
+        agentType: true,
+        proactiveEnabled: true,
+        proactiveFrequency: true,
+        exitIntentEnabled: true,
+        widgetPosition: true,
       },
     });
 

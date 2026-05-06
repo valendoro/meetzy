@@ -24,6 +24,11 @@ const UpdateSiteSchema = z.object({
   simliAvatarId: z.string().nullable().optional(),
   calBookingUrl: z.string().nullable().optional(),
   webhookUrl: z.string().nullable().optional(),
+  agentType: z.enum(["vendedor", "guia", "soporte", "recepcionista"]).optional(),
+  proactiveEnabled: z.boolean().optional(),
+  proactiveFrequency: z.enum(["conservador", "normal", "proactivo"]).optional(),
+  exitIntentEnabled: z.boolean().optional(),
+  widgetPosition: z.enum(["bottom-right", "bottom-left"]).optional(),
 });
 
 async function getSiteForUser(siteId: string, userId: string) {

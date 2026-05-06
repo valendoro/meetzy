@@ -17,6 +17,11 @@ interface SiteData {
   calBookingUrl: string | null;
   voiceEnabled: boolean;
   voiceId: string | null;
+  agentType?: string;
+  proactiveEnabled?: boolean;
+  proactiveFrequency?: string;
+  exitIntentEnabled?: boolean;
+  widgetPosition?: string;
 }
 
 export default function SiteSettingsForm({ site }: { site: SiteData }) {
@@ -32,6 +37,11 @@ export default function SiteSettingsForm({ site }: { site: SiteData }) {
     brandColor2: site.brandColor2,
     webhookUrl: site.webhookUrl ?? "",
     calBookingUrl: site.calBookingUrl ?? "",
+    agentType: site.agentType ?? "guia",
+    proactiveEnabled: site.proactiveEnabled ?? true,
+    proactiveFrequency: site.proactiveFrequency ?? "normal",
+    exitIntentEnabled: site.exitIntentEnabled ?? true,
+    widgetPosition: site.widgetPosition ?? "bottom-right",
   });
 
   const [saving, setSaving] = useState(false);
@@ -152,6 +162,83 @@ export default function SiteSettingsForm({ site }: { site: SiteData }) {
         <div>
           <label className="block text-xs text-[#6b6b6b] mb-2">Webhook URL (CRM)</label>
           <input name="webhookUrl" value={form.webhookUrl} onChange={handleChange} className={inputClass} placeholder="https://hook.us1.make.com/..." />
+        </div>
+      </div>
+
+      {/* Widget behavior */}
+      <div className="bg-[#111] border border-[#1e1e1e] rounded-2xl p-6 space-y-5">
+        <h2 className="font-syne font-bold text-base text-[#F0EDE8]">Comportamiento del widget</h2>
+
+        <div>
+          <label className="block text-xs text-[#6b6b6b] mb-2">Tipo de agente</label>
+          <select name="agentType" value={form.agentType}
+            onChange={e => setForm(p => ({ ...p, agentType: e.target.value }))}
+            className={inputClass}>
+            <option value="guia">🧭 Guía — Acompaña al visitante</option>
+            <option value="vendedor">💰 Vendedor — Detecta interés y cierra</option>
+            <option value="soporte">🔧 Soporte — Resuelve dudas técnicas</option>
+            <option value="recepcionista">📋 Recepcionista — Agenda y deriva</option>
+          </select>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-[#F0EDE8]">Mensajes proactivos</p>
+            <p className="text-xs text-[#6b6b6b] mt-0.5">El agente inicia conversación según el comportamiento</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setForm(p => ({ ...p, proactiveEnabled: !p.proactiveEnabled }))}
+            className={`relative w-10 h-5 rounded-full transition-colors ${form.proactiveEnabled ? "bg-accent" : "bg-[#333]"}`}
+          >
+            <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${form.proactiveEnabled ? "translate-x-5" : "translate-x-0.5"}`} />
+          </button>
+        </div>
+
+        {form.proactiveEnabled && (
+          <div>
+            <label className="block text-xs text-[#6b6b6b] mb-2">Frecuencia de mensajes</label>
+            <select name="proactiveFrequency" value={form.proactiveFrequency}
+              onChange={e => setForm(p => ({ ...p, proactiveFrequency: e.target.value }))}
+              className={inputClass}>
+              <option value="conservador">Conservador — cada 10 minutos</option>
+              <option value="normal">Normal — cada 3 minutos</option>
+              <option value="proactivo">Proactivo — cada 1 minuto</option>
+            </select>
+          </div>
+        )}
+
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm text-[#F0EDE8]">Exit intent</p>
+            <p className="text-xs text-[#6b6b6b] mt-0.5">Mensaje cuando el visitante está por irse</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setForm(p => ({ ...p, exitIntentEnabled: !p.exitIntentEnabled }))}
+            className={`relative w-10 h-5 rounded-full transition-colors ${form.exitIntentEnabled ? "bg-accent" : "bg-[#333]"}`}
+          >
+            <span className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${form.exitIntentEnabled ? "translate-x-5" : "translate-x-0.5"}`} />
+          </button>
+        </div>
+
+        <div>
+          <label className="block text-xs text-[#6b6b6b] mb-2">Posición del widget</label>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { value: "bottom-right", label: "↘ Abajo derecha" },
+              { value: "bottom-left", label: "↙ Abajo izquierda" },
+            ].map(opt => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => setForm(p => ({ ...p, widgetPosition: opt.value }))}
+                className={`text-sm py-2.5 rounded-xl border transition-all ${form.widgetPosition === opt.value ? "border-accent bg-accent/10 text-[#F0EDE8]" : "border-[#222] text-[#6b6b6b] hover:border-[#333]"}`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

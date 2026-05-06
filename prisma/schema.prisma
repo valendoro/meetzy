@@ -48,10 +48,15 @@ model Site {
   voiceEnabled     Boolean        @default(false)
   voiceId          String?
   simliAvatarId    String?
-  calBookingUrl    String?
-  webhookUrl       String?
-  embedMode        String         @default("widget")
-  primaryQuestion  String?
+  calBookingUrl        String?
+  webhookUrl           String?
+  embedMode            String         @default("widget")
+  primaryQuestion      String?
+  agentType            String         @default("guia")
+  proactiveEnabled     Boolean        @default(true)
+  proactiveFrequency   String         @default("normal")
+  exitIntentEnabled    Boolean        @default(true)
+  widgetPosition       String         @default("bottom-right")
   createdAt        DateTime       @default(now())
   updatedAt        DateTime       @updatedAt
   conversations    Conversation[]

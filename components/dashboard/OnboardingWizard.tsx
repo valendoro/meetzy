@@ -31,6 +31,7 @@ interface FormData {
   logoUrl: string;
   embedMode: "widget" | "fullpage";
   primaryQuestion: string;
+  agentType: "vendedor" | "guia" | "soporte" | "recepcionista";
 }
 
 const AVATAR_TYPES = [
@@ -69,6 +70,7 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
     logoUrl: "",
     embedMode: "widget",
     primaryQuestion: "",
+    agentType: "guia",
   });
 
   const isPro = userPlan === "pro" || userPlan === "elite";
@@ -114,7 +116,7 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
       const res = await fetch("/api/sites", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
+          body: JSON.stringify({
           name: form.siteName || form.url,
           url: form.url,
           agentName: form.agentName,
@@ -130,6 +132,7 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
           logoUrl: form.logoUrl || undefined,
           embedMode: form.embedMode,
           primaryQuestion: form.primaryQuestion || undefined,
+          agentType: form.agentType,
         }),
       });
       const data = (await res.json()) as { site?: { siteId: string }; error?: string };

@@ -2,6 +2,10 @@ import * as esbuild from "esbuild";
 import { readFileSync, writeFileSync } from "fs";
 import { resolve, dirname } from "path";
 import { fileURLToPath } from "url";
+import { config } from "dotenv";
+
+// Load .env so NEXT_PUBLIC_APP_URL is available
+config({ path: resolve(dirname(fileURLToPath(import.meta.url)), "../.env") });
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, "..");

@@ -87,17 +87,77 @@ NUNCA:
 
   console.log(`✓ Site 1: ${site1.name} (${site1.siteId})`);
 
+  const MILO_SYSTEM_PROMPT = `Sos Milo, el agente de Meetzy que vive en la landing page.
+Tu trabajo es acompañar al visitante durante su recorrido
+y ayudarlo a entender si Meetzy es para él.
+
+SOBRE MEETZY:
+- SaaS que convierte cualquier web en una experiencia interactiva con IA
+- El agente aprende el negocio del cliente automáticamente (scraping de URL)
+- 3 planes: Starter $29/mes (chat texto), Pro $79/mes (avatar animado), Elite $199/mes (voz + lip sync)
+- Instalación: 2 líneas de código en cualquier web
+- Dashboard para ver conversaciones, analytics y configurar el agente
+- Tipos de agente: Vendedor, Guía, Soporte, Recepcionista
+- Behavioral tracking: observa lo que hace cada visitante en tiempo real
+- Self-serve: sin código, sin contratos, sin equipo de onboarding
+- 14 días gratis sin tarjeta de crédito
+
+TU PERSONALIDAD:
+- Amigable, directo, sin rodeos
+- Español rioplatense natural (vos, che, etc.)
+- Máximo 2-3 líneas por respuesta — nunca más
+- No usés markdown, asteriscos ni listas — texto plano conversacional
+- No explicás todo de una — preguntás y vas de a poco
+- Si el visitante muestra interés real → ofrecés el siguiente paso concreto
+- Nunca inventás información que no tenés
+
+SECCIÓN ACTUAL: {{currentSection}}
+CONTEXTO DEL VISITANTE: {{visitorContext}}
+
+Usá el contexto para responder con precisión.
+Si está en pricing, hablá de pricing.
+Si tiene dudas sobre integración, resolvelas.
+Si está confundido, simplificá.
+Si está listo para empezar, facilitalo.`;
+
   // meetzy-landing site for the demo chat on the landing page
   const siteLanding = await prisma.site.upsert({
     where: { siteId: "meetzy-landing" },
-    update: {},
+    update: { systemPrompt: MILO_SYSTEM_PROMPT },
     create: {
       siteId: "meetzy-landing",
       userId: user.id,
       name: "Meetzy Landing Demo",
       url: "https://meetzy.ai",
-      plan: "pro",
+      plan: "elite",
       isActive: true,
+      agentName: "Milo",
+      agentRole: "agente de Meetzy",
+      agentPersonality: "directo, amigable, siempre con contexto",
+      welcomeMessage: "Hola, soy Milo. Ya sé lo que estuviste mirando. Preguntame.",
+      systemPrompt: MILO_SYSTEM_PROMPT,
+      brandColor: "#6366f1",
+      brandColor2: "#818cf8",
+      avatarType: "human",
+      avatarSubtype: "male",
+      proactiveEnabled: true,
+      proactiveFrequency: "normal",
+      exitIntentEnabled: true,
+    },
+  });
+  console.log(`✓ Site landing: ${siteLanding.name} (${siteLanding.siteId})`);
+
+  // TEMP: keep old block below for backwards compat
+  const _siteLandingOld = await prisma.site.upsert({
+    where: { siteId: "meetzy-landing-old" },
+    update: {},
+    create: {
+      siteId: "meetzy-landing-old",
+      userId: user.id,
+      name: "Meetzy Landing (old)",
+      url: "https://meetzy.ai",
+      plan: "pro",
+      isActive: false,
       agentName: "Milo",
       agentRole: "agente de Meetzy",
       agentPersonality: "directo, inteligente, usa referencias al contexto del visitante",

@@ -4,13 +4,26 @@ import { openai, UI_FUNCTIONS } from "@/lib/openai";
 import { chatRatelimit } from "@/lib/redis";
 import type OpenAI from "openai";
 
+interface VisitorContextPayload {
+  timeOnSite?: number;
+  currentSection?: string;
+  sectionsViewed?: Record<string, { time: number; revisits: number }>;
+  referrer?: string;
+  searchQuery?: string | null;
+  localHour?: number;
+  isReturnVisitor?: boolean;
+  inferredIntent?: string;
+  scrollDepth?: number;
+}
+
 interface ChatRequestBody {
   siteId: string;
   message: string;
   conversationId?: string;
   visitorId: string;
   plan?: string;
-  visitorContext?: Record<string, unknown>;
+  currentSection?: string;
+  visitorContext?: VisitorContextPayload;
   visitorContextPrompt?: string;
 }
 
@@ -19,10 +32,52 @@ interface UIComponent {
   data: Record<string, unknown>;
 }
 
+function buildSystemPrompt(
+  site: { systemPrompt: string; agentName: string; agentRole: string; agentPersonality: string; language: string },
+  currentSection?: string,
+  visitorContext?: VisitorContextPayload,
+  legacyPrompt?: string
+): string {
+  let base = site.systemPrompt;
+
+  // Replace template variables if present (Milo landing pattern)
+  if (base.includes("{{currentSection}}") || base.includes("{{visitorContext}}")) {
+    const ctxStr = visitorContext
+      ? `tiempo en sitio: ${visitorContext.timeOnSite ?? 0}s, sección actual: ${currentSection ?? "desconocida"}, ` +
+        `intención: ${visitorContext.inferredIntent ?? "explorando"}, ` +
+        `visita anterior: ${visitorContext.isReturnVisitor ? "sí" : "no"}, ` +
+        `hora local: ${visitorContext.localHour ?? new Date().getHours()}hs, ` +
+        `origen: ${visitorContext.referrer || "directo"}, ` +
+        `secciones vistas: ${JSON.stringify(visitorContext.sectionsViewed ?? {})}`
+      : "no disponible";
+
+    base = base
+      .replace(/\{\{currentSection\}\}/g, currentSection ?? "desconocida")
+      .replace(/\{\{visitorContext\}\}/g, ctxStr);
+  } else {
+    // Standard agent prompt
+    base = `${base}\n\nTu nombre es ${site.agentName}. Tu rol es ${site.agentRole}. Tu personalidad es ${site.agentPersonality}.
+Respondé en ${site.language === "es" ? "español rioplatense (vos, che)" : site.language === "en" ? "inglés" : site.language}.
+Sé conciso y útil. Máximo 3 líneas por respuesta.`;
+
+    if (currentSection) {
+      base += `\n\nEl visitante está actualmente en la sección: "${currentSection}".`;
+    }
+
+    if (legacyPrompt) {
+      base += `\n\n${legacyPrompt}`;
+    } else if (visitorContext) {
+      base += `\n\nCONTEXTO DEL VISITANTE: ${JSON.stringify(visitorContext)}`;
+    }
+  }
+
+  return base;
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as ChatRequestBody;
-    const { siteId, message, conversationId, visitorId, visitorContextPrompt } = body;
+    const { siteId, message, conversationId, visitorId, visitorContextPrompt, currentSection, visitorContext } = body;
 
     if (!siteId || !message || !visitorId) {
       return NextResponse.json(
@@ -71,14 +126,7 @@ export async function POST(req: NextRequest) {
     const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
       {
         role: "system",
-        content: `${site.systemPrompt}
-
-Tu nombre es ${site.agentName}. Tu rol es ${site.agentRole}. Tu personalidad es ${site.agentPersonality}.
-Respondé en ${site.language === "es" ? "español rioplatense (vos, che)" : site.language === "en" ? "inglés" : site.language}.
-Sé conciso y útil. Representás esta marca.
-Cuando sea relevante, usá function calling para generar UI dinámica (cards, galerías, precios, contacto).${
-  visitorContextPrompt ? `\n\n${visitorContextPrompt}` : ""
-}`,
+        content: buildSystemPrompt(site, currentSection, visitorContext, visitorContextPrompt),
       },
       ...previousMessages.map((m) => ({
         role: m.role as "user" | "assistant",

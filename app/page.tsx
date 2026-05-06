@@ -10,6 +10,7 @@ import HowItWorks from "@/components/landing/HowItWorks";
 import Pricing from "@/components/landing/Pricing";
 import LandingOrchestrator from "@/components/landing/LandingOrchestrator";
 import WidgetDemo from "@/components/landing/WidgetDemo";
+// WidgetDemo loads the real Milo widget — this IS the demo
 
 /* ── Count-up number ─────────────────────────────────────── */
 function CountUp({ end, suffix = "" }: { end: number; suffix?: string }) {

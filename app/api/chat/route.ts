@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { openai, UI_FUNCTIONS } from "@/lib/openai";
+import { isOpenAIConfigured, openai, UI_FUNCTIONS } from "@/lib/openai";
 import { chatRatelimit } from "@/lib/redis";
 import type OpenAI from "openai";
 
@@ -83,6 +83,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(
         { error: "siteId, message, and visitorId are required" },
         { status: 400 }
+      );
+    }
+
+    if (!isOpenAIConfigured()) {
+      return NextResponse.json(
+        {
+          error:
+            "OpenAI no está configurado. Definí OPENAI_API_KEY en el entorno del servidor y volvé a desplegar.",
+        },
+        { status: 503 }
       );
     }
 

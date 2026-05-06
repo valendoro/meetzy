@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getDbUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { openai } from "@/lib/openai";
+import { isOpenAIConfigured, openai } from "@/lib/openai";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ siteId: string }> }) {
   try {
@@ -44,7 +44,7 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ sit
     }));
 
     let topQuestions: string[] = [];
-    if (recentMsgs.length > 0) {
+    if (recentMsgs.length > 0 && isOpenAIConfigured()) {
       try {
         const completion = await openai.chat.completions.create({
           model: "gpt-4o-mini",

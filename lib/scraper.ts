@@ -1,5 +1,5 @@
 import * as cheerio from "cheerio";
-import { openai } from "@/lib/openai";
+import { isOpenAIConfigured, openai } from "@/lib/openai";
 
 export interface ScrapeResult {
   systemPrompt: string;
@@ -81,6 +81,12 @@ export async function scrapeUrl(url: string): Promise<ScrapeResult> {
 
   if (rawContent.length > MAX_CHARS) {
     rawContent = rawContent.substring(0, MAX_CHARS);
+  }
+
+  if (!isOpenAIConfigured()) {
+    throw new Error(
+      "OPENAI_API_KEY no está configurada. No se puede generar el prompt del agente sin una clave de OpenAI válida."
+    );
   }
 
   const completion = await openai.chat.completions.create({

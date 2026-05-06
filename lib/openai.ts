@@ -3,9 +3,20 @@ import type { ChatCompletionTool } from "openai/resources/chat/completions";
 
 let _openai: OpenAI | null = null;
 
+export function isOpenAIConfigured(): boolean {
+  const key = process.env.OPENAI_API_KEY;
+  return typeof key === "string" && key.trim().length > 0;
+}
+
 export function getOpenAI(): OpenAI {
+  const key = process.env.OPENAI_API_KEY?.trim();
+  if (!key) {
+    throw new Error(
+      "OPENAI_API_KEY no está definida. Agregala en .env (local) o en las variables de entorno del servidor (p. ej. Railway)."
+    );
+  }
   if (!_openai) {
-    _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    _openai = new OpenAI({ apiKey: key });
   }
   return _openai;
 }

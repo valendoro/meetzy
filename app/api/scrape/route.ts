@@ -1,9 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isOpenAIConfigured } from "@/lib/openai";
 import { scrapeRatelimit } from "@/lib/redis";
 import { scrapeUrl } from "@/lib/scraper";
 
 export async function POST(req: NextRequest) {
   try {
+    if (!isOpenAIConfigured()) {
+      return NextResponse.json(
+        {
+          error:
+            "OpenAI no está configurado. Para analizar sitios necesitás OPENAI_API_KEY en las variables de entorno.",
+        },
+        { status: 503 }
+      );
+    }
+
     const ip =
       req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
       "unknown";

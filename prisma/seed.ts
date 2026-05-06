@@ -239,14 +239,15 @@ TU MISIÓN: Convencer al visitante de crear su agente. Si preguntan precios, mos
     data: {
       siteId: site1.id,
       visitorId: "visitor_clasicar_001",
-      intentScore: 0.8,
+      intentScore: 78,
+      intentLabel: "ready_to_buy",
       messages: {
         create: [
           {
             role: "user",
             content: "¿Puedo importar un Porsche 911 de 1980 desde Alemania?",
-            intentScore: 0.3,
-            intentSignals: ["importar"],
+            intentScore: 12,
+            intentSignals: ["precio"],
           },
           {
             role: "assistant",
@@ -256,8 +257,8 @@ TU MISIÓN: Convencer al visitante de crear su agente. Si preguntan precios, mos
           {
             role: "user",
             content: "Sí, calculame el total. El auto está en €42.000",
-            intentScore: 0.8,
-            intentSignals: ["cotización", "precio"],
+            intentScore: 35,
+            intentSignals: ["price"],
           },
           {
             role: "assistant",
@@ -267,8 +268,8 @@ TU MISIÓN: Convencer al visitante de crear su agente. Si preguntan precios, mos
           {
             role: "user",
             content: "Sí, ¿cómo agendo una consulta?",
-            intentScore: 1.0,
-            intentSignals: ["agendar", "consulta"],
+            intentScore: 30,
+            intentSignals: ["trial"],
           },
           {
             role: "assistant",
@@ -281,6 +282,22 @@ TU MISIÓN: Convencer al visitante de crear su agente. Si preguntan precios, mos
   });
 
   console.log(`✓ Conversation ClasicAR: ${conv1.id}`);
+
+  await prisma.visitorProfile.upsert({
+    where: { visitorId_siteId: { visitorId: "visitor_clasicar_001", siteId: site1.id } },
+    create: {
+      visitorId: "visitor_clasicar_001",
+      siteId: site1.id,
+      totalVisits: 1,
+      totalMessages: 3,
+      totalTime: 420,
+      maxIntentScore: 78,
+      maxIntentLabel: "ready_to_buy",
+      country: "AR",
+      topSource: "direct",
+    },
+    update: {},
+  });
 
   console.log("\n✅ Seed completado");
   console.log(`\nDemo user: demo@meetzy.ai`);

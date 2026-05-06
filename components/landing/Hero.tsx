@@ -25,23 +25,23 @@ export default function Hero({ tracker }: { tracker: BehaviorTrackerResult }) {
         minHeight: "100vh",
         display: "flex",
         alignItems: "center",
-        paddingTop: 64,
+        paddingTop: "var(--nav-height)",
         overflow: "hidden",
       }}
     >
       {/* Deep glow */}
       <div style={{
         position: "absolute", inset: 0, pointerEvents: "none",
-        background: "radial-gradient(ellipse 75% 55% at 62% 42%, rgba(99,102,241,0.1) 0%, transparent 65%)",
+        background: "radial-gradient(ellipse 75% 55% at 62% 42%, rgba(124,108,255,0.11) 0%, transparent 62%), radial-gradient(ellipse 50% 40% at 20% 70%, rgba(232,160,144,0.06) 0%, transparent 55%)",
       }} />
       {/* Bottom fade */}
       <div style={{
         position: "absolute", bottom: 0, left: 0, right: 0, height: 120,
-        background: "linear-gradient(to top, #07070a, transparent)",
+        background: "linear-gradient(to top, var(--c-bg), transparent)",
         pointerEvents: "none",
       }} />
 
-      <div className="wrap" style={{ position: "relative", paddingTop: 80, paddingBottom: 80 }}>
+      <div className="wrap" style={{ position: "relative", paddingTop: 48, paddingBottom: 80 }}>
         <div style={{
           display: "grid",
           gridTemplateColumns: "1fr",
@@ -117,10 +117,10 @@ export default function Hero({ tracker }: { tracker: BehaviorTrackerResult }) {
                   <div className="anim-fade-in" style={{
                     position: "absolute", bottom: -4, left: "50%", transform: "translateX(-50%)",
                     whiteSpace: "nowrap", padding: "6px 14px", borderRadius: 100,
-                    background: "rgba(15,15,20,0.96)",
-                    border: "1px solid rgba(99,102,241,0.3)",
+                    background: "var(--c-surface2)",
+                    border: "1px solid rgba(124,108,255,0.32)",
                     fontSize: "0.72rem",
-                    color: "rgba(236,234,229,0.75)",
+                    color: "var(--c-muted)",
                     zIndex: 10,
                   }}>
                     Hablame, ya sé lo que estuviste mirando
@@ -133,8 +133,8 @@ export default function Hero({ tracker }: { tracker: BehaviorTrackerResult }) {
             <div style={{
               display: "inline-flex", alignItems: "center", gap: 8,
               padding: "8px 16px", borderRadius: 100,
-              background: "rgba(15,15,20,0.9)",
-              border: "1px solid rgba(255,255,255,0.08)",
+              background: "var(--c-surface)",
+              border: "1px solid var(--c-border)",
             }}>
               <span style={{
                 width: 8, height: 8, borderRadius: "50%", flexShrink: 0,
@@ -151,8 +151,8 @@ export default function Hero({ tracker }: { tracker: BehaviorTrackerResult }) {
               <div className="anim-slide-up" style={{ width: "100%", maxWidth: 340 }}>
                 <div style={{
                   padding: 16, borderRadius: "0 18px 18px 18px",
-                  background: "rgba(15,15,20,0.96)",
-                  border: "1px solid rgba(99,102,241,0.28)",
+                  background: "rgba(22,21,31,0.96)",
+                  border: "1px solid rgba(124,108,255,0.28)",
                   boxShadow: "0 16px 48px rgba(0,0,0,0.4)",
                 }}>
                   <p style={{ fontSize: "0.875rem", color: "var(--c-text)", lineHeight: 1.55, marginBottom: 12 }}>

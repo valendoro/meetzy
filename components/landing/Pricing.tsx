@@ -37,12 +37,13 @@ function FaqItem({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false);
   return (
     <button
+      type="button"
       onClick={() => setOpen(!open)}
       style={{
         width: "100%", textAlign: "left", padding: "20px 24px",
-        borderRadius: 16, border: `1px solid ${open ? "rgba(99,102,241,0.2)" : "rgba(255,255,255,0.07)"}`,
-        background: open ? "rgba(15,15,22,0.9)" : "rgba(14,14,20,0.6)",
-        transition: "all 0.2s ease", cursor: "none",
+        borderRadius: 16, border: `1px solid ${open ? "rgba(124,108,255,0.28)" : "var(--c-border)"}`,
+        background: open ? "var(--c-surface2)" : "var(--c-surface)",
+        transition: "all 0.2s ease", cursor: "pointer",
       }}
     >
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
@@ -61,12 +62,12 @@ export default function Pricing() {
   return (
     <>
       {/* ── Pricing ── */}
-      <section id="precios" data-section="pricing" style={{ padding: "112px 0", position: "relative" }}>
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(to right, transparent, rgba(255,255,255,0.07), transparent)" }} />
+      <section id="precios" data-section="pricing" className="section-y relative">
+        <div className="section-divider-top" />
 
         <div className="wrap">
           <ScrollReveal style={{ textAlign: "center", marginBottom: 64 }}>
-            <p style={{ fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(99,102,241,0.8)", marginBottom: 16 }}>Precios</p>
+            <p className="kicker kicker-accent">Precios</p>
             <h2 className="display display-lg" style={{ marginBottom: 12 }}>Simple. Sin sorpresas.</h2>
             <p style={{ fontSize: "1.1rem", fontWeight: 300, color: "var(--c-muted)" }}>
               Sin comisiones por conversación. Cancelás cuando querés.
@@ -80,13 +81,13 @@ export default function Pricing() {
                   position: "relative", borderRadius: 20, padding: plan.highlighted ? "2rem" : "1.75rem",
                   display: "flex", flexDirection: "column",
                   ...(plan.highlighted ? {
-                    background: "rgba(99,102,241,0.1)",
-                    border: "1px solid rgba(99,102,241,0.42)",
-                    boxShadow: "0 0 60px rgba(99,102,241,0.14), 0 24px 60px rgba(0,0,0,0.35)",
+                    background: "rgba(124,108,255,0.09)",
+                    border: "1px solid rgba(124,108,255,0.38)",
+                    boxShadow: "0 0 60px rgba(124,108,255,0.12), 0 24px 60px rgba(0,0,0,0.35)",
                     transform: "scale(1.02)",
                   } : {
-                    background: "rgba(14,14,20,0.85)",
-                    border: "1px solid rgba(255,255,255,0.08)",
+                    background: "var(--c-surface)",
+                    border: "1px solid var(--c-border)",
                   }),
                 }}>
                   {plan.badge && (
@@ -100,7 +101,7 @@ export default function Pricing() {
                   )}
 
                   <p style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12,
-                    color: plan.highlighted ? "rgba(99,102,241,0.85)" : "var(--c-muted2)" }}>{plan.name}</p>
+                    color: plan.highlighted ? "rgba(183,176,255,0.92)" : "var(--c-muted2)" }}>{plan.name}</p>
 
                   <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 8 }}>
                     <span style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: plan.highlighted ? "2.8rem" : "2.4rem", letterSpacing: "-0.04em", color: "var(--c-text)" }}>
@@ -113,10 +114,10 @@ export default function Pricing() {
                   <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 10, flex: 1, marginBottom: 24 }}>
                     {plan.features.map(f => (
                       <li key={f} style={{ display: "flex", alignItems: "flex-start", gap: 10, fontSize: "0.85rem" }}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: 2, color: plan.highlighted ? "var(--c-accent2)" : "var(--c-accent)" }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: 2, color: plan.highlighted ? "var(--c-warm)" : "var(--c-accent)" }}>
                           <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
-                        <span style={{ color: "rgba(236,234,229,0.55)" }}>{f}</span>
+                        <span style={{ color: "var(--c-muted)" }}>{f}</span>
                       </li>
                     ))}
                   </ul>
@@ -127,10 +128,10 @@ export default function Pricing() {
                     ...(plan.highlighted ? {
                       background: "var(--c-accent)",
                       color: "#fff",
-                      boxShadow: "0 0 24px rgba(99,102,241,0.35)",
+                      boxShadow: "0 0 28px rgba(124,108,255,0.4)",
                     } : {
-                      border: "1px solid rgba(255,255,255,0.1)",
-                      color: "rgba(236,234,229,0.6)",
+                      border: "1px solid var(--c-border2)",
+                      color: "var(--c-muted)",
                     }),
                   }}>
                     {plan.cta}
@@ -148,7 +149,7 @@ export default function Pricing() {
       </section>
 
       {/* ── FAQ ── */}
-      <section style={{ paddingBottom: 112 }}>
+      <section className="section-y relative" style={{ paddingTop: 0 }}>
         <div className="wrap">
           <ScrollReveal style={{ textAlign: "center", marginBottom: 48 }}>
             <h2 className="display display-md">Preguntas frecuentes</h2>
@@ -165,21 +166,21 @@ export default function Pricing() {
       </section>
 
       {/* ── CTA Final ── */}
-      <section style={{ paddingBottom: 112 }}>
+      <section className="section-y relative" style={{ paddingTop: 0 }}>
         <div className="wrap">
           <ScrollReveal>
             <div style={{
               position: "relative", borderRadius: 28, padding: "80px 48px", textAlign: "center", overflow: "hidden",
-              background: "linear-gradient(135deg, rgba(14,14,20,0.97) 0%, rgba(16,14,28,0.97) 100%)",
-              border: "1px solid rgba(99,102,241,0.15)",
-              boxShadow: "0 40px 100px rgba(0,0,0,0.5), inset 0 0 60px rgba(99,102,241,0.04)",
+              background: "linear-gradient(135deg, var(--c-surface) 0%, var(--c-bg-subtle) 100%)",
+              border: "1px solid rgba(124,108,255,0.2)",
+              boxShadow: "0 40px 100px rgba(0,0,0,0.5), inset 0 0 60px rgba(124,108,255,0.05)",
             }}>
-              <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse 60% 70% at 50% 50%, rgba(99,102,241,0.08) 0%, transparent 100%)" }} />
+              <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse 60% 70% at 50% 50%, rgba(124,108,255,0.09) 0%, rgba(232,160,144,0.04) 45%, transparent 100%)" }} />
               <div style={{ position: "relative" }}>
                 <h2 className="display" style={{ fontSize: "clamp(2.5rem, 7vw, 5.5rem)", letterSpacing: "-0.05em", lineHeight: 0.88, marginBottom: 12 }}>
                   Tu web siempre<br />estuvo muda.
                 </h2>
-                <h2 className="display" style={{ fontSize: "clamp(2.5rem, 7vw, 5.5rem)", letterSpacing: "-0.05em", lineHeight: 0.88, color: "rgba(236,234,229,0.2)", marginBottom: 32 }}>
+                <h2 className="display" style={{ fontSize: "clamp(2.5rem, 7vw, 5.5rem)", letterSpacing: "-0.05em", lineHeight: 0.88, color: "var(--c-muted2)", marginBottom: 32 }}>
                   Ya no tiene que serlo.
                 </h2>
                 <p style={{ fontSize: "1.1rem", fontWeight: 300, color: "var(--c-muted)", maxWidth: 480, margin: "0 auto 48px" }}>
@@ -206,12 +207,12 @@ export default function Pricing() {
       </section>
 
       {/* ── Footer ── */}
-      <footer style={{ borderTop: "1px solid rgba(255,255,255,0.05)", padding: "40px 0" }}>
+      <footer style={{ borderTop: "1px solid var(--c-border)", padding: "40px 0" }}>
         <div className="wrap" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 24 }}>
           <div>
-            <p style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.1rem", color: "var(--c-text)" }}>
-              MEET<span style={{ color: "var(--c-accent)" }}>ZY</span>
-            </p>
+            <Link href="/" className="logo-mark" style={{ fontSize: "1.1rem" }}>
+              MEET<span>ZY</span>
+            </Link>
             <p style={{ fontSize: "0.78rem", color: "var(--c-muted2)", marginTop: 4 }}>La web que entiende.</p>
           </div>
           <div style={{ display: "flex", gap: 28 }}>

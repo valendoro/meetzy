@@ -194,21 +194,16 @@ export default function AvatarShowcase() {
   const [active, setActive] = useState<number | null>(null);
 
   return (
-    <section data-section="avatar" className="py-28 relative">
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(255,255,255,0.05)] to-transparent" />
+    <section data-section="avatar" className="section-y relative">
+      <div className="section-divider-top" />
 
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="wrap">
         <ScrollReveal className="text-center mb-14">
-          <p className="text-xs text-accent/70 uppercase tracking-widest font-medium mb-4">
-            El avatar
-          </p>
-          <h2
-            className="font-syne font-black text-[#eeeae4] leading-[0.9] mb-4"
-            style={{ fontSize: "clamp(2rem, 5vw, 3.8rem)", letterSpacing: "-0.03em" }}
-          >
+          <p className="kicker kicker-accent">El avatar</p>
+          <h2 className="display display-lg mb-4">
             Tu agente tiene<br />tu identidad. No la nuestra.
           </h2>
-          <p className="text-[rgba(238,234,228,0.4)] font-light text-lg max-w-lg mx-auto">
+          <p className="text-muted font-light text-lg max-w-lg mx-auto leading-relaxed">
             Hover para verlos reaccionar. Clic para verlos hablar.
           </p>
         </ScrollReveal>
@@ -228,14 +223,14 @@ export default function AvatarShowcase() {
                 >
                   {av.render(active === i)}
                 </div>
-                <p className="text-sm font-syne font-bold text-[#eeeae4] mb-1">{av.label}</p>
-                <p className="text-xs text-[rgba(238,234,228,0.35)]">{av.sublabel}</p>
+                <p className="text-sm font-syne font-bold text-text mb-1">{av.label}</p>
+                <p className="text-xs text-muted">{av.sublabel}</p>
               </div>
             </ScrollReveal>
           ))}
         </div>
 
-        <p className="text-center text-sm text-[rgba(238,234,228,0.3)] mt-10">
+        <p className="text-center text-sm text-muted mt-10 max-w-2xl mx-auto opacity-80">
           Plan Pro: elegís el tipo y aplicamos tu marca.
           Plan Elite: el personaje habla con voz real y lip sync.
         </p>

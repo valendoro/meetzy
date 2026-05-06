@@ -45,14 +45,14 @@ export default function MiloDemo({ tracker }: MiloDemoProps) {
   }, [tracker]);
 
   return (
-    <section id="demo" data-section="demo" ref={sectionRef} className="py-32 relative overflow-hidden">
-      <div className="section-divider absolute top-0 inset-x-0" />
+    <section id="demo" data-section="demo" ref={sectionRef} className="section-y relative overflow-hidden">
+      <div className="section-divider-top absolute top-0 left-0 right-0 z-10" />
 
       {/* Background */}
       <div className="absolute inset-0 pointer-events-none">
         <div style={{
           position: "absolute", inset: 0,
-          background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(99,102,241,0.07) 0%, transparent 70%)"
+          background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(124,108,255,0.075) 0%, transparent 70%)"
         }} />
         {/* Floating particles */}
         {Array.from({ length: 8 }).map((_, i) => (
@@ -68,19 +68,24 @@ export default function MiloDemo({ tracker }: MiloDemoProps) {
         ))}
       </div>
 
-      <div className="relative max-w-6xl mx-auto px-6">
+      <div className="relative wrap z-[1]">
         {/* Header */}
         <div className="text-center mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6"
-            style={{ background: "rgba(99,102,241,0.08)", border: "1px solid rgba(99,102,241,0.2)" }}>
+          <div
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-6"
+            style={{ background: "var(--c-accent-dim)", border: "1px solid rgba(124,108,255,0.28)" }}
+          >
             <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-            <span className="text-xs font-medium" style={{ color: "rgba(99,102,241,0.9)" }}>Demo en vivo</span>
+            <span className="text-xs font-medium" style={{ color: "rgba(200,194,255,0.95)" }}>
+              Demo en vivo
+            </span>
           </div>
-          <h2 className="font-syne font-black text-[#eeeae4] leading-[0.9] mb-4"
-            style={{ fontSize: "clamp(2rem, 5vw, 3.8rem)", letterSpacing: "-0.035em" }}>
-            Hablale. Ya sabe<br />lo que estuviste mirando.
+          <h2 className="display display-lg mb-4">
+            Hablale. Ya sabe
+            <br />
+            lo que estuviste mirando.
           </h2>
-          <p style={{ color: "rgba(238,234,228,0.4)", fontSize: "1.1rem", fontWeight: 300 }}>
+          <p className="text-muted text-[1.1rem] font-light max-w-xl mx-auto leading-relaxed">
             Esto es exactamente lo que tus visitantes van a vivir en tu web.
           </p>
         </div>
@@ -91,10 +96,14 @@ export default function MiloDemo({ tracker }: MiloDemoProps) {
           {/* Milo */}
           <div ref={containerRef} className="flex flex-col items-center gap-5 flex-shrink-0">
             <div className="relative">
-              <div className="absolute inset-0 pointer-events-none" style={{
-                background: "radial-gradient(ellipse 60% 70% at 50% 40%, rgba(99,102,241,0.24) 0%, transparent 70%)",
-                transform: "scale(1.6)",
-              }} />
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background:
+                    "radial-gradient(ellipse 60% 70% at 50% 40%, rgba(124,108,255,0.22) 0%, transparent 70%)",
+                  transform: "scale(1.6)",
+                }}
+              />
               <MiloAvatar
                 size={300}
                 isSpeaking={isSpeaking}
@@ -105,26 +114,31 @@ export default function MiloDemo({ tracker }: MiloDemoProps) {
             </div>
 
             {/* Status */}
-            <div className="flex items-center gap-2.5 px-5 py-2.5 rounded-full"
+            <div
+              className="flex items-center gap-2.5 px-5 py-2.5 rounded-full"
               style={{
-                background: "rgba(14,14,20,0.9)",
-                border: "1px solid rgba(255,255,255,0.08)",
-              }}>
-              <span className={`w-2 h-2 rounded-full flex-shrink-0 transition-colors ${isSpeaking ? "bg-accent" : "bg-green-500"}`}
-                style={{ animation: "pulse-glow 2s ease-in-out infinite" }} />
-              <span className="text-xs" style={{ color: "rgba(238,234,228,0.45)" }}>
+                background: "var(--c-surface)",
+                border: "1px solid var(--c-border)",
+              }}
+            >
+              <span
+                className={`w-2 h-2 rounded-full flex-shrink-0 transition-colors animate-pulse ${isSpeaking ? "bg-accent" : "bg-green-500"}`}
+              />
+              <span className="text-xs text-muted">
                 {isSpeaking ? "Milo está respondiendo…" : "Milo · observando esta página"}
               </span>
             </div>
 
             {/* Intent badge */}
             {tracker.context.inferredIntent !== "exploring" && (
-              <div className="px-3 py-1 rounded-full"
+              <div
+                className="px-3 py-1 rounded-full"
                 style={{
-                  background: "rgba(99,102,241,0.08)",
-                  border: "1px solid rgba(99,102,241,0.18)",
-                }}>
-                <span className="text-[10px] font-mono" style={{ color: "rgba(99,102,241,0.8)" }}>
+                  background: "var(--c-accent-dim)",
+                  border: "1px solid rgba(124,108,255,0.22)",
+                }}
+              >
+                <span className="text-[10px] font-mono" style={{ color: "rgba(183,176,255,0.9)" }}>
                   intent: {tracker.context.inferredIntent}
                 </span>
               </div>
@@ -133,12 +147,15 @@ export default function MiloDemo({ tracker }: MiloDemoProps) {
 
           {/* Chat panel */}
           <div className="w-full max-w-[400px] lg:w-[400px] flex-shrink-0" style={{ height: 480 }}>
-            <div className="h-full rounded-2xl overflow-hidden"
+            <div
+              className="h-full rounded-2xl overflow-hidden"
               style={{
-                background: "rgba(14,14,20,0.9)",
-                border: "1px solid rgba(255,255,255,0.08)",
-                boxShadow: "0 24px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(99,102,241,0.06) inset",
-              }}>
+                background: "var(--c-surface)",
+                border: "1px solid var(--c-border)",
+                boxShadow:
+                  "0 24px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(124,108,255,0.07) inset",
+              }}
+            >
               {started ? (
                 <MiloChat
                   initialMessage={chatOpener || buildDemoOpener(tracker)}
@@ -153,7 +170,7 @@ export default function MiloDemo({ tracker }: MiloDemoProps) {
                         style={{ animation: `float 1.2s ease ${d}ms infinite` }} />
                     ))}
                   </div>
-                  <p className="text-xs" style={{ color: "rgba(238,234,228,0.25)" }}>
+                  <p className="text-xs text-[var(--c-muted2)]">
                     Milo está observando…
                   </p>
                 </div>
@@ -163,7 +180,7 @@ export default function MiloDemo({ tracker }: MiloDemoProps) {
         </div>
 
         {/* Footer note */}
-        <p className="text-center mt-10 text-xs" style={{ color: "rgba(238,234,228,0.18)" }}>
+        <p className="text-center mt-10 text-xs text-[var(--c-muted2)] opacity-70">
           Milo usa el contexto real de lo que hiciste en esta página
         </p>
       </div>

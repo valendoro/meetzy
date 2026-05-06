@@ -8,14 +8,12 @@ const STEPS = [
 
 export default function HowItWorks() {
   return (
-    <section id="como-funciona" data-section="how" style={{ padding: "112px 0", position: "relative" }}>
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(to right, transparent, rgba(255,255,255,0.07), transparent)" }} />
+    <section id="como-funciona" data-section="how" className="section-y relative">
+      <div className="section-divider-top" />
 
       <div className="wrap">
         <ScrollReveal style={{ textAlign: "center", marginBottom: 64 }}>
-          <p style={{ fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(99,102,241,0.8)", marginBottom: 16 }}>
-            Cómo funciona
-          </p>
+          <p className="kicker kicker-accent">Cómo funciona</p>
           <h2 className="display display-lg">
             De cero a agente<br />en 10 minutos.
           </h2>
@@ -60,7 +58,7 @@ export default function HowItWorks() {
               {` };
 </script>
 <script src=`}
-              <span style={{ color: "rgba(99,102,241,0.85)" }}>{'"https://meetzy.ai/widget.js"'}</span>
+              <span style={{ color: "var(--c-accent)" }}>{'"https://meetzy.ai/widget.js"'}</span>
               {` async></script>`}
             </pre>
           </div>

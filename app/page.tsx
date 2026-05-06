@@ -45,46 +45,24 @@ function CountUp({ end, suffix = "" }: { end: number; suffix?: string }) {
 /* ── Stats bar ──────────────────────────────────────────── */
 function Stats() {
   return (
-    <section style={{
-      borderTop: "1px solid rgba(255,255,255,0.06)",
-      borderBottom: "1px solid rgba(255,255,255,0.06)",
-      padding: "56px 0",
-    }}>
+    <section className="stats-strip" aria-label="Indicadores">
       <div className="wrap">
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(2, 1fr)",
-          gap: "2rem",
-          textAlign: "center",
-        }} className="stats-grid">
-          {[
-            { end: 1200, suffix: "+", label: "agentes activos" },
-            { end: 4, suffix: ".8M", label: "conversaciones" },
-            { end: 94, suffix: "%", label: "satisfacción" },
-            { end: 10, suffix: " min", label: "de setup" },
-          ].map((s) => (
-            <div key={s.label}>
-              <div style={{
-                fontFamily: "var(--font-syne)",
-                fontWeight: 800,
-                fontSize: "clamp(2rem, 5vw, 3rem)",
-                letterSpacing: "-0.04em",
-                color: "var(--c-text)",
-                lineHeight: 1,
-                marginBottom: 8,
-              }}>
-                <CountUp end={s.end} suffix={s.suffix} />
-              </div>
-              <p style={{ fontSize: "0.85rem", color: "var(--c-muted)" }}>{s.label}</p>
+        <div className="stats-grid-desktop">
+        {[
+          { end: 1200, suffix: "+", label: "agentes activos" },
+          { end: 4, suffix: ".8M", label: "conversaciones" },
+          { end: 94, suffix: "%", label: "satisfacción" },
+          { end: 10, suffix: " min", label: "de setup" },
+        ].map((s) => (
+          <div key={s.label} className="stat-cell">
+            <div className="stat-value">
+              <CountUp end={s.end} suffix={s.suffix} />
             </div>
-          ))}
+            <p className="stat-label">{s.label}</p>
+          </div>
+        ))}
         </div>
       </div>
-      <style>{`
-        @media (min-width: 640px) {
-          .stats-grid { grid-template-columns: repeat(4, 1fr) !important; }
-        }
-      `}</style>
     </section>
   );
 }
@@ -92,7 +70,7 @@ function Stats() {
 /* ── Page ────────────────────────────────────────────────── */
 export default function HomePage() {
   return (
-    <main style={{ minHeight: "100vh", width: "100%", backgroundColor: "var(--c-bg)" }}>
+    <main className="relative z-[1] min-h-screen w-full">
       <Navbar />
       <LandingOrchestrator />
       <WidgetDemo />

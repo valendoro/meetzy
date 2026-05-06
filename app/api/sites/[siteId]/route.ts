@@ -80,7 +80,24 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
     const { siteId } = await params;
     const site = await findSite(siteId, dbUser.id);
     if (!site) return NextResponse.json({ error: "Site not found" }, { status: 404 });
-    await prisma.site.update({ where: { id: site.id }, data: { isActive: false } });
+
+    await prisma.$transaction(async (tx) => {
+      const conversations = await tx.conversation.findMany({
+        where: { siteId: site.id },
+        select: { id: true },
+      });
+      const convIds = conversations.map((c) => c.id);
+      if (convIds.length > 0) {
+        await tx.message.deleteMany({ where: { conversationId: { in: convIds } } });
+      }
+      await tx.visitorProfile.deleteMany({ where: { siteId: site.id } });
+      await tx.conversation.deleteMany({ where: { siteId: site.id } });
+      await tx.site.delete({ where: { id: site.id } });
+    });
+
     return NextResponse.json({ success: true });
-  } catch (e) { console.error(e); return NextResponse.json({ error: "Internal server error" }, { status: 500 }); }
+  } catch (e) {
+    console.error(e);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }

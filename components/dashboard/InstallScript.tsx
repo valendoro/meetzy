@@ -33,50 +33,38 @@ export default function InstallScript({ siteId, appUrl }: InstallScriptProps) {
   }
 
   return (
-    <div className="bg-[#111] border border-[#1e1e1e] rounded-2xl p-6">
-      <h2 className="font-syne font-bold text-lg text-[#F0EDE8] mb-5">
-        Instalación
-      </h2>
+    <div className="dash-card p-6 pl-7">
+      <h2 className="dash-chart-head mb-4 text-[1.05rem]">Instalación</h2>
 
-      {/* Tabs */}
-      <div className="flex gap-1 mb-5 bg-[#0e0e0e] p-1 rounded-xl w-fit">
+      <div className="dash-segmented mb-5 w-full sm:w-auto">
         {TABS.map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-4 py-1.5 text-sm font-medium rounded-lg transition-colors ${
-              activeTab === tab
-                ? "bg-accent text-white"
-                : "text-[#6b6b6b] hover:text-[#F0EDE8]"
-            }`}
-          >
+          <button key={tab} type="button" data-active={activeTab === tab ? "true" : "false"} onClick={() => setActiveTab(tab)}>
             {tab}
           </button>
         ))}
       </div>
 
-      <p className="text-sm text-[#6b6b6b] mb-3">{instructions[activeTab]}</p>
+      <p className="mb-3 text-sm leading-relaxed text-[color:var(--c-muted)]">{instructions[activeTab]}</p>
 
-      {/* Code block */}
       <div className="relative">
-        <pre className="bg-[#0a0a0a] border border-[#1e1e1e] rounded-xl p-4 text-sm text-[#F0EDE8] font-mono overflow-x-auto">
+        <pre className="max-h-[min(280px,45vh)] overflow-auto rounded-[var(--radius-md)] border border-[color:var(--c-border)] bg-[color:var(--c-bg-subtle)] p-4 font-mono text-[13px] leading-relaxed text-[color:var(--c-text)] [scrollbar-color:rgba(124,108,255,0.35)_transparent]">
           <code>{script}</code>
         </pre>
         <button
+          type="button"
           onClick={copyScript}
-          className={`absolute top-3 right-3 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors ${
+          className={`absolute right-3 top-3 text-xs font-semibold transition-colors ${
             copied
-              ? "bg-green-500/20 text-green-400"
-              : "bg-[#1a1a1a] text-[#6b6b6b] hover:text-[#F0EDE8]"
+              ? "rounded-lg bg-[color:var(--c-green)]/15 px-3 py-1.5 text-[color:var(--c-green)]"
+              : "btn-ghost btn-ghost--sm !px-3 !py-1.5"
           }`}
         >
           {copied ? "¡Copiado!" : "Copiar"}
         </button>
       </div>
 
-      <p className="text-xs text-[#444] mt-4">
-        El widget se carga de forma asíncrona y no afecta el rendimiento de tu
-        sitio.
+      <p className="mt-4 text-xs leading-relaxed text-[color:var(--c-muted2)]">
+        El widget se carga de forma asíncrona y no afecta el rendimiento de tu sitio.
       </p>
     </div>
   );

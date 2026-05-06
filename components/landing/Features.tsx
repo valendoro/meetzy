@@ -11,15 +11,13 @@ const SIGNALS = [
 
 export default function Features() {
   return (
-    <section data-section="features" style={{ padding: "112px 0", position: "relative" }}>
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(to right, transparent, rgba(255,255,255,0.07), transparent)" }} />
-      <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse 50% 50% at 50% 50%, rgba(99,102,241,0.03) 0%, transparent 100%)" }} />
+    <section data-section="features" className="section-y relative">
+      <div className="section-divider-top" />
+      <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse 50% 50% at 50% 50%, rgba(124,108,255,0.045) 0%, transparent 100%)" }} />
 
       <div className="wrap" style={{ position: "relative" }}>
         <ScrollReveal style={{ textAlign: "center", marginBottom: 64 }}>
-          <p style={{ fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(99,102,241,0.8)", marginBottom: 16 }}>
-            Behavioral tracking
-          </p>
+          <p className="kicker kicker-accent">Behavioral tracking</p>
           <h2 className="display display-lg" style={{ marginBottom: 16 }}>
             Entiende sin que<br />digas nada.
           </h2>
@@ -41,8 +39,8 @@ export default function Features() {
                 </p>
                 <div style={{
                   fontFamily: "monospace", fontSize: "0.72rem", padding: "8px 12px", borderRadius: 8,
-                  background: "rgba(99,102,241,0.07)", border: "1px solid rgba(99,102,241,0.15)",
-                  color: "rgba(99,102,241,0.85)",
+                  background: "var(--c-accent-dim)", border: "1px solid rgba(124,108,255,0.22)",
+                  color: "rgba(183, 176, 255, 0.92)",
                 }}>
                   {s.code}
                 </div>

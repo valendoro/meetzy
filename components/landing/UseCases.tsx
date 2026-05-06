@@ -65,18 +65,13 @@ export default function UseCases() {
   const c = CASES[active]!;
 
   return (
-    <section data-section="use-cases" className="py-28 relative">
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[rgba(255,255,255,0.05)] to-transparent" />
+    <section id="para-quien" data-section="use-cases" className="section-y relative">
+      <div className="section-divider-top" />
 
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="wrap">
         <ScrollReveal className="text-center mb-14">
-          <p className="text-xs text-accent/70 uppercase tracking-widest font-medium mb-4">
-            Para quién
-          </p>
-          <h2
-            className="font-syne font-black text-[#eeeae4] leading-[0.9]"
-            style={{ fontSize: "clamp(2rem, 5vw, 3.8rem)", letterSpacing: "-0.03em" }}
-          >
+          <p className="kicker kicker-accent">Para quién</p>
+          <h2 className="display display-lg">
             Un agente que entiende<br />cualquier negocio.
           </h2>
         </ScrollReveal>
@@ -87,10 +82,10 @@ export default function UseCases() {
               <button
                 key={i}
                 onClick={() => setActive(i)}
-                className={`w-full text-left px-4 py-3 rounded-xl border transition-all duration-200 flex items-center gap-3 ${
+                className={`w-full text-left px-4 py-3 rounded-xl border transition-all duration-200 flex items-center gap-3 cursor-pointer ${
                   active === i
-                    ? "border-[rgba(255,255,255,0.1)] bg-[rgba(255,255,255,0.04)] text-[#eeeae4]"
-                    : "border-transparent text-[rgba(238,234,228,0.35)] hover:text-[rgba(238,234,228,0.65)] hover:border-[rgba(255,255,255,0.05)]"
+                    ? "border-[var(--c-border2)] bg-[rgba(255,255,255,0.04)] text-[var(--c-text)]"
+                    : "border-transparent text-[var(--c-muted)] hover:text-[var(--c-text)] hover:border-[var(--c-border)]"
                 }`}
               >
                 <span className="text-lg">{cas.icon}</span>
@@ -108,16 +103,16 @@ export default function UseCases() {
                 {c.avatarEmoji}
               </div>
               <div>
-                <p className="font-syne font-bold text-xl text-[#eeeae4] mb-1">{c.label}</p>
-                <p className="text-sm text-[rgba(238,234,228,0.4)]">Lo que Meetzy hace:</p>
-                <p className="text-base text-[rgba(238,234,228,0.8)] mt-1 leading-relaxed">{c.what}</p>
+                <p className="font-syne font-bold text-xl text-text mb-1">{c.label}</p>
+                <p className="text-sm text-muted">Lo que Meetzy hace:</p>
+                <p className="text-base text-[var(--c-text)] mt-1 leading-relaxed opacity-90">{c.what}</p>
               </div>
             </div>
 
             <div className="grid sm:grid-cols-2 gap-3">
-              <div className="bg-[#0a0a0d] border border-[rgba(255,255,255,0.05)] rounded-xl p-4">
-                <p className="text-[10px] uppercase tracking-widest text-[rgba(238,234,228,0.2)] font-medium mb-2">Sin Meetzy</p>
-                <p className="text-sm text-[rgba(238,234,228,0.3)]">{c.without}</p>
+              <div className="bg-bg border border-border rounded-xl p-4">
+                <p className="text-[10px] uppercase tracking-widest text-[var(--c-muted2)] font-medium mb-2">Sin Meetzy</p>
+                <p className="text-sm text-muted">{c.without}</p>
               </div>
               <div className="rounded-xl p-4 border" style={{ background: `${c.color}08`, borderColor: `${c.color}22` }}>
                 <p className="text-[10px] uppercase tracking-widest font-medium mb-2" style={{ color: `${c.color}aa` }}>Con Meetzy</p>
@@ -126,6 +121,11 @@ export default function UseCases() {
             </div>
           </div>
         </div>
+
+        <p className="text-center text-sm text-muted mt-12 max-w-2xl mx-auto leading-relaxed opacity-80">
+          Plan Pro: elegís el tipo y aplicamos tu marca.
+          Plan Elite: el personaje habla con voz real y lip sync.
+        </p>
       </div>
     </section>
   );

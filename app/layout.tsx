@@ -34,16 +34,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${syne.variable} ${dmSans.variable}`}
       suppressHydrationWarning
     >
-      <body style={{ backgroundColor: "#07070a", color: "#eceae5", fontFamily: "var(--font-dm-sans, 'DM Sans', sans-serif)" }}>
+      <body className="min-h-screen antialiased">
         <ClerkProvider
           appearance={{
             variables: {
-              colorPrimary: "#6366f1",
-              colorBackground: "#0e0e12",
-              colorInputBackground: "#111118",
-              colorInputText: "#eceae5",
-              colorText: "#eceae5",
-              colorTextSecondary: "rgba(236,234,229,0.5)",
+              colorPrimary: "#7c6cff",
+              colorBackground: "#0b0a0f",
+              colorInputBackground: "#16151f",
+              colorInputText: "#f3f1ec",
+              colorText: "#f3f1ec",
+              colorTextSecondary: "rgba(243,241,236,0.5)",
               borderRadius: "12px",
               fontFamily: "DM Sans, sans-serif",
             },

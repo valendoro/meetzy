@@ -3,6 +3,11 @@ import { prisma } from "@/lib/prisma";
 import { isOpenAIConfigured, openai, UI_FUNCTIONS } from "@/lib/openai";
 import { chatRatelimit } from "@/lib/redis";
 import type OpenAI from "openai";
+import type { Prisma } from "@prisma/client";
+import { computeFullIntent, scoreFromChatMessage, type VisitorContextLike } from "@/lib/intent-scorer";
+import { enrichFromMessage, type ExtractedVisitorHints } from "@/lib/visitor-enrichment";
+import { inferTrafficSource, upsertVisitorProfile } from "@/lib/visitor-profile-sync";
+import { clientIpFromRequest, lookupGeo } from "@/lib/geoip";
 
 interface VisitorContextPayload {
   timeOnSite?: number;
@@ -25,6 +30,134 @@ interface ChatRequestBody {
   currentSection?: string;
   visitorContext?: VisitorContextPayload;
   visitorContextPrompt?: string;
+  referrer?: string | null;
+  utmSource?: string | null;
+  utmMedium?: string | null;
+  utmCampaign?: string | null;
+}
+
+function scheduleGeoEnrichment(req: NextRequest, conversationId: string): void {
+  void (async () => {
+    try {
+      const ip = clientIpFromRequest(req.headers);
+      if (!ip) return;
+      const g = lookupGeo(ip);
+      if (!g?.country && !g?.city) return;
+      await prisma.conversation.update({
+        where: { id: conversationId },
+        data: {
+          country: g.country ?? undefined,
+          city: g.city ?? undefined,
+        },
+      });
+    } catch {
+      /* never block */
+    }
+  })();
+}
+
+async function syncConversationAfterUserMessage(args: {
+  conversationId: string;
+  internalSiteId: string;
+  visitorId: string;
+  visitorContext?: VisitorContextPayload;
+  referrer?: string | null;
+  utmSource?: string | null;
+  utmMedium?: string | null;
+  utmCampaign?: string | null;
+}): Promise<{ intentScore: number; intentLabel: string }> {
+  const conv = await prisma.conversation.findUnique({ where: { id: args.conversationId } });
+  if (!conv) {
+    return { intentScore: 0, intentLabel: "exploring" };
+  }
+
+  const userRows = await prisma.message.findMany({
+    where: { conversationId: conv.id, role: "user" },
+    orderBy: { createdAt: "asc" },
+    select: { content: true },
+  });
+  const texts = userRows.map((r) => r.content);
+
+  const prevConvCount = await prisma.conversation.count({
+    where: { siteId: args.internalSiteId, visitorId: args.visitorId, id: { not: conv.id } },
+  });
+  const isReturnVisitor = prevConvCount > 0 || !!args.visitorContext?.isReturnVisitor;
+
+  const mergedSections = args.visitorContext?.sectionsViewed
+    ? {
+        ...((conv.sectionsViewed as Record<string, { time: number; revisits: number }> | null) ?? {}),
+        ...args.visitorContext.sectionsViewed,
+      }
+    : (conv.sectionsViewed as VisitorContextLike["sectionsViewed"] | undefined);
+
+  const ctx: VisitorContextLike = {
+    timeOnSite: args.visitorContext?.timeOnSite ?? conv.sessionDuration,
+    sectionsViewed: mergedSections,
+    scrollDepth: args.visitorContext?.scrollDepth ?? conv.scrollDepth,
+    isReturnVisitor,
+  };
+
+  const { intentScore, intentLabel, intentSignalsLog } = computeFullIntent(texts, ctx);
+
+  let hints: ExtractedVisitorHints = {
+    email: conv.visitorEmail ?? undefined,
+    name: conv.visitorName ?? undefined,
+    company: conv.visitorCompany ?? undefined,
+  };
+  for (const t of texts) {
+    hints = enrichFromMessage(t, hints);
+  }
+
+  const source = inferTrafficSource(
+    args.referrer ?? args.visitorContext?.referrer ?? conv.referrer,
+    args.utmSource ?? conv.utmSource,
+  );
+
+  const updated = await prisma.conversation.update({
+    where: { id: conv.id },
+    data: {
+      intentScore,
+      intentLabel,
+      intentSignalsLog: intentSignalsLog as unknown as Prisma.InputJsonValue,
+      source,
+      ...(hints.email ? { visitorEmail: hints.email } : {}),
+      ...(hints.name ? { visitorName: hints.name } : {}),
+      ...(hints.company ? { visitorCompany: hints.company } : {}),
+      ...(mergedSections && Object.keys(mergedSections).length > 0
+        ? { sectionsViewed: mergedSections as unknown as Prisma.InputJsonValue }
+        : {}),
+      ...(args.visitorContext?.scrollDepth != null ? { scrollDepth: args.visitorContext.scrollDepth } : {}),
+      ...(args.visitorContext?.timeOnSite != null ? { sessionDuration: args.visitorContext.timeOnSite } : {}),
+      ...((args.referrer ?? args.visitorContext?.referrer) != null &&
+      (args.referrer ?? args.visitorContext?.referrer) !== ""
+        ? { referrer: args.referrer ?? args.visitorContext?.referrer ?? undefined }
+        : {}),
+      ...(args.utmSource ? { utmSource: args.utmSource } : {}),
+      ...(args.utmMedium ? { utmMedium: args.utmMedium } : {}),
+      ...(args.utmCampaign ? { utmCampaign: args.utmCampaign } : {}),
+      ...(args.visitorContext?.searchQuery !== undefined
+        ? { searchQuery: args.visitorContext.searchQuery || null }
+        : {}),
+    },
+  });
+
+  await upsertVisitorProfile({
+    internalSiteId: args.internalSiteId,
+    visitorId: args.visitorId,
+    email: hints.email ?? updated.visitorEmail,
+    name: hints.name ?? updated.visitorName,
+    company: hints.company ?? updated.visitorCompany,
+    intentScore,
+    intentLabel,
+    demoBooked: updated.demoBooked,
+    sessionDurationAdded: 0,
+    messageCountDelta: 1,
+    countAsNewVisit: false,
+    country: updated.country,
+    source,
+  });
+
+  return { intentScore, intentLabel };
 }
 
 interface UIComponent {
@@ -77,7 +210,19 @@ Sé conciso y útil. Máximo 3 líneas por respuesta.`;
 export async function POST(req: NextRequest) {
   try {
     const body = (await req.json()) as ChatRequestBody;
-    const { siteId, message, conversationId, visitorId, visitorContextPrompt, currentSection, visitorContext } = body;
+    const {
+      siteId,
+      message,
+      conversationId,
+      visitorId,
+      visitorContextPrompt,
+      currentSection,
+      visitorContext,
+      referrer,
+      utmSource,
+      utmMedium,
+      utmCampaign,
+    } = body;
 
     if (!siteId || !message || !visitorId) {
       return NextResponse.json(
@@ -118,12 +263,39 @@ export async function POST(req: NextRequest) {
     }
 
     let conversation = conversationId
-      ? await prisma.conversation.findUnique({ where: { id: conversationId } })
+      ? await prisma.conversation.findFirst({
+          where: { id: conversationId, siteId: site.id, visitorId },
+        })
       : null;
 
     if (!conversation) {
       conversation = await prisma.conversation.create({
-        data: { siteId: site.id, visitorId },
+        data: {
+          siteId: site.id,
+          visitorId,
+          referrer: (referrer ?? visitorContext?.referrer) || undefined,
+          searchQuery: visitorContext?.searchQuery || undefined,
+          utmSource: utmSource || undefined,
+          utmMedium: utmMedium || undefined,
+          utmCampaign: utmCampaign || undefined,
+          source: inferTrafficSource(referrer ?? visitorContext?.referrer, utmSource),
+        },
+      });
+      scheduleGeoEnrichment(req, conversation.id);
+      await upsertVisitorProfile({
+        internalSiteId: site.id,
+        visitorId,
+        email: null,
+        name: null,
+        company: null,
+        intentScore: 0,
+        intentLabel: "exploring",
+        demoBooked: false,
+        sessionDurationAdded: 0,
+        messageCountDelta: 0,
+        countAsNewVisit: true,
+        country: null,
+        source: inferTrafficSource(referrer ?? visitorContext?.referrer, utmSource),
       });
     }
 
@@ -148,16 +320,7 @@ export async function POST(req: NextRequest) {
     const isPro = site.plan === "pro" || site.plan === "elite";
     const tools = isPro ? UI_FUNCTIONS : undefined;
 
-    // Intent signals to watch for
-    const INTENT_SIGNALS = [
-      "precio", "cuánto cuesta", "plan", "contratar", "empezar", "comprar",
-      "agendar", "llamada", "reunión", "demo", "trial", "prueba", "cotización",
-      "presupuesto", "tarjeta", "factura", "suscripción", "pagar",
-      "price", "cost", "buy", "purchase", "subscribe", "book", "schedule",
-    ];
-    const lowerMsg = message.toLowerCase();
-    const matchedSignals = INTENT_SIGNALS.filter((s) => lowerMsg.includes(s));
-    const intentScore = Math.min(matchedSignals.length / 3, 1);
+    const { points: msgIntentPoints, signals: msgSigs } = scoreFromChatMessage(message);
 
     const stream = await openai.chat.completions.create({
       model: "gpt-4o",
@@ -218,39 +381,53 @@ export async function POST(req: NextRequest) {
             }
 
             if (finishReason === "stop" || finishReason === "tool_calls") {
+              let finalIntent = { intentScore: 0, intentLabel: "exploring" };
+              try {
+                await prisma.$transaction([
+                  prisma.message.create({
+                    data: {
+                      conversationId: conversation!.id,
+                      role: "user",
+                      content: message,
+                      intentScore: msgIntentPoints,
+                      intentSignals:
+                        msgSigs.length > 0 ? (msgSigs as unknown as Prisma.InputJsonValue) : undefined,
+                    },
+                  }),
+                  prisma.message.create({
+                    data: {
+                      conversationId: conversation!.id,
+                      role: "assistant",
+                      content: fullContent || "[UI Component]",
+                      uiComponents:
+                        uiComponents.length > 0
+                          ? (uiComponents as unknown as Prisma.JsonArray)
+                          : undefined,
+                    },
+                  }),
+                ]);
+
+                finalIntent = await syncConversationAfterUserMessage({
+                  conversationId: conversation!.id,
+                  internalSiteId: site.id,
+                  visitorId,
+                  visitorContext,
+                  referrer: referrer ?? visitorContext?.referrer,
+                  utmSource,
+                  utmMedium,
+                  utmCampaign,
+                });
+              } catch (err) {
+                console.error("Chat persist error:", err);
+              }
+
               const doneData = JSON.stringify({
                 type: "done",
                 conversationId: conversation!.id,
-                intentScore,
-                intentSignals: matchedSignals,
+                intentScore: finalIntent.intentScore,
+                intentLabel: finalIntent.intentLabel,
               });
               controller.enqueue(encoder.encode(`data: ${doneData}\n\n`));
-
-              prisma.$transaction([
-                prisma.message.create({
-                  data: {
-                    conversationId: conversation!.id,
-                    role: "user",
-                    content: message,
-                    intentScore,
-                    intentSignals: matchedSignals.length > 0 ? matchedSignals : undefined,
-                  },
-                }),
-                prisma.message.create({
-                  data: {
-                    conversationId: conversation!.id,
-                    role: "assistant",
-                    content: fullContent || "[UI Component]",
-                    uiComponents: uiComponents.length > 0 ? (uiComponents as unknown as import("@prisma/client").Prisma.JsonArray) : undefined,
-                  },
-                }),
-                ...(intentScore > 0 ? [
-                  prisma.conversation.update({
-                    where: { id: conversation!.id },
-                    data: { intentScore: { increment: intentScore } },
-                  }),
-                ] : []),
-              ]).catch(console.error);
 
               if (site.webhookUrl && fullContent) {
                 fetch(site.webhookUrl, {

@@ -16,42 +16,28 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav style={{
-      position: "fixed", top: 0, left: 0, right: 0, zIndex: 50,
-      transition: "background-color 0.3s, border-color 0.3s",
-      ...(scrolled ? {
-        backgroundColor: "rgba(7,7,10,0.9)",
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
-        borderBottom: "1px solid rgba(255,255,255,0.07)",
-      } : {}),
-    }}>
-      <div className="wrap" style={{ height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <Link href="/" style={{
-          fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.2rem",
-          letterSpacing: "-0.02em", color: "#eceae5", textDecoration: "none",
-        }}>
-          MEET<span style={{ color: "#6366f1" }}>ZY</span>
+    <nav className={`landing-nav ${scrolled ? "landing-nav-scrolled" : ""}`}>
+      <div className="wrap landing-nav-inner">
+        <Link href="/" className="logo-mark">
+          MEET<span>ZY</span>
         </Link>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 32 }} className="nav-links">
-          {[["Cómo funciona", "#como-funciona"], ["Para quién", "#para-quien"], ["Precios", "#precios"]].map(([l, h]) => (
-            <a key={l} href={h} style={{ fontSize: "0.875rem", color: "rgba(236,234,229,0.45)", textDecoration: "none" }}
-              onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "#eceae5"}
-              onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "rgba(236,234,229,0.45)"}
-            >{l}</a>
+        <div className="landing-nav-links">
+          {[
+            ["Cómo funciona", "#como-funciona"],
+            ["Para quién", "#para-quien"],
+            ["Precios", "#precios"],
+          ].map(([label, href]) => (
+            <a key={href} href={href} className="landing-nav-link">
+              {label}
+            </a>
           ))}
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginLeft: "auto" }}>
           {isSignedIn ? (
             <>
-              <Link href="/dashboard" style={{
-                display: "inline-flex", alignItems: "center", gap: 6,
-                background: "#6366f1", color: "#fff", textDecoration: "none",
-                fontWeight: 600, fontSize: "0.8rem", padding: "8px 18px",
-                borderRadius: 12,
-              }}>
+              <Link href="/dashboard" className="btn-primary" style={{ fontSize: "0.8rem", padding: "0.5rem 1.15rem" }}>
                 Dashboard
               </Link>
               <UserButton />
@@ -59,17 +45,23 @@ export default function Navbar() {
           ) : (
             <>
               <SignInButton mode="modal">
-                <button style={{ fontSize: "0.875rem", color: "rgba(236,234,229,0.5)", background: "none", border: "none", cursor: "pointer" }}>
+                <button
+                  type="button"
+                  style={{
+                    fontSize: "0.8125rem",
+                    fontWeight: 500,
+                    color: "var(--c-muted)",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    padding: "0.5rem 0.75rem",
+                  }}
+                >
                   Iniciar sesión
                 </button>
               </SignInButton>
               <SignUpButton mode="modal">
-                <button style={{
-                  display: "inline-flex", alignItems: "center",
-                  background: "#6366f1", color: "#fff", border: "none",
-                  fontWeight: 600, fontSize: "0.8rem", padding: "8px 18px",
-                  borderRadius: 12, cursor: "pointer",
-                }}>
+                <button type="button" className="btn-primary" style={{ fontSize: "0.8rem", padding: "0.5rem 1.15rem" }}>
                   Crear mi agente
                 </button>
               </SignUpButton>
@@ -77,8 +69,6 @@ export default function Navbar() {
           )}
         </div>
       </div>
-
-      <style>{`@media (max-width: 768px) { .nav-links { display: none !important; } }`}</style>
     </nav>
   );
 }

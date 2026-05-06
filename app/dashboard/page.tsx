@@ -70,8 +70,8 @@ export default async function DashboardPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="font-syne font-bold text-2xl text-[#eceae5]">Mis agentes</h1>
-          <p className="text-sm mt-1" style={{ color: "rgba(236,234,229,0.4)" }}>
+          <h1 className="font-syne font-bold text-2xl text-text">Mis agentes</h1>
+          <p className="text-sm mt-1 text-muted">
             Plan: <span className="text-accent capitalize font-medium">{userData?.plan ?? "starter"}</span>
           </p>
         </div>
@@ -82,12 +82,17 @@ export default async function DashboardPage() {
 
       {sitesWithMetrics.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-center">
-          <div className="w-20 h-20 rounded-2xl flex items-center justify-center text-3xl mb-6"
-            style={{ background: "rgba(99,102,241,0.1)", border: "1px solid rgba(99,102,241,0.2)" }}>
+          <div
+            className="w-20 h-20 rounded-2xl flex items-center justify-center text-3xl mb-6"
+            style={{
+              background: "var(--c-accent-dim)",
+              border: "1px solid rgba(124,108,255,0.28)",
+            }}
+          >
             🤖
           </div>
-          <h2 className="font-syne font-bold text-xl text-[#eceae5] mb-2">Creá tu primer agente</h2>
-          <p className="text-sm mb-8 max-w-sm" style={{ color: "rgba(236,234,229,0.4)" }}>
+          <h2 className="font-syne font-bold text-xl text-text mb-2">Creá tu primer agente</h2>
+          <p className="text-sm mb-8 max-w-sm text-muted">
             En 3 pasos tenés un agente AI con la identidad de tu marca instalado en tu web.
           </p>
           <Link href="/dashboard/new" className="btn-primary" style={{ textDecoration: "none", display: "inline-flex" }}>

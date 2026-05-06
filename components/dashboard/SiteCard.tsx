@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import DeleteSiteButton from "@/components/dashboard/DeleteSiteButton";
 
 interface SiteCardProps {
   site: {
@@ -152,6 +153,15 @@ export default function SiteCard({ site }: SiteCardProps) {
         >
           {copied ? "¡Copiado!" : "Copiar script"}
         </button>
+      </div>
+
+      <div className="mt-4 pt-4 border-t border-[#1e1e1e] flex justify-end">
+        <DeleteSiteButton
+          siteId={site.siteId}
+          siteName={site.name}
+          variant="card"
+          className="text-xs text-red-400/90 hover:text-red-400 hover:underline underline-offset-2"
+        />
       </div>
     </div>
   );

@@ -25,61 +25,119 @@ model User {
 }
 
 model Site {
-  id               String         @id @default(cuid())
-  siteId           String         @unique @default(cuid())
-  userId           String
-  user             User           @relation(fields: [userId], references: [id])
-  name             String
-  url              String
-  plan             String         @default("starter")
-  isActive         Boolean        @default(true)
-  agentName        String         @default("Meetzy")
-  agentRole        String         @default("Asistente virtual")
-  agentPersonality String         @default("amigable y profesional")
-  welcomeMessage   String         @default("¡Hola! ¿En qué te puedo ayudar?")
-  systemPrompt     String         @db.Text
-  language         String         @default("es")
-  avatarType       String?
-  avatarSubtype    String?
-  brandColor       String         @default("#6366f1")
-  brandColor2      String         @default("#8b5cf6")
-  logoUrl          String?
-  avatarConfig     Json?
-  voiceEnabled     Boolean        @default(false)
-  voiceId          String?
-  simliAvatarId    String?
+  id                   String           @id @default(cuid())
+  siteId               String           @unique @default(cuid())
+  userId               String
+  user                 User             @relation(fields: [userId], references: [id])
+  name                 String
+  url                  String
+  plan                 String           @default("starter")
+  isActive             Boolean          @default(true)
+  agentName            String           @default("Meetzy")
+  agentRole            String           @default("Asistente virtual")
+  agentPersonality     String           @default("amigable y profesional")
+  welcomeMessage       String           @default("¡Hola! ¿En qué te puedo ayudar?")
+  systemPrompt         String           @db.Text
+  language             String           @default("es")
+  avatarType           String?
+  avatarSubtype        String?
+  brandColor           String           @default("#6366f1")
+  brandColor2          String           @default("#8b5cf6")
+  logoUrl              String?
+  avatarConfig         Json?
+  voiceEnabled         Boolean          @default(false)
+  voiceId              String?
+  simliAvatarId        String?
   calBookingUrl        String?
   webhookUrl           String?
-  embedMode            String         @default("widget")
+  embedMode            String           @default("widget")
   primaryQuestion      String?
-  agentType            String         @default("guia")
-  proactiveEnabled     Boolean        @default(true)
-  proactiveFrequency   String         @default("normal")
-  exitIntentEnabled    Boolean        @default(true)
-  widgetPosition       String         @default("bottom-right")
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  conversations    Conversation[]
+  agentType            String           @default("guia")
+  proactiveEnabled     Boolean          @default(true)
+  proactiveFrequency   String           @default("normal")
+  exitIntentEnabled    Boolean          @default(true)
+  widgetPosition       String           @default("bottom-right")
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  conversations        Conversation[]
+  visitorProfiles      VisitorProfile[]
 }
 
 model Conversation {
-  id            String    @id @default(cuid())
-  siteId        String
-  site          Site      @relation(fields: [siteId], references: [id])
-  visitorId     String
-  metadata      Json?
-  intentScore   Float     @default(0)
+  id     String @id @default(cuid())
+  siteId String
+  site   Site   @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  visitorId String
+
+  visitorEmail   String?
+  visitorName    String?
+  visitorCompany String?
+
+  country String?
+  city    String?
+
+  source      String?
+  referrer    String?
+  searchQuery String?
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+
+  pagesVisited    String[] @default([])
+  sessionDuration Int      @default(0)
+  activeTime      Int      @default(0)
+  scrollDepth     Int      @default(0)
+  sectionsViewed  Json?
+
+  intentScore      Int    @default(0)
+  intentLabel      String @default("exploring")
+  demoBooked       Boolean @default(false)
+  intentSignalsLog Json?
+
+  device  String?
+  browser String?
+
+  metadata       Json?
   visitorPersona String?
-  bookedMeeting Boolean   @default(false)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  messages      Message[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  messages  Message[]
+}
+
+model VisitorProfile {
+  id        String @id @default(cuid())
+  visitorId String
+  siteId    String
+  site      Site   @relation(fields: [siteId], references: [id], onDelete: Cascade)
+
+  email   String?
+  name    String?
+  company String?
+
+  totalVisits   Int @default(1)
+  totalMessages Int @default(0)
+  totalTime     Int @default(0)
+
+  maxIntentScore Int    @default(0)
+  maxIntentLabel String @default("exploring")
+  demoBooked     Boolean @default(false)
+
+  firstSeenAt DateTime @default(now())
+  lastSeenAt  DateTime @default(now())
+
+  country   String?
+  topSource String?
+
+  contactedAt DateTime?
+
+  @@unique([visitorId, siteId])
 }
 
 model Message {
   id             String       @id @default(cuid())
   conversationId String
-  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   role           String
   content        String       @db.Text
   uiComponents   Json?

@@ -9,14 +9,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        bg: "#080808",
-        surface: "#111111",
-        "surface-2": "#1a1a1a",
-        border: "#222222",
-        text: "#F0EDE8",
-        muted: "#6b6b6b",
-        accent: "#6366f1",
-        "accent-2": "#8b5cf6",
+        bg: "#0b0a0f",
+        surface: "#16151f",
+        "surface-2": "#1e1d2a",
+        "surface-3": "#252433",
+        border: "#2a2936",
+        text: "#f3f1ec",
+        muted: "#8f8a82",
+        accent: "#7c6cff",
+        "accent-2": "#e8a090",
       },
       fontFamily: {
         syne: ["var(--font-syne)", "sans-serif"],

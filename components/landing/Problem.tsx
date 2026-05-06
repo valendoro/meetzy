@@ -23,21 +23,15 @@ const CARDS = [
 
 export default function Problem() {
   return (
-    <section data-section="problem" style={{ padding: "112px 0", position: "relative" }}>
-      <div style={{
-        position: "absolute", top: 0, left: 0, right: 0,
-        height: 1,
-        background: "linear-gradient(to right, transparent, rgba(255,255,255,0.07), transparent)"
-      }} />
+    <section data-section="problem" className="section-y relative">
+      <div className="section-divider-top" />
 
       <div className="wrap">
         <ScrollReveal style={{ textAlign: "center", marginBottom: 64 }}>
-          <p style={{ fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(99,102,241,0.8)", marginBottom: 16 }}>
-            El problema
-          </p>
+          <p className="kicker kicker-accent">El problema</p>
           <h2 className="display display-lg">
             Tu web habla.<br />
-            <span style={{ color: "rgba(236,234,229,0.25)" }}>Pero no escucha.</span>
+            <span style={{ color: "var(--c-muted2)" }}>Pero no escucha.</span>
           </h2>
         </ScrollReveal>
 

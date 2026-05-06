@@ -54,6 +54,49 @@ class BehaviorTracker {
   private sectionTimers: Record<string, number> = {};
   private activeSections = new Set<string>();
   private observer: IntersectionObserver | null = null;
+  readonly pagesVisited: string[] = [];
+  private lastActivityMs = Date.now();
+  activeTimeSec = 0;
+  readonly utm: { utm_source: string | null; utm_medium: string | null; utm_campaign: string | null };
+
+  constructor() {
+    const sp = new URLSearchParams(window.location.search);
+    this.utm = {
+      utm_source: sp.get("utm_source"),
+      utm_medium: sp.get("utm_medium"),
+      utm_campaign: sp.get("utm_campaign"),
+    };
+    this.addPagePath(window.location.pathname);
+    this.patchHistory();
+  }
+
+  private addPagePath(path: string) {
+    const p = path || "/";
+    if (this.pagesVisited.length === 0 || this.pagesVisited[this.pagesVisited.length - 1] !== p) {
+      this.pagesVisited.push(p);
+    }
+  }
+
+  private patchHistory() {
+    const tracker = this;
+    const wrap = (fn: History["pushState"]) =>
+      function (this: History, ...args: Parameters<History["pushState"]>) {
+        const ret = fn.apply(this, args);
+        tracker.addPagePath(window.location.pathname);
+        return ret;
+      };
+    history.pushState = wrap(History.prototype.pushState);
+    history.replaceState = wrap(History.prototype.replaceState);
+    window.addEventListener("popstate", () => this.addPagePath(window.location.pathname));
+  }
+
+  bumpActivity() {
+    this.lastActivityMs = Date.now();
+  }
+
+  idleMs(): number {
+    return Date.now() - this.lastActivityMs;
+  }
 
   init() {
     localStorage.setItem("mz_visited", "true");
@@ -63,12 +106,20 @@ class BehaviorTracker {
       this.ctx.searchQuery = url.searchParams.get("q") ?? url.searchParams.get("query");
     } catch { /* no referrer */ }
 
+    const onAct = () => this.bumpActivity();
+    ["keydown", "mousedown", "scroll", "touchstart"].forEach((ev) => {
+      window.addEventListener(ev, onAct, { passive: true });
+    });
+
     // Time tracker
     setInterval(() => {
       this.ctx.timeOnSite = Math.round((Date.now() - this.startTime) / 1000);
       for (const id of this.activeSections) {
         if (!this.ctx.sectionsViewed[id]) this.ctx.sectionsViewed[id] = { time: 0, revisits: 0 };
         this.ctx.sectionsViewed[id]!.time = Math.round((Date.now() - (this.sectionTimers[id] ?? Date.now())) / 1000);
+      }
+      if (document.visibilityState === "visible" && Date.now() - this.lastActivityMs < 45_000) {
+        this.activeTimeSec += 2;
       }
       this.updateIntent();
     }, 2000);
@@ -107,6 +158,7 @@ class BehaviorTracker {
     window.addEventListener("scroll", () => {
       const max = document.body.scrollHeight - window.innerHeight;
       this.ctx.scrollDepth = max > 0 ? Math.round((window.scrollY / max) * 100) : 0;
+      this.bumpActivity();
     }, { passive: true });
 
     // Mouse Y for exit intent
@@ -145,6 +197,7 @@ class MeetzyWidget {
   private isStreaming = false;
   private avatarRenderer: AvatarRenderer | null = null;
   private msgTimeout: ReturnType<typeof setTimeout> | null = null;
+  private sessionEndSent = false;
 
   // DOM refs
   private bubbleWrap!: HTMLElement;
@@ -162,6 +215,8 @@ class MeetzyWidget {
       if (!v) { v = Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem("mz_uid", v); }
       return v;
     })();
+    const storedC = sessionStorage.getItem(`mz_c_${siteId}`);
+    if (storedC) this.conversationId = storedC;
   }
 
   init() {
@@ -182,6 +237,52 @@ class MeetzyWidget {
     if (this.config.proactiveEnabled) {
       setInterval(() => this.evaluateTriggers(), 2000);
     }
+
+    window.addEventListener("pagehide", () => {
+      this.flushSession();
+    });
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "hidden") this.flushSession();
+    });
+    window.addEventListener("beforeunload", () => {
+      this.flushSession();
+    });
+    setInterval(() => {
+      if (this.tracker.idleMs() >= 30 * 60 * 1000) this.flushSession();
+    }, 60_000);
+  }
+
+  private flushSession() {
+    if (this.sessionEndSent) return;
+    const cid = this.conversationId ?? sessionStorage.getItem(`mz_c_${this.siteId}`) ?? undefined;
+    if (!cid) return;
+    this.sessionEndSent = true;
+    const ctx = this.tracker.get();
+    const u = this.tracker.utm;
+    const mobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const payload = {
+      conversationId: cid,
+      visitorId: this.visitorId,
+      siteId: this.siteId,
+      sessionDuration: ctx.timeOnSite,
+      activeTime: this.tracker.activeTimeSec,
+      pagesVisited: [...this.tracker.pagesVisited],
+      sectionsViewed: ctx.sectionsViewed,
+      scrollDepth: ctx.scrollDepth,
+      device: mobile ? "mobile" : "desktop",
+      browser: navigator.userAgent.includes("Chrome") ? "chrome" : "other",
+      referrer: document.referrer || null,
+      searchQuery: ctx.searchQuery,
+      utmSource: u.utm_source,
+      utmMedium: u.utm_medium,
+      utmCampaign: u.utm_campaign,
+    };
+    void fetch(`${APP_URL}/api/sessions/end`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      keepalive: true,
+    }).catch(() => {});
   }
 
   /* ── BUBBLE ──────────────────────────── */
@@ -501,6 +602,7 @@ class MeetzyWidget {
 
     this.addUserMsg(text);
     this.isStreaming = true;
+    this.tracker.bumpActivity();
     this.avatarRenderer?.setTalking(true);
     const bbl = this.addStreamBubble();
 
@@ -525,6 +627,7 @@ class MeetzyWidget {
 
       const newConvId = res.headers.get("X-Conversation-Id");
       if (newConvId) {
+        if (newConvId !== this.conversationId) this.sessionEndSent = false;
         this.conversationId = newConvId;
         sessionStorage.setItem(`mz_c_${this.siteId}`, newConvId);
       }
@@ -817,7 +920,40 @@ function initFullPage(siteId: string, config: SiteConfig) {
   sendB.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22L11 13M11 13L2 9" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
   ia.appendChild(sendB); chat.appendChild(ia); wrap.appendChild(chat);
   const vid = (() => { let v = localStorage.getItem("mz_uid"); if (!v) { v = Math.random().toString(36).slice(2); localStorage.setItem("mz_uid", v); } return v; })();
-  let cid: string | undefined; let streaming = false;
+  let cid: string | undefined;
+  let streaming = false;
+  const fpStart = Date.now();
+  let fpSessionSent = false;
+  function flushFpSession() {
+    if (fpSessionSent || !cid) return;
+    fpSessionSent = true;
+    const dur = Math.round((Date.now() - fpStart) / 1000);
+    const sp = new URLSearchParams(location.search);
+    void fetch(`${APP_URL}/api/sessions/end`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        conversationId: cid,
+        visitorId: vid,
+        siteId,
+        sessionDuration: dur,
+        activeTime: dur,
+        pagesVisited: [location.pathname],
+        scrollDepth: 0,
+        device: /Mobile/i.test(navigator.userAgent) ? "mobile" : "desktop",
+        browser: navigator.userAgent.includes("Chrome") ? "chrome" : "other",
+        referrer: document.referrer || null,
+        utmSource: sp.get("utm_source"),
+        utmMedium: sp.get("utm_medium"),
+        utmCampaign: sp.get("utm_campaign"),
+      }),
+      keepalive: true,
+    }).catch(() => {});
+  }
+  window.addEventListener("beforeunload", flushFpSession);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") flushFpSession();
+  });
   function addMsg(r: "a"|"u", t: string): HTMLElement {
     const el = shadow.getElementById("fp-msgs")!;
     const wr = document.createElement("div"); wr.className = `mw m${r}`;
@@ -836,7 +972,11 @@ function initFullPage(siteId: string, config: SiteConfig) {
     try {
       const r = await fetch(`${APP_URL}/api/chat`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ siteId, message: text, conversationId: cid, visitorId: vid, plan: config.plan }) });
       if (!r.ok || !r.body) { bbl.textContent = "Error."; return; }
-      const nc = r.headers.get("X-Conversation-Id"); if (nc) cid = nc;
+      const nc = r.headers.get("X-Conversation-Id");
+      if (nc) {
+        if (nc !== cid) fpSessionSent = false;
+        cid = nc;
+      }
       const reader = r.body.getReader(); const dec = new TextDecoder(); let full = ""; bbl.textContent = "";
       while (true) {
         const { done, value } = await reader.read(); if (done) break;

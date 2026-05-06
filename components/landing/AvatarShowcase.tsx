@@ -15,7 +15,7 @@ function MiniDog({ color, speaking }: { color: string; speaking: boolean }) {
     const ctx = c.getContext("2d")!;
     const f = frame.current++;
     ctx.clearRect(0, 0, 80, 80);
-    const blink = f % 200 < 6 ? 1 - (f % 200) / 3 : 1;
+    const blink = Math.max(0.01, f % 200 < 6 ? 1 - (f % 200) / 3 : 1);
     const mouth = speaking ? 0.3 + Math.sin(f * 0.3) * 0.4 : 0;
 
     ctx.fillStyle = color; ctx.beginPath(); ctx.ellipse(40, 55, 22, 18, 0, 0, Math.PI * 2); ctx.fill();
@@ -52,7 +52,7 @@ function MiniOrange({ speaking }: { speaking: boolean }) {
     const f = frame.current++;
     ctx.clearRect(0, 0, 80, 80);
     const bounce = speaking ? Math.abs(Math.sin(f * 0.25)) * 5 : 0;
-    const blink = f % 220 < 6 ? 1 - (f % 220) / 3 : 1;
+    const blink = Math.max(0.01, f % 220 < 6 ? 1 - (f % 220) / 3 : 1);
 
     ctx.save(); ctx.translate(0, -bounce);
     const g = ctx.createRadialGradient(30, 25, 5, 40, 42, 30);
@@ -86,7 +86,7 @@ function MiniCup({ color, speaking }: { color: string; speaking: boolean }) {
     const ctx = c.getContext("2d")!;
     const f = frame.current++;
     ctx.clearRect(0, 0, 80, 80);
-    const blink = f % 180 < 6 ? 1 - (f % 180) / 3 : 1;
+    const blink = Math.max(0.01, f % 180 < 6 ? 1 - (f % 180) / 3 : 1);
 
     ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(14, 20); ctx.lineTo(16, 68); ctx.quadraticCurveTo(40, 75, 64, 68); ctx.lineTo(66, 20); ctx.closePath(); ctx.fill();
     ctx.fillStyle = color; ctx.beginPath(); ctx.ellipse(40, 20, 26, 7, 0, 0, Math.PI * 2); ctx.fill();
@@ -128,7 +128,7 @@ function MiniHuman({ color, speaking }: { color: string; speaking: boolean }) {
     const f = frame.current++;
     ctx.clearRect(0, 0, 80, 80);
     const breathe = 1 + Math.sin(f * 0.02) * 0.008;
-    const blink = f % 200 < 6 ? 1 - (f % 200) / 3 : 1;
+    const blink = Math.max(0.01, f % 200 < 6 ? 1 - (f % 200) / 3 : 1);
 
     ctx.save(); ctx.translate(40, 55); ctx.scale(breathe, breathe); ctx.translate(-40, -55);
     ctx.fillStyle = color; ctx.beginPath(); ctx.roundRect(18, 42, 44, 30, 6); ctx.fill();

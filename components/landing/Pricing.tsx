@@ -6,63 +6,31 @@ import ScrollReveal from "./ScrollReveal";
 
 const PLANS = [
   {
-    id: "starter",
-    name: "Starter",
-    price: "$29",
+    id: "starter", name: "Starter", price: "$29",
     tagline: "Para entender a tu visitante",
-    features: [
-      "Agente aprende tu negocio solo",
-      "Behavioral tracking completo",
-      "Inicia conversaciones con contexto",
-      "Chat texto · 1 sitio · 500 conversaciones",
-    ],
-    cta: "Empezar gratis",
-    href: "/dashboard/new?plan=starter",
-    highlighted: false,
+    features: ["Agente que aprende tu negocio solo", "Behavioral tracking completo", "Inicia conversaciones con contexto", "Chat texto · 1 sitio · 500 conv/mes"],
+    cta: "Empezar gratis", href: "/dashboard/new?plan=starter", highlighted: false,
   },
   {
-    id: "pro",
-    name: "Pro",
-    badge: "El más elegido",
-    price: "$79",
+    id: "pro", name: "Pro", price: "$79", badge: "El más elegido",
     tagline: "Para que tu marca esté viva",
-    features: [
-      "Todo lo de Starter +",
-      "Avatar animado con tu identidad",
-      "Tu logo, tus colores, tu personaje",
-      "UI dinámica en tiempo real",
-      "3 sitios · 2.000 conversaciones",
-    ],
-    cta: "Empezar con Pro",
-    href: "/dashboard/new?plan=pro",
-    highlighted: true,
+    features: ["Todo lo de Starter +", "Avatar animado con tu identidad", "Tu logo, tus colores, tu personaje", "UI dinámica en tiempo real", "3 sitios · 2.000 conv/mes"],
+    cta: "Empezar con Pro", href: "/dashboard/new?plan=pro", highlighted: true,
   },
   {
-    id: "elite",
-    name: "Elite",
-    price: "$199",
+    id: "elite", name: "Elite", price: "$199",
     tagline: "La experiencia completa",
-    features: [
-      "Todo lo de Pro +",
-      "El avatar habla con voz real",
-      "Lip sync en tiempo real",
-      "Agenda reuniones solo",
-      "CRM automático",
-      "Sitios y conversaciones ilimitados",
-      'Sin "Powered by Meetzy"',
-    ],
-    cta: "Hablar con el equipo",
-    href: "/auth/signin",
-    highlighted: false,
+    features: ["Todo lo de Pro +", "El avatar habla con voz real", "Lip sync en tiempo real", "Agenda reuniones solo", "CRM automático", "Ilimitado · Sin branding"],
+    cta: "Hablar con el equipo", href: "/auth/signin", highlighted: false,
   },
 ];
 
 const FAQ = [
   { q: "¿Necesito saber programar?", a: "No. Pegás tu URL, configurás el avatar en 5 minutos, copiás una línea. Si usás Webflow, WordPress o Shopify, hay integración directa." },
   { q: "¿Cómo aprende mi negocio?", a: "Pegás la URL y Meetzy analiza todo automáticamente: productos, precios, horarios, servicios, tono." },
-  { q: "¿El tracking no es invasivo?", a: "Meetzy trackea comportamiento anónimo de navegación — igual que Google Analytics. Sin datos personales sin consentimiento." },
+  { q: "¿El tracking no es invasivo?", a: "Trackea comportamiento anónimo de navegación — igual que Google Analytics. Sin datos personales sin consentimiento." },
   { q: "¿Qué pasa si no sabe responder algo?", a: "Lo reconoce y puede derivar a WhatsApp, email o llamada. Nunca inventa información." },
-  { q: "¿El avatar se puede personalizar?", a: "Completamente. Tipo, colores, logo. La naranja de tu frutería. La chomba con tu logo. Lo que represente tu negocio." },
+  { q: "¿El avatar se puede personalizar?", a: "Completamente. Tipo, colores, logo. La naranja de tu frutería. La chomba con tu logo." },
 ];
 
 function FaqItem({ q, a }: { q: string; a: string }) {
@@ -70,27 +38,21 @@ function FaqItem({ q, a }: { q: string; a: string }) {
   return (
     <button
       onClick={() => setOpen(!open)}
-      className="w-full text-left p-6 rounded-2xl transition-all duration-200"
       style={{
-        background: open ? "rgba(16,16,22,0.9)" : "rgba(14,14,20,0.6)",
-        border: `1px solid ${open ? "rgba(99,102,241,0.2)" : "rgba(255,255,255,0.07)"}`,
+        width: "100%", textAlign: "left", padding: "20px 24px",
+        borderRadius: 16, border: `1px solid ${open ? "rgba(99,102,241,0.2)" : "rgba(255,255,255,0.07)"}`,
+        background: open ? "rgba(15,15,22,0.9)" : "rgba(14,14,20,0.6)",
+        transition: "all 0.2s ease", cursor: "none",
       }}
     >
-      <div className="flex items-center justify-between gap-4">
-        <p className="font-syne font-bold text-[#eeeae4] text-sm text-left">{q}</p>
-        <svg
-          className="flex-shrink-0 transition-transform duration-200"
-          style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)", opacity: 0.5 }}
-          width="16" height="16" viewBox="0 0 24 24" fill="none"
-        >
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16 }}>
+        <span style={{ fontFamily: "var(--font-syne)", fontWeight: 700, fontSize: "0.9rem", color: "var(--c-text)" }}>{q}</span>
+        <svg style={{ flexShrink: 0, opacity: 0.4, transition: "transform 0.2s", transform: open ? "rotate(180deg)" : "none" }}
+          width="16" height="16" viewBox="0 0 24 24" fill="none">
           <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       </div>
-      {open && (
-        <p className="mt-3 text-sm leading-relaxed text-left" style={{ color: "rgba(238,234,228,0.45)" }}>
-          {a}
-        </p>
-      )}
+      {open && <p style={{ marginTop: 12, fontSize: "0.85rem", lineHeight: 1.65, color: "var(--c-muted)" }}>{a}</p>}
     </button>
   );
 }
@@ -98,129 +60,100 @@ function FaqItem({ q, a }: { q: string; a: string }) {
 export default function Pricing() {
   return (
     <>
-      {/* Pricing */}
-      <section id="precios" data-section="pricing" className="py-28 relative">
-        <div className="section-divider absolute top-0 inset-x-0" />
-        <div className="absolute inset-0 pointer-events-none" style={{
-          background: "radial-gradient(ellipse 50% 40% at 50% 80%, rgba(99,102,241,0.04) 0%, transparent 100%)"
-        }} />
+      {/* ── Pricing ── */}
+      <section id="precios" data-section="pricing" style={{ padding: "112px 0", position: "relative" }}>
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1, background: "linear-gradient(to right, transparent, rgba(255,255,255,0.07), transparent)" }} />
 
-        <div className="max-w-6xl mx-auto px-6">
-          <ScrollReveal className="text-center mb-16">
-            <p className="text-xs font-medium uppercase tracking-widest mb-4" style={{ color: "rgba(99,102,241,0.75)" }}>Precios</p>
-            <h2 className="font-syne font-black text-[#eeeae4] leading-[0.9] mb-4"
-              style={{ fontSize: "clamp(2rem, 5vw, 3.8rem)", letterSpacing: "-0.035em" }}>
-              Simple. Sin sorpresas.
-            </h2>
-            <p style={{ color: "rgba(238,234,228,0.4)", fontSize: "1.1rem", fontWeight: 300 }}>
+        <div className="wrap">
+          <ScrollReveal style={{ textAlign: "center", marginBottom: 64 }}>
+            <p style={{ fontSize: "0.72rem", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(99,102,241,0.8)", marginBottom: 16 }}>Precios</p>
+            <h2 className="display display-lg" style={{ marginBottom: 12 }}>Simple. Sin sorpresas.</h2>
+            <p style={{ fontSize: "1.1rem", fontWeight: 300, color: "var(--c-muted)" }}>
               Sin comisiones por conversación. Cancelás cuando querés.
             </p>
           </ScrollReveal>
 
-          <div className="grid md:grid-cols-3 gap-5 max-w-4xl mx-auto items-start">
+          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 16, maxWidth: 900, margin: "0 auto", alignItems: "start" }} className="pricing-grid">
             {PLANS.map((plan, i) => (
               <ScrollReveal key={plan.id} className={`reveal-d${i + 1}`}>
-                <div
-                  className="relative flex flex-col rounded-2xl"
-                  style={plan.highlighted ? {
+                <div style={{
+                  position: "relative", borderRadius: 20, padding: plan.highlighted ? "2rem" : "1.75rem",
+                  display: "flex", flexDirection: "column",
+                  ...(plan.highlighted ? {
                     background: "rgba(99,102,241,0.1)",
-                    border: "1px solid rgba(99,102,241,0.45)",
-                    boxShadow: "0 0 60px rgba(99,102,241,0.15), 0 24px 60px rgba(0,0,0,0.35)",
-                    transform: "scale(1.03)",
-                    padding: "2rem",
+                    border: "1px solid rgba(99,102,241,0.42)",
+                    boxShadow: "0 0 60px rgba(99,102,241,0.14), 0 24px 60px rgba(0,0,0,0.35)",
+                    transform: "scale(1.02)",
                   } : {
-                    background: "rgba(14,14,20,0.8)",
+                    background: "rgba(14,14,20,0.85)",
                     border: "1px solid rgba(255,255,255,0.08)",
-                    padding: "1.75rem",
-                  }}
-                >
+                  }),
+                }}>
                   {plan.badge && (
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                      <span className="bg-accent text-white text-[10px] font-bold px-3 py-1 rounded-full tracking-wide uppercase">
-                        {plan.badge}
-                      </span>
+                    <div style={{ position: "absolute", top: -14, left: "50%", transform: "translateX(-50%)" }}>
+                      <span style={{
+                        background: "var(--c-accent)", color: "#fff", fontSize: "0.68rem",
+                        fontWeight: 700, padding: "4px 12px", borderRadius: 100, letterSpacing: "0.06em",
+                        textTransform: "uppercase",
+                      }}>{plan.badge}</span>
                     </div>
                   )}
 
-                  <div className="mb-6">
-                    <p className="text-[10px] uppercase tracking-widest font-medium mb-2"
-                      style={{ color: plan.highlighted ? "rgba(99,102,241,0.8)" : "rgba(238,234,228,0.3)" }}>
-                      {plan.name}
-                    </p>
-                    <div className="flex items-baseline gap-1 mb-2">
-                      <span className="font-syne font-black text-[#eeeae4]"
-                        style={{ fontSize: plan.highlighted ? "2.8rem" : "2.4rem" }}>
-                        {plan.price}
-                      </span>
-                      <span className="text-sm" style={{ color: "rgba(238,234,228,0.3)" }}>/mes</span>
-                    </div>
-                    <p className="text-sm" style={{ color: "rgba(238,234,228,0.42)" }}>{plan.tagline}</p>
-                  </div>
+                  <p style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12,
+                    color: plan.highlighted ? "rgba(99,102,241,0.85)" : "var(--c-muted2)" }}>{plan.name}</p>
 
-                  <ul className="space-y-2.5 flex-1 mb-7">
-                    {plan.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2.5 text-sm">
-                        <svg className="w-4 h-4 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none"
-                          style={{ color: plan.highlighted ? "#818cf8" : "#6366f1" }}>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 8 }}>
+                    <span style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: plan.highlighted ? "2.8rem" : "2.4rem", letterSpacing: "-0.04em", color: "var(--c-text)" }}>
+                      {plan.price}
+                    </span>
+                    <span style={{ fontSize: "0.85rem", color: "var(--c-muted2)" }}>/mes</span>
+                  </div>
+                  <p style={{ fontSize: "0.85rem", color: "var(--c-muted)", marginBottom: 24 }}>{plan.tagline}</p>
+
+                  <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 10, flex: 1, marginBottom: 24 }}>
+                    {plan.features.map(f => (
+                      <li key={f} style={{ display: "flex", alignItems: "flex-start", gap: 10, fontSize: "0.85rem" }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: 2, color: plan.highlighted ? "var(--c-accent2)" : "var(--c-accent)" }}>
                           <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
-                        <span style={{ color: "rgba(238,234,228,0.55)" }}>{f}</span>
+                        <span style={{ color: "rgba(236,234,229,0.55)" }}>{f}</span>
                       </li>
                     ))}
                   </ul>
 
-                  <Link
-                    href={plan.href}
-                    className="block w-full text-center font-semibold py-3 rounded-xl text-sm transition-all duration-150"
-                    style={plan.highlighted ? {
-                      background: "#6366f1",
+                  <Link href={plan.href} style={{
+                    display: "block", textAlign: "center", fontWeight: 600, fontSize: "0.875rem",
+                    padding: "12px", borderRadius: 12, textDecoration: "none", transition: "all 0.15s ease",
+                    ...(plan.highlighted ? {
+                      background: "var(--c-accent)",
                       color: "#fff",
-                      boxShadow: "0 0 20px rgba(99,102,241,0.4)",
+                      boxShadow: "0 0 24px rgba(99,102,241,0.35)",
                     } : {
                       border: "1px solid rgba(255,255,255,0.1)",
-                      color: "rgba(238,234,228,0.6)",
-                    }}
-                    onMouseEnter={e => {
-                      if (!plan.highlighted) {
-                        (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.2)";
-                        (e.currentTarget as HTMLElement).style.color = "#eeeae4";
-                      } else {
-                        (e.currentTarget as HTMLElement).style.background = "#4f46e5";
-                      }
-                    }}
-                    onMouseLeave={e => {
-                      if (!plan.highlighted) {
-                        (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.1)";
-                        (e.currentTarget as HTMLElement).style.color = "rgba(238,234,228,0.6)";
-                      } else {
-                        (e.currentTarget as HTMLElement).style.background = "#6366f1";
-                      }
-                    }}
-                  >
+                      color: "rgba(236,234,229,0.6)",
+                    }),
+                  }}>
                     {plan.cta}
                   </Link>
                 </div>
               </ScrollReveal>
             ))}
           </div>
-
-          <p className="text-center mt-8 text-xs" style={{ color: "rgba(238,234,228,0.2)" }}>
+          <p style={{ textAlign: "center", marginTop: 28, fontSize: "0.78rem", color: "var(--c-muted2)" }}>
             Sin tarjeta para empezar · Cancelás cuando querés · 10 minutos de setup
           </p>
         </div>
+
+        <style>{`@media (min-width: 768px) { .pricing-grid { grid-template-columns: repeat(3, 1fr) !important; } }`}</style>
       </section>
 
-      {/* FAQ */}
-      <section className="pb-28">
-        <div className="max-w-6xl mx-auto px-6">
-          <ScrollReveal className="text-center mb-12">
-            <h2 className="font-syne font-black text-[#eeeae4]"
-              style={{ fontSize: "clamp(1.8rem, 4vw, 3rem)", letterSpacing: "-0.03em" }}>
-              Preguntas frecuentes
-            </h2>
+      {/* ── FAQ ── */}
+      <section style={{ paddingBottom: 112 }}>
+        <div className="wrap">
+          <ScrollReveal style={{ textAlign: "center", marginBottom: 48 }}>
+            <h2 className="display display-md">Preguntas frecuentes</h2>
           </ScrollReveal>
-
-          <div className="grid md:grid-cols-2 gap-3 max-w-4xl mx-auto">
+          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 10, maxWidth: 800, margin: "0 auto" }} className="faq-grid">
             {FAQ.map((item, i) => (
               <ScrollReveal key={i} className={`reveal-d${(i % 2) + 1}`}>
                 <FaqItem q={item.q} a={item.a} />
@@ -228,65 +161,42 @@ export default function Pricing() {
             ))}
           </div>
         </div>
+        <style>{`@media (min-width: 768px) { .faq-grid { grid-template-columns: repeat(2, 1fr) !important; } }`}</style>
       </section>
 
-      {/* CTA Final */}
-      <section className="pb-28">
-        <div className="max-w-6xl mx-auto px-6">
+      {/* ── CTA Final ── */}
+      <section style={{ paddingBottom: 112 }}>
+        <div className="wrap">
           <ScrollReveal>
-            <div className="relative rounded-3xl p-14 md:p-24 text-center overflow-hidden"
-              style={{
-                background: "linear-gradient(135deg, rgba(14,14,20,0.95) 0%, rgba(16,14,28,0.95) 100%)",
-                border: "1px solid rgba(99,102,241,0.15)",
-                boxShadow: "0 40px 100px rgba(0,0,0,0.5), inset 0 0 60px rgba(99,102,241,0.04)",
-              }}>
-              <div className="absolute inset-0 pointer-events-none" style={{
-                background: "radial-gradient(ellipse 60% 70% at 50% 50%, rgba(99,102,241,0.08) 0%, transparent 100%)"
-              }} />
-
-              <div className="relative">
-                <h2 className="font-syne font-black text-[#eeeae4] leading-[0.88] mb-3"
-                  style={{ fontSize: "clamp(2.2rem, 6vw, 5rem)", letterSpacing: "-0.045em" }}>
+            <div style={{
+              position: "relative", borderRadius: 28, padding: "80px 48px", textAlign: "center", overflow: "hidden",
+              background: "linear-gradient(135deg, rgba(14,14,20,0.97) 0%, rgba(16,14,28,0.97) 100%)",
+              border: "1px solid rgba(99,102,241,0.15)",
+              boxShadow: "0 40px 100px rgba(0,0,0,0.5), inset 0 0 60px rgba(99,102,241,0.04)",
+            }}>
+              <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse 60% 70% at 50% 50%, rgba(99,102,241,0.08) 0%, transparent 100%)" }} />
+              <div style={{ position: "relative" }}>
+                <h2 className="display" style={{ fontSize: "clamp(2.5rem, 7vw, 5.5rem)", letterSpacing: "-0.05em", lineHeight: 0.88, marginBottom: 12 }}>
                   Tu web siempre<br />estuvo muda.
                 </h2>
-                <p className="font-syne font-black leading-[0.88] mb-8"
-                  style={{
-                    fontSize: "clamp(2.2rem, 6vw, 5rem)",
-                    letterSpacing: "-0.045em",
-                    color: "rgba(238,234,228,0.2)",
-                  }}>
+                <h2 className="display" style={{ fontSize: "clamp(2.5rem, 7vw, 5.5rem)", letterSpacing: "-0.05em", lineHeight: 0.88, color: "rgba(236,234,229,0.2)", marginBottom: 32 }}>
                   Ya no tiene que serlo.
-                </p>
-                <p className="font-light mb-10 mx-auto max-w-xl"
-                  style={{ color: "rgba(238,234,228,0.4)", fontSize: "1.1rem" }}>
+                </h2>
+                <p style={{ fontSize: "1.1rem", fontWeight: 300, color: "var(--c-muted)", maxWidth: 480, margin: "0 auto 48px" }}>
                   Meetzy le da a tu web la capacidad de entender, responder y conectar.
                 </p>
-                <div className="flex flex-wrap justify-center gap-4">
-                  <Link
-                    href="/dashboard/new"
-                    className="inline-flex items-center gap-2 text-white font-semibold px-8 py-4 rounded-xl transition-all text-base"
-                    style={{
-                      background: "#6366f1",
-                      boxShadow: "0 0 40px rgba(99,102,241,0.4)",
-                    }}
-                  >
+                <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", gap: 14 }}>
+                  <Link href="/dashboard/new" className="btn-primary" style={{ padding: "14px 32px", fontSize: "1rem" }}>
                     Crear mi agente gratis
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
                       <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                     </svg>
                   </Link>
-                  <Link
-                    href="#precios"
-                    className="inline-flex items-center font-medium px-8 py-4 rounded-xl transition-all text-base"
-                    style={{
-                      border: "1px solid rgba(255,255,255,0.1)",
-                      color: "rgba(238,234,228,0.55)",
-                    }}
-                  >
+                  <Link href="#precios" className="btn-ghost" style={{ padding: "14px 32px", fontSize: "1rem" }}>
                     Ver los planes
                   </Link>
                 </div>
-                <p className="text-xs mt-6" style={{ color: "rgba(238,234,228,0.18)" }}>
+                <p style={{ marginTop: 24, fontSize: "0.78rem", color: "var(--c-muted2)" }}>
                   Sin tarjeta · Sin código · Sin contratos · 10 minutos
                 </p>
               </div>
@@ -295,21 +205,23 @@ export default function Pricing() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }} className="py-10">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      {/* ── Footer ── */}
+      <footer style={{ borderTop: "1px solid rgba(255,255,255,0.05)", padding: "40px 0" }}>
+        <div className="wrap" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 24 }}>
           <div>
-            <p className="font-syne font-black text-lg text-[#eeeae4]">
-              MEET<span className="text-accent">ZY</span>
+            <p style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: "1.1rem", color: "var(--c-text)" }}>
+              MEET<span style={{ color: "var(--c-accent)" }}>ZY</span>
             </p>
-            <p className="text-xs mt-0.5" style={{ color: "rgba(238,234,228,0.2)" }}>La web que entiende.</p>
+            <p style={{ fontSize: "0.78rem", color: "var(--c-muted2)", marginTop: 4 }}>La web que entiende.</p>
           </div>
-          <div className="flex items-center gap-6 text-xs" style={{ color: "rgba(238,234,228,0.3)" }}>
+          <div style={{ display: "flex", gap: 28 }}>
             {[["Precios", "#precios"], ["Privacidad", "#"], ["Términos", "#"], ["Contacto", "/auth/signin"]].map(([l, h]) => (
-              <a key={l} href={h} className="hover:text-[#eeeae4] transition-colors">{l}</a>
+              <a key={l} href={h} style={{ fontSize: "0.82rem", color: "var(--c-muted2)", textDecoration: "none", transition: "color 0.15s" }}
+                onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "var(--c-text)"}
+                onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "var(--c-muted2)"}>{l}</a>
             ))}
           </div>
-          <p className="text-xs" style={{ color: "rgba(238,234,228,0.2)" }}>© 2026 Meetzy.</p>
+          <p style={{ fontSize: "0.78rem", color: "var(--c-muted2)" }}>© 2026 Meetzy.</p>
         </div>
       </footer>
     </>

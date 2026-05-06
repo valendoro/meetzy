@@ -10,9 +10,10 @@ import HowItWorks from "@/components/landing/HowItWorks";
 import Pricing from "@/components/landing/Pricing";
 import LandingOrchestrator from "@/components/landing/LandingOrchestrator";
 
-function CountUp({ target, suffix = "" }: { target: number; suffix?: string }) {
-  const [value, setValue] = useState(0);
-  const ref = useRef<HTMLSpanElement>(null);
+/* ── Count-up number ─────────────────────────────────────── */
+function CountUp({ end, suffix = "" }: { end: number; suffix?: string }) {
+  const [val, setVal] = useState(0);
+  const ref = useRef<HTMLElement>(null);
   const started = useRef(false);
 
   useEffect(() => {
@@ -21,55 +22,75 @@ function CountUp({ target, suffix = "" }: { target: number; suffix?: string }) {
     const obs = new IntersectionObserver(([entry]) => {
       if (entry?.isIntersecting && !started.current) {
         started.current = true;
-        const duration = 1200;
-        const start = Date.now();
+        const dur = 1400;
+        const t0 = Date.now();
         const tick = () => {
-          const elapsed = Date.now() - start;
-          const progress = Math.min(elapsed / duration, 1);
-          const eased = 1 - Math.pow(1 - progress, 3);
-          setValue(Math.round(eased * target));
-          if (progress < 1) requestAnimationFrame(tick);
+          const p = Math.min((Date.now() - t0) / dur, 1);
+          const eased = 1 - Math.pow(1 - p, 3);
+          setVal(Math.round(eased * end));
+          if (p < 1) requestAnimationFrame(tick);
         };
         requestAnimationFrame(tick);
       }
     }, { threshold: 0.5 });
     obs.observe(el);
     return () => obs.disconnect();
-  }, [target]);
+  }, [end]);
 
-  return <span ref={ref}>{value.toLocaleString("es-AR")}{suffix}</span>;
+  return <span ref={ref}>{val.toLocaleString("es-AR")}{suffix}</span>;
 }
 
+/* ── Stats bar ──────────────────────────────────────────── */
 function Stats() {
-  const STATS = [
-    { label: "agentes activos", target: 1200, suffix: "+" },
-    { label: "conversaciones", target: 4.8, suffix: "M", isDecimal: true },
-    { label: "satisfacción", target: 94, suffix: "%" },
-    { label: "minutos de setup", target: 10, suffix: "" },
-  ];
-
   return (
-    <section className="py-16" style={{ borderTop: "1px solid rgba(255,255,255,0.05)", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-          {STATS.map((s) => (
-            <div key={s.label} className="animate-count-up">
-              <p className="font-syne font-black text-[#eeeae4] mb-1.5"
-                style={{ fontSize: "clamp(1.8rem, 4vw, 2.8rem)", letterSpacing: "-0.035em" }}>
-                {s.isDecimal ? `${s.target}${s.suffix}` : <CountUp target={s.target} suffix={s.suffix} />}
-              </p>
-              <p className="text-sm" style={{ color: "rgba(238,234,228,0.35)" }}>{s.label}</p>
+    <section style={{
+      borderTop: "1px solid rgba(255,255,255,0.06)",
+      borderBottom: "1px solid rgba(255,255,255,0.06)",
+      padding: "56px 0",
+    }}>
+      <div className="wrap">
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(2, 1fr)",
+          gap: "2rem",
+          textAlign: "center",
+        }} className="stats-grid">
+          {[
+            { end: 1200, suffix: "+", label: "agentes activos" },
+            { end: 4, suffix: ".8M", label: "conversaciones" },
+            { end: 94, suffix: "%", label: "satisfacción" },
+            { end: 10, suffix: " min", label: "de setup" },
+          ].map((s) => (
+            <div key={s.label}>
+              <div style={{
+                fontFamily: "var(--font-syne)",
+                fontWeight: 800,
+                fontSize: "clamp(2rem, 5vw, 3rem)",
+                letterSpacing: "-0.04em",
+                color: "var(--c-text)",
+                lineHeight: 1,
+                marginBottom: 8,
+              }}>
+                <CountUp end={s.end} suffix={s.suffix} />
+              </div>
+              <p style={{ fontSize: "0.85rem", color: "var(--c-muted)" }}>{s.label}</p>
             </div>
           ))}
         </div>
       </div>
+      <style>{`
+        @media (min-width: 640px) {
+          .stats-grid { grid-template-columns: repeat(4, 1fr) !important; }
+        }
+      `}</style>
     </section>
   );
 }
 
+/* ── Page ────────────────────────────────────────────────── */
 export default function HomePage() {
   return (
-    <main className="min-h-screen w-full bg-[#060608]">
+    <main style={{ minHeight: "100vh", width: "100%", backgroundColor: "var(--c-bg)" }}>
       <Navbar />
       <LandingOrchestrator />
       <Stats />

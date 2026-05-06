@@ -5,9 +5,11 @@ import { useEffect, useRef } from "react";
 export default function ScrollReveal({
   children,
   className = "",
+  style,
 }: {
   children: React.ReactNode;
   className?: string;
+  style?: React.CSSProperties;
 }) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -15,12 +17,7 @@ export default function ScrollReveal({
     const el = ref.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry?.isIntersecting) {
-          el.classList.add("visible");
-          obs.unobserve(el);
-        }
-      },
+      ([entry]) => { if (entry?.isIntersecting) { el.classList.add("visible"); obs.unobserve(el); } },
       { threshold: 0.1 }
     );
     obs.observe(el);
@@ -28,7 +25,7 @@ export default function ScrollReveal({
   }, []);
 
   return (
-    <div ref={ref} className={`reveal ${className}`}>
+    <div ref={ref} className={`reveal ${className}`} style={style}>
       {children}
     </div>
   );

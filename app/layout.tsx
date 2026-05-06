@@ -32,6 +32,8 @@ export const metadata: Metadata = {
   },
 };
 
+import CustomCursor from "@/components/landing/CustomCursor";
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
@@ -39,7 +41,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${syne.variable} ${dmSans.variable}`}
       suppressHydrationWarning
     >
-      <body className="bg-[#080808] text-[#F0EDE8] font-dm-sans antialiased">
+      <body style={{ backgroundColor: "#07070a", color: "#eceae5", fontFamily: "var(--font-dm, 'DM Sans', sans-serif)" }}>
+        <CustomCursor />
         {children}
       </body>
     </html>

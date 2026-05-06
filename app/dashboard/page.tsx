@@ -1,5 +1,6 @@
 import { getDbUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import SiteCard from "@/components/dashboard/SiteCard";
 
@@ -7,10 +8,10 @@ export const metadata = { title: "Dashboard" };
 
 export default async function DashboardPage() {
   const dbUser = await getDbUser();
-  if (!dbUser) return null;
+  if (!dbUser) redirect("/sign-in");
 
-  const [user, sites] = await Promise.all([
-    prisma.user.findUnique({ where: { id: dbUser.id }, select: { plan: true, name: true } }),
+  const [userData, sites] = await Promise.all([
+    prisma.user.findUnique({ where: { id: dbUser.id }, select: { plan: true } }),
     prisma.site.findMany({
       where: { userId: dbUser.id },
       orderBy: { createdAt: "desc" },
@@ -37,8 +38,7 @@ export default async function DashboardPage() {
         <div>
           <h1 className="font-syne font-bold text-2xl text-[#eceae5]">Mis agentes</h1>
           <p className="text-sm mt-1" style={{ color: "rgba(236,234,229,0.4)" }}>
-            Plan actual:{" "}
-            <span className="text-accent capitalize font-medium">{user?.plan ?? "starter"}</span>
+            Plan: <span className="text-accent capitalize font-medium">{userData?.plan ?? "starter"}</span>
           </p>
         </div>
         <Link href="/dashboard/new" className="btn-primary" style={{ textDecoration: "none" }}>
@@ -48,12 +48,15 @@ export default async function DashboardPage() {
 
       {sitesWithMetrics.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-24 text-center">
-          <div className="w-20 h-20 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center text-3xl mb-6">🤖</div>
+          <div className="w-20 h-20 rounded-2xl flex items-center justify-center text-3xl mb-6"
+            style={{ background: "rgba(99,102,241,0.1)", border: "1px solid rgba(99,102,241,0.2)" }}>
+            🤖
+          </div>
           <h2 className="font-syne font-bold text-xl text-[#eceae5] mb-2">Creá tu primer agente</h2>
           <p className="text-sm mb-8 max-w-sm" style={{ color: "rgba(236,234,229,0.4)" }}>
             En 3 pasos tenés un agente AI con la identidad de tu marca instalado en tu web.
           </p>
-          <Link href="/dashboard/new" className="btn-primary" style={{ textDecoration: "none" }}>
+          <Link href="/dashboard/new" className="btn-primary" style={{ textDecoration: "none", display: "inline-flex" }}>
             Crear mi primer agente
           </Link>
         </div>

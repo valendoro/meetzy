@@ -45,7 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ClerkProvider
           appearance={{
             variables: {
-              colorPrimary: "#6366f1",
+              colorPrimary: "#7c6cff",
               colorBackground: "#060608",
               colorInputBackground: "#12121a",
               colorInputText: "#eeeae4",

@@ -3,10 +3,10 @@
 const DAY_LABELS = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 
 function intensity(n: number, max: number): string {
-  if (max <= 0) return "rgba(99,102,241,0)";
+  if (max <= 0) return "rgba(124,108,255,0)";
   const t = n / max;
   const a = 0.12 + t * 0.88;
-  return `rgba(99,102,241,${a.toFixed(2)})`;
+  return `rgba(124,108,255,${a.toFixed(2)})`;
 }
 
 export default function HeatmapChart({ matrix }: { matrix: number[][] }) {

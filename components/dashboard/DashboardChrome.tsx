@@ -235,7 +235,7 @@ export default function DashboardChrome({
         </aside>
 
         <div className="flex min-w-0 flex-1 flex-col pb-16 md:pb-0">
-          <main className="dash-page-enter mx-auto w-full max-w-[1320px] flex-1 px-4 py-8 sm:px-6 lg:px-10">{children}</main>
+          <main className="dash-page-enter mx-auto w-full max-w-[1280px] flex-1 px-4 py-9 sm:px-6 sm:py-10 lg:px-10 lg:py-11">{children}</main>
         </div>
 
         <nav className="product-bottom-nav md:hidden" aria-label="Móvil">

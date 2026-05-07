@@ -128,7 +128,7 @@ export default function ConversationsClient({
                 <X className="size-5" />
               </Dialog.Close>
             </div>
-            <div className="min-h-0 flex-1 overflow-y-auto p-5 [scrollbar-color:rgba(99,102,241,0.35)_transparent]">
+            <div className="min-h-0 flex-1 overflow-y-auto p-5 [scrollbar-color:rgba(124,108,255,0.35)_transparent]">
               {transcriptLoading ? (
                 <div className="space-y-3">
                   <div className="dash-skeleton h-20" />
@@ -198,7 +198,7 @@ export default function ConversationsClient({
       ) : (
         <div className="space-y-4">
           {items.map((c) => (
-            <div key={c.id} className="dash-card overflow-hidden p-0 [&::before]:opacity-60">
+            <div key={c.id} className="dash-card dash-card--quiet overflow-hidden p-0 [&::before]:opacity-60">
               <button
                 type="button"
                 onClick={() => void openTranscript(c)}

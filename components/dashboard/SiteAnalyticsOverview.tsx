@@ -33,7 +33,7 @@ interface AnalyticsPayload {
   topQuestions: { question: string; count: number }[];
 }
 
-const ACCENT = "#6366f1";
+const ACCENT = "#7c6cff";
 
 const INTENT_COLORS: Record<string, string> = {
   exploring: "#94A3B8",
@@ -53,7 +53,7 @@ const RANGE_OPTIONS: { value: Range; label: string }[] = [
 const tooltipProps = {
   contentStyle: {
     background: "rgba(18, 18, 26, 0.98)",
-    border: "1px solid rgba(99, 102, 241, 0.22)",
+    border: "1px solid rgba(124, 108, 255, 0.22)",
     borderRadius: 12,
     boxShadow: "0 16px 48px rgba(0, 0, 0, 0.45)",
   },

@@ -90,7 +90,7 @@ export default function VisitorDetailClient({
   if (loading) {
     return (
       <div className="space-y-6">
-        <SiteSubnav siteId={sitePublicId} siteName={siteName} active="visitors" pageTitle="Perfil" />
+        <SiteSubnav siteId={sitePublicId} siteName={siteName} active="visitors" pageTitle="Perfil" description="Historial de sesiones, secciones e intención detectada para este visitante." />
         <div className="dash-skeleton h-44" />
         <div className="grid gap-4 lg:grid-cols-2">
           <div className="dash-skeleton h-72" />
@@ -103,7 +103,7 @@ export default function VisitorDetailClient({
   if (!data) {
     return (
       <div className="space-y-6">
-        <SiteSubnav siteId={sitePublicId} siteName={siteName} active="visitors" pageTitle="Perfil" />
+        <SiteSubnav siteId={sitePublicId} siteName={siteName} active="visitors" pageTitle="Perfil" description="Historial de sesiones, secciones e intención detectada para este visitante." />
         <div className="dash-empty">
           <p className="text-3xl mb-4" aria-hidden>
             ◌
@@ -131,7 +131,7 @@ export default function VisitorDetailClient({
 
   const tooltipStyle = {
     background: "rgba(18, 18, 26, 0.98)",
-    border: "1px solid rgba(99, 102, 241, 0.22)",
+    border: "1px solid rgba(124, 108, 255, 0.22)",
     borderRadius: "12px",
     fontSize: "12px",
     color: "var(--c-text)",
@@ -140,10 +140,10 @@ export default function VisitorDetailClient({
 
   return (
     <div className="space-y-8">
-      <SiteSubnav siteId={sitePublicId} siteName={siteName} active="visitors" pageTitle="Perfil" />
+      <SiteSubnav siteId={sitePublicId} siteName={siteName} active="visitors" pageTitle="Perfil" description="Historial de sesiones, secciones e intención detectada para este visitante." />
 
       <div className="dash-hero flex flex-col gap-5 sm:flex-row sm:items-start">
-        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[var(--radius-lg)] bg-[color:var(--c-accent-dim)] font-syne text-2xl font-bold text-[color:var(--c-text)] ring-1 ring-[rgba(99,102,241,0.25)]">
+        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[var(--radius-lg)] bg-[color:var(--c-accent-dim)] font-syne text-2xl font-bold text-[color:var(--c-text)] ring-1 ring-[rgba(124,108,255,0.28)]">
           {bigInitials(profile.name, profile.email, profile.visitorId)}
         </div>
         <div className="min-w-0 flex-1 space-y-2">
@@ -208,7 +208,7 @@ export default function VisitorDetailClient({
                       contentStyle={tooltipStyle}
                       formatter={(value) => [`${String(value ?? 0)}s`, "Tiempo"]}
                     />
-                    <Bar dataKey="sec" fill="#6366f1" radius={[0, 6, 6, 0]} />
+                    <Bar dataKey="sec" fill="#7c6cff" radius={[0, 6, 6, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>

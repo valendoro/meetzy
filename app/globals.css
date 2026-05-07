@@ -39,34 +39,34 @@
 
 /* ══════════════════════════════════════
    PRODUCT APP SHELL (dashboard, auth, pricing)
-   Linear / Vercel–grade tokens — landing uses :root above
+   Alineado a la landing: violeta cálido + coral suave
 ══════════════════════════════════════ */
 .meetzy-product-ui {
   --product-gold: #c9b896;
   --product-champagne: #e8e2d9;
   --product-gold-subtle: rgba(201, 184, 150, 0.12);
 
-  --bg-base: #060608;
-  --bg-surface: #0c0c10;
-  --bg-elevated: #12121a;
-  --bg-overlay: #16161f;
+  --bg-base: #0b0a0f;
+  --bg-surface: #121119;
+  --bg-elevated: #16151f;
+  --bg-overlay: #1e1d2a;
 
-  --border-subtle: rgba(255, 255, 255, 0.04);
+  --border-subtle: rgba(255, 255, 255, 0.065);
   --border-default: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.14);
-  --border-focus: rgba(99, 102, 241, 0.55);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --border-focus: rgba(124, 108, 255, 0.55);
 
-  --text-primary: #eeeae4;
-  --text-secondary: rgba(238, 234, 228, 0.65);
-  --text-tertiary: rgba(238, 234, 228, 0.35);
-  --text-disabled: rgba(238, 234, 228, 0.22);
+  --text-primary: #f3f1ec;
+  --text-secondary: rgba(243, 241, 236, 0.52);
+  --text-tertiary: rgba(243, 241, 236, 0.32);
+  --text-disabled: rgba(243, 241, 236, 0.2);
 
-  --accent: #6366f1;
-  --accent-hover: #5558e8;
-  --accent-subtle: rgba(99, 102, 241, 0.1);
-  --accent-muted: rgba(99, 102, 241, 0.2);
-  --accent-border: rgba(99, 102, 241, 0.35);
-  --accent-glow: rgba(99, 102, 241, 0.2);
+  --accent: #7c6cff;
+  --accent-hover: #6f5cf5;
+  --accent-subtle: rgba(124, 108, 255, 0.14);
+  --accent-muted: rgba(124, 108, 255, 0.22);
+  --accent-border: rgba(124, 108, 255, 0.28);
+  --accent-glow: rgba(124, 108, 255, 0.35);
 
   /* Intent */
   --intent-exploring: #64748b;
@@ -76,26 +76,26 @@
   --intent-hot: #ef4444;
 
   /* Semánticos */
-  --success: #22c55e;
-  --success-subtle: rgba(34, 197, 94, 0.1);
+  --success: #3dd68f;
+  --success-subtle: rgba(61, 214, 143, 0.12);
   --warning: #f59e0b;
   --warning-subtle: rgba(245, 158, 11, 0.1);
   --error: #ef4444;
   --error-subtle: rgba(239, 68, 68, 0.1);
 
-  /* Radius */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
+  /* Radius (un poco más redondeado, como la landing) */
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 22px;
   --radius-full: 9999px;
 
   /* Sombras */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.45);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.38);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.48);
-  --shadow-accent: 0 0 20px rgba(99, 102, 241, 0.12);
-  --shadow-premium-card: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --shadow-sm: 0 4px 24px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 16px 48px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 24px 80px rgba(0, 0, 0, 0.4);
+  --shadow-accent: 0 0 28px rgba(124, 108, 255, 0.14);
+  --shadow-premium-card: 0 4px 24px rgba(0, 0, 0, 0.28);
 
   /* Puente: código legacy que usa --c-* */
   --c-bg: var(--bg-base);
@@ -132,9 +132,11 @@
   pointer-events: none;
   z-index: 0;
   background:
-    radial-gradient(ellipse 52% 40% at 48% -12%, rgba(99, 102, 241, 0.07), transparent 55%),
+    radial-gradient(ellipse 85% 55% at 50% -18%, rgba(124, 108, 255, 0.1), transparent 58%),
+    radial-gradient(ellipse 55% 40% at 100% 35%, rgba(232, 160, 144, 0.06), transparent 52%),
+    linear-gradient(to bottom, transparent 0%, rgba(11, 10, 15, 0.45) 100%),
     url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-  background-size: auto, 180px 180px;
+  background-size: auto, auto, auto, 180px 180px;
 }
 
 .meetzy-product-ui > * {
@@ -224,7 +226,7 @@
 /* ── Dashboard redesign utilities (Linear / Vercel grade) ───────────────── */
 .dash-focus-ring:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+  box-shadow: 0 0 0 3px rgba(124, 108, 255, 0.22);
 }
 
 @keyframes dash-page-in {
@@ -379,7 +381,8 @@
   background: var(--accent-subtle);
   color: var(--accent);
   font-weight: 500;
-  border-color: rgba(99, 102, 241, 0.2);
+  border-color: rgba(124, 108, 255, 0.22);
+  box-shadow: 0 0 20px rgba(124, 108, 255, 0.08);
 }
 
 .product-sidebar-link[data-active="true"]::before {
@@ -388,15 +391,17 @@
 }
 
 .product-sidebar-shell {
-  background: var(--bg-surface);
-  border-right: 1px solid var(--border-subtle);
-  box-shadow: none;
+  background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(15, 14, 20, 0.98) 100%);
+  border-right: 1px solid rgba(124, 108, 255, 0.12);
+  box-shadow: 6px 0 40px rgba(0, 0, 0, 0.35);
 }
 
 .product-user-panel {
-  border-radius: 12px;
-  border: none;
-  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(124, 108, 255, 0.12);
+  background: rgba(11, 10, 15, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .product-plan-pill {
@@ -410,19 +415,21 @@
 }
 
 .product-site-card {
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  background: var(--bg-surface);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  background: linear-gradient(165deg, var(--bg-surface) 0%, var(--bg-elevated) 100%);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.22);
   transition:
-    border-color 200ms ease,
-    box-shadow 200ms ease,
-    transform 200ms ease;
+    border-color 0.22s ease,
+    box-shadow 0.22s ease,
+    transform 0.22s ease;
 }
 
 .product-site-card:hover {
-  border-color: rgba(255, 255, 255, 0.12);
-  box-shadow: var(--shadow-md);
+  border-color: var(--border-strong);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(124, 108, 255, 0.08);
   transform: translateY(-2px);
 }
 
@@ -504,10 +511,11 @@
   z-index: 50;
   height: 56px;
   padding-bottom: env(safe-area-inset-bottom);
-  background: rgba(14, 14, 18, 0.94);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-top: 1px solid var(--border-subtle);
+  background: rgba(11, 10, 15, 0.92);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-top: 1px solid rgba(124, 108, 255, 0.12);
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.35);
 }
 
 @media (min-width: 768px) {
@@ -768,16 +776,26 @@ button.onboard-primary-cta:focus-visible {
     0 0 0 4px rgba(124, 108, 255, 0.5);
 }
 
-/* ── Analytics / métricas (superficie plana, acento lateral) ─────────── */
+/* ── Analytics / métricas (misma familia que landing .card) ─────────── */
 .dash-card {
   position: relative;
   border-radius: var(--radius-xl);
-  border: 1px solid var(--c-border2);
-  background: var(--c-surface2);
+  border: 1px solid var(--c-border);
+  background: linear-gradient(165deg, var(--c-surface) 0%, var(--c-surface2) 100%);
   box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.28),
-    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+    0 10px 48px rgba(0, 0, 0, 0.32),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
   overflow: hidden;
+  transition:
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+.dash-card:hover {
+  border-color: var(--c-border2);
+  box-shadow:
+    0 16px 52px rgba(0, 0, 0, 0.38),
+    0 0 0 1px rgba(124, 108, 255, 0.08) inset,
+    0 0 32px rgba(124, 108, 255, 0.06);
 }
 .dash-card::before {
   content: "";
@@ -794,12 +812,18 @@ button.onboard-primary-cta:focus-visible {
 .dash-card--flush::before {
   display: none;
 }
+.dash-card--quiet:hover {
+  border-color: var(--c-border);
+  box-shadow:
+    0 10px 48px rgba(0, 0, 0, 0.32),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+}
 
 .dash-chart-head {
   font-family: var(--font-syne);
   font-weight: 700;
-  font-size: 0.9375rem;
-  letter-spacing: -0.02em;
+  font-size: 1rem;
+  letter-spacing: -0.025em;
   color: var(--c-text);
   margin-bottom: 1.1rem;
   padding-left: 0.15rem;
@@ -921,17 +945,22 @@ button.onboard-primary-cta:focus-visible {
   text-align: center;
   padding: 3rem 1.5rem;
   border-radius: var(--radius-xl);
-  border: 1px dashed var(--c-border2);
-  background: radial-gradient(ellipse 70% 80% at 50% 0%, var(--c-accent-dim), transparent 55%);
+  border: 1px dashed rgba(124, 108, 255, 0.22);
+  background: radial-gradient(ellipse 72% 85% at 50% 0%, rgba(124, 108, 255, 0.1), transparent 58%);
 }
 
 .dash-hero {
   border-radius: var(--radius-xl);
-  padding: 1.35rem 1.5rem;
-  border: 1px solid var(--c-border2);
-  background: var(--c-surface2);
+  padding: 1.5rem 1.65rem;
+  border: 1px solid rgba(124, 108, 255, 0.22);
+  background: linear-gradient(
+    135deg,
+    rgba(124, 108, 255, 0.1) 0%,
+    rgba(22, 21, 31, 0.95) 50%,
+    rgba(232, 160, 144, 0.07) 100%
+  );
   box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.26),
+    0 24px 80px rgba(0, 0, 0, 0.4),
     0 0 0 1px rgba(255, 255, 255, 0.03) inset;
 }
 
@@ -940,20 +969,24 @@ button.onboard-primary-cta:focus-visible {
   flex-wrap: wrap;
   gap: 0.65rem;
   align-items: center;
-  padding: 1rem 1.1rem;
+  padding: 1rem 1.15rem;
   border-radius: var(--radius-xl);
-  border: 1px solid var(--c-border2);
-  background: var(--c-surface2);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(124, 108, 255, 0.14);
+  background: rgba(22, 21, 31, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.28);
   margin-bottom: 1.5rem;
 }
 
 .dash-table-wrap {
   border-radius: var(--radius-xl);
-  border: 1px solid var(--c-border2);
+  border: 1px solid var(--c-border);
   overflow: hidden;
-  background: var(--c-surface2);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.26);
+  background: linear-gradient(180deg, rgba(30, 29, 42, 0.35) 0%, var(--c-surface) 52%);
+  box-shadow:
+    0 14px 48px rgba(0, 0, 0, 0.34),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
 }
 .dash-table-wrap table thead tr {
   background: var(--c-surface3);

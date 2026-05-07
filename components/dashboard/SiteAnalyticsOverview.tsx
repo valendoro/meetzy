@@ -228,21 +228,39 @@ export default function SiteAnalyticsOverview({
               value={data.sessions.total}
               change={data.sessions.change}
               sub="Conversaciones iniciadas en este periodo."
-              icon="📈"
+              icon={
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                  <polyline points="16 7 22 7 22 13" />
+                </svg>
+              }
             />
             <MetricCard
               title="Páginas / sesión"
               value={data.avgPagesVisited.value}
               change={data.avgPagesVisited.change}
               sub="Profundidad promedio de navegación."
-              icon="📑"
+              icon={
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="16" y1="13" x2="8" y2="13" />
+                  <line x1="16" y1="17" x2="8" y2="17" />
+                  <line x1="10" y1="9" x2="8" y2="9" />
+                </svg>
+              }
             />
             <MetricCard
               title="Duración media"
               value={formatDurationSec(data.avgDuration.value)}
               change={data.avgDuration.change}
               sub="Tiempo promedio por conversación."
-              icon="⏱"
+              icon={
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="9" />
+                  <polyline points="12 7 12 12 15.5 14" />
+                </svg>
+              }
             />
             <MetricCard
               title="Hot leads"
@@ -250,7 +268,11 @@ export default function SiteAnalyticsOverview({
               change={data.hotLeads.change}
               sub="Visitantes con intención alta de compra."
               highlight="hot"
-              icon="🔥"
+              icon={
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z" />
+                </svg>
+              }
             />
           </div>
 
@@ -295,9 +317,13 @@ export default function SiteAnalyticsOverview({
               <h3 className="dash-chart-head">Distribución de intención</h3>
               {donutData.length === 0 ? (
                 <div className="dash-empty py-14">
-                  <p className="text-3xl mb-3" aria-hidden>
-                    🎯
-                  </p>
+                  <div className="flex justify-center mb-4">
+                    <div style={{ width: 44, height: 44, borderRadius: 12, background: "var(--c-accent-dim)", border: "1px solid rgba(124,108,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--c-accent)" }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
+                      </svg>
+                    </div>
+                  </div>
                   <p className="text-sm text-[color:var(--c-muted)] max-w-xs mx-auto">
                     Cuando el widget reciba tráfico, vas a ver cómo se distribuyen tus visitantes por nivel de
                     intención.
@@ -409,9 +435,13 @@ export default function SiteAnalyticsOverview({
         </>
       ) : !loading ? (
         <div className="dash-empty">
-          <p className="text-2xl mb-3" aria-hidden>
-            ⚠️
-          </p>
+          <div className="flex justify-center mb-4">
+            <div style={{ width: 44, height: 44, borderRadius: 12, background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", display: "flex", alignItems: "center", justifyContent: "center", color: "#f87171" }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16" strokeWidth="2.5"/>
+              </svg>
+            </div>
+          </div>
           <p className="text-[color:var(--c-text)] font-medium mb-1">No se pudieron cargar las métricas</p>
           <p className="text-sm text-[color:var(--c-muted)]">Revisá tu conexión o volvé a intentar en unos segundos.</p>
           <button

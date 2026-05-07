@@ -207,23 +207,82 @@ export default function Pricing() {
       </section>
 
       {/* ── Footer ── */}
-      <footer style={{ borderTop: "1px solid var(--c-border)", padding: "40px 0" }}>
-        <div className="wrap" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 24 }}>
-          <div>
-            <Link href="/" className="logo-mark" style={{ fontSize: "1.1rem" }}>
-              MEET<span>ZY</span>
-            </Link>
-            <p style={{ fontSize: "0.78rem", color: "var(--c-muted2)", marginTop: 4 }}>La web que entiende.</p>
+      <footer style={{ borderTop: "1px solid var(--c-border)", paddingTop: 56, paddingBottom: 40 }}>
+        <div className="wrap">
+          {/* Main row */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 40, marginBottom: 48 }} className="footer-grid">
+            {/* Brand col */}
+            <div>
+              <Link href="/" className="logo-mark" style={{ fontSize: "1.15rem" }}>
+                MEET<span>ZY</span>
+              </Link>
+              <p style={{ fontSize: "0.85rem", color: "var(--c-muted)", marginTop: 10, lineHeight: 1.6, maxWidth: 240 }}>
+                La primera web que realmente entiende a cada visitante.
+              </p>
+              {/* Social icons */}
+              <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
+                {[
+                  { label: "Twitter / X", href: "#", path: "M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.631zm-1.161 17.52h1.833L7.084 4.126H5.117z" },
+                  { label: "LinkedIn", href: "#", path: "M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z M4 6a2 2 0 100-4 2 2 0 000 4z" },
+                  { label: "Instagram", href: "#", path: "M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zM17.5 6.5h.01M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5z" },
+                ].map(({ label, href, path }) => (
+                  <a key={label} href={href} aria-label={label} style={{
+                    width: 36, height: 36, borderRadius: 10,
+                    background: "var(--c-surface2)", border: "1px solid var(--c-border)",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    color: "var(--c-muted)", textDecoration: "none",
+                    transition: "color 0.15s ease, border-color 0.15s ease, background 0.15s ease",
+                  }}
+                    onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.color = "var(--c-text)"; el.style.borderColor = "var(--c-border2)"; el.style.background = "var(--c-surface3)"; }}
+                    onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.color = "var(--c-muted)"; el.style.borderColor = "var(--c-border)"; el.style.background = "var(--c-surface2)"; }}
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                      <path d={path} />
+                    </svg>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Links cols */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 32 }} className="footer-links-grid">
+              <div>
+                <p style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--c-muted2)", marginBottom: 16 }}>Producto</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  {[["Cómo funciona", "#como-funciona"], ["Para quién", "#para-quien"], ["Precios", "#precios"], ["Demo", "#demo"]].map(([l, h]) => (
+                    <a key={l} href={h} style={{ fontSize: "0.875rem", color: "var(--c-muted)", textDecoration: "none", transition: "color 0.15s" }}
+                      onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "var(--c-text)"}
+                      onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "var(--c-muted)"}>{l}</a>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <p style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--c-muted2)", marginBottom: 16 }}>Legal</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  {[["Privacidad", "#"], ["Términos", "#"], ["Cookies", "#"], ["Contacto", "/auth/signin"]].map(([l, h]) => (
+                    <a key={l} href={h} style={{ fontSize: "0.875rem", color: "var(--c-muted)", textDecoration: "none", transition: "color 0.15s" }}
+                      onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "var(--c-text)"}
+                      onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "var(--c-muted)"}>{l}</a>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
-          <div style={{ display: "flex", gap: 28 }}>
-            {[["Precios", "#precios"], ["Privacidad", "#"], ["Términos", "#"], ["Contacto", "/auth/signin"]].map(([l, h]) => (
-              <a key={l} href={h} style={{ fontSize: "0.82rem", color: "var(--c-muted2)", textDecoration: "none", transition: "color 0.15s" }}
-                onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "var(--c-text)"}
-                onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "var(--c-muted2)"}>{l}</a>
-            ))}
+
+          {/* Bottom bar */}
+          <div style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.07), transparent)", marginBottom: 24 }} />
+          <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+            <p style={{ fontSize: "0.78rem", color: "var(--c-muted2)" }}>© 2026 Meetzy. Todos los derechos reservados.</p>
+            <p style={{ fontSize: "0.78rem", color: "var(--c-muted2)" }}>Hecho en Argentina 🇦🇷</p>
           </div>
-          <p style={{ fontSize: "0.78rem", color: "var(--c-muted2)" }}>© 2026 Meetzy.</p>
         </div>
+
+        <style>{`
+          @media (min-width: 768px) {
+            .footer-grid { grid-template-columns: 260px 1fr !important; }
+            .footer-links-grid { grid-template-columns: repeat(3, 1fr) !important; }
+          }
+        `}</style>
       </footer>
     </>
   );

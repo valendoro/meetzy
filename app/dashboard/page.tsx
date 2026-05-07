@@ -71,7 +71,7 @@ export default async function DashboardPage() {
           </h1>
           <p className="mt-2 text-sm text-[var(--text-secondary)]">
             Plan actual:{" "}
-            <span className="font-syne font-bold capitalize tracking-wide text-[var(--product-champagne)]">
+            <span className="font-syne font-semibold capitalize tracking-wide text-[var(--accent)]">
               {userData?.plan ?? "starter"}
             </span>
           </p>
@@ -84,14 +84,21 @@ export default async function DashboardPage() {
       {sitesWithMetrics.length === 0 ? (
         <div className="product-empty-state relative flex flex-col items-center justify-center overflow-hidden px-6 py-24 text-center">
           <div
-            className="relative z-[1] mb-6 flex size-20 items-center justify-center rounded-[var(--radius-lg)] text-3xl"
+            className="relative z-[1] mb-6 flex size-20 items-center justify-center rounded-[var(--radius-lg)]"
             style={{
               background: "var(--accent-subtle)",
               border: "1px solid var(--accent-border)",
               boxShadow: "var(--shadow-accent)",
+              color: "var(--accent)",
             }}
           >
-            🤖
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="11" width="18" height="10" rx="2" />
+              <circle cx="12" cy="5" r="2" />
+              <path d="M12 7v4" />
+              <line x1="8" y1="16" x2="8" y2="16" strokeWidth="2.5" strokeLinecap="round" />
+              <line x1="16" y1="16" x2="16" y2="16" strokeWidth="2.5" strokeLinecap="round" />
+            </svg>
           </div>
           <h2 className="relative z-[1] font-syne text-xl font-bold tracking-tight text-[var(--text-primary)]">
             Creá tu primer agente

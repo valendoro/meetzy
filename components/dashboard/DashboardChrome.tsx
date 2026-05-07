@@ -93,12 +93,15 @@ export default function DashboardChrome({
           style={{ paddingTop: 12 }}
         >
           <div className="flex flex-1 flex-col px-3 pb-4">
-            <Link
-              href={DASH}
-              className="mb-6 flex items-center gap-2 px-2 font-syne text-lg font-extrabold tracking-[-0.03em] text-[var(--text-primary)] transition-colors hover:text-[var(--product-champagne)]"
-            >
-              MEET<span className="bg-gradient-to-r from-[var(--accent)] to-[var(--product-gold)] bg-clip-text text-transparent">ZY</span>
-            </Link>
+            <div style={{ paddingLeft: 8, paddingRight: 8, marginBottom: 24 }}>
+              <Link
+                href={DASH}
+                className="inline-flex items-center gap-0 whitespace-nowrap font-syne text-lg font-extrabold tracking-[-0.03em] text-[var(--text-primary)] hover:opacity-90"
+              >
+                MEET<span className="text-[var(--accent)]">ZY</span>
+              </Link>
+              <div style={{ height: 1, marginTop: 16, background: "var(--border-subtle)" }} />
+            </div>
 
             <nav className="flex flex-1 flex-col gap-1 text-[13px]" aria-label="Principal">
               <Link
@@ -154,7 +157,7 @@ export default function DashboardChrome({
                 <span className="product-plan-pill px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-[0.12em]">
                   {plan}
                 </span>
-                <Link href="/pricing" className="text-[11px] font-medium text-[var(--product-gold)]/90 hover:text-[var(--product-champagne)] hover:underline">
+                <Link href="/pricing" className="text-[11px] font-medium text-[var(--accent)] hover:underline">
                   Billing
                 </Link>
               </div>

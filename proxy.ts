@@ -18,9 +18,16 @@ const isPublic = createRouteMatcher([
 ]);
 
 export default clerkMiddleware(async (auth, req) => {
+  if (process.env.TESTING_MODE === "true") {
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set("x-pathname", req.nextUrl.pathname);
+    return NextResponse.next({ request: { headers: requestHeaders } });
+  }
+
   if (!isPublic(req)) {
     await auth.protect();
   }
+
   const requestHeaders = new Headers(req.headers);
   requestHeaders.set("x-pathname", req.nextUrl.pathname);
   return NextResponse.next({ request: { headers: requestHeaders } });

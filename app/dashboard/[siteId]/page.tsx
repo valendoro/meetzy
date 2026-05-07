@@ -31,6 +31,7 @@ export default async function SiteDetailPage({ params }: { params: Promise<{ sit
           siteUrl={site.url}
           appUrl={appUrl}
           initialIsActive={site.isActive}
+          brandColor={site.brandColor}
         />
       </div>
 

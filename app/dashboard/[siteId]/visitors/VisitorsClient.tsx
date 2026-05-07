@@ -112,7 +112,7 @@ export default function VisitorsClient({
           <option value="google">Google</option>
           <option value="instagram">Instagram</option>
           <option value="direct">Direct</option>
-          <option value="referral">Referral</option>
+          <option value="facebook">Facebook</option>
         </select>
         <Button type="button" size="sm" variant="secondary" onClick={() => void load()} className="shrink-0">
           Aplicar
@@ -185,7 +185,7 @@ export default function VisitorsClient({
                   <td className="px-4 py-3.5 text-right">
                     <Link
                       href={`/dashboard/${sitePublicId}/visitors/${v.visitorId}`}
-                      className="font-medium text-[color:var(--c-accent)] hover:underline"
+                      className="inline-flex min-h-10 items-center font-medium text-[color:var(--c-accent)] hover:underline"
                     >
                       Ver perfil
                     </Link>

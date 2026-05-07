@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { getDbUser } from "@/lib/auth";
+import { TESTING_MODE } from "@/lib/testing-mode";
 import { prisma } from "@/lib/prisma";
 import DashboardChrome from "@/components/dashboard/DashboardChrome";
 import { CreateAgentModalProvider } from "@/components/providers/create-agent-modal";
@@ -14,7 +15,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const pathname = headersList.get("x-pathname") ?? "";
   const isGuestOnboarding = pathname === "/dashboard/new" || pathname.startsWith("/dashboard/new/");
 
-  if (!isGuestOnboarding) {
+  if (!isGuestOnboarding && !TESTING_MODE) {
     const { userId } = await auth();
     if (!userId) redirect("/sign-in");
   }

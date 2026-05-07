@@ -15,6 +15,7 @@ import {
   Cell,
 } from "recharts";
 import MetricCard from "./MetricCard";
+import RecentConversationsPreview from "./RecentConversationsPreview";
 import { formatDurationSec } from "@/lib/format-duration";
 import { countryFlagEmoji } from "@/lib/country-flag";
 import { useProductToast } from "@/components/providers/product-toast";
@@ -67,12 +68,14 @@ export default function SiteAnalyticsOverview({
   siteUrl,
   appUrl,
   initialIsActive,
+  brandColor,
 }: {
   siteId: string;
   siteName: string;
   siteUrl: string;
   appUrl: string;
   initialIsActive: boolean;
+  brandColor: string;
 }) {
   const { push } = useProductToast();
   const [range, setRange] = useState<Range>("7d");
@@ -284,7 +287,7 @@ export default function SiteAnalyticsOverview({
                   <AreaChart data={data.sessions.byDay} margin={{ top: 6, right: 6, left: -18, bottom: 4 }}>
                     <defs>
                       <linearGradient id="meetzySessionsArea" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor={ACCENT} stopOpacity={0.22} />
+                        <stop offset="0%" stopColor={ACCENT} stopOpacity={0.15} />
                         <stop offset="100%" stopColor={ACCENT} stopOpacity={0} />
                       </linearGradient>
                     </defs>
@@ -364,6 +367,17 @@ export default function SiteAnalyticsOverview({
 
           <div className="grid gap-6 lg:grid-cols-2">
             <div className="dash-card p-5 pl-6">
+              <h3 className="dash-chart-head">Conversaciones recientes</h3>
+              <RecentConversationsPreview siteId={siteId} brandColor={brandColor} />
+              <Link
+                href={`/dashboard/${siteId}/conversations`}
+                className="mt-4 inline-flex min-h-10 items-center text-xs font-semibold text-[color:var(--c-accent)] hover:underline"
+              >
+                Ver todas →
+              </Link>
+            </div>
+
+            <div className="dash-card p-5 pl-6">
               <h3 className="dash-chart-head">Top preguntas</h3>
               {!data.topQuestions?.length ? (
                 <div className="rounded-[var(--radius-lg)] border border-dashed border-[color:var(--c-border)] bg-[color:var(--c-surface2)]/40 px-4 py-8 text-center">
@@ -393,10 +407,11 @@ export default function SiteAnalyticsOverview({
                 </ul>
               )}
             </div>
+          </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="dash-card p-5 pl-6">
-                <h3 className="dash-chart-head">Países</h3>
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div className="dash-card p-5 pl-6">
+              <h3 className="dash-chart-head">Países</h3>
                 {!data.countries.length ? (
                   <p className="text-sm text-[color:var(--c-muted2)] leading-relaxed">
                     Aparecen cuando tengamos país por IP o por el widget.
@@ -438,7 +453,6 @@ export default function SiteAnalyticsOverview({
                 )}
               </div>
             </div>
-          </div>
         </>
       ) : !loading ? (
         <div className="dash-empty">

@@ -14,18 +14,29 @@ export default function JourneyMap({
   const path = journey;
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-2 text-sm text-[color:var(--c-text)]">
+    <div className="relative overflow-x-auto pb-1 [-webkit-overflow-scrolling:touch]">
+      <ol className="flex min-w-min items-stretch gap-0">
         {path.map((j, i) => (
-          <span key={`${j.section}-${i}`} className="flex items-center gap-2">
-            {i > 0 ? <span className="text-[color:var(--c-muted2)]">→</span> : null}
-            <span className="rounded-lg border border-[color:var(--c-border)] bg-[color:var(--c-surface2)] px-2.5 py-1 capitalize">
-              {j.section}
-              <span className="ml-1 text-xs text-[color:var(--c-muted)]">({Math.round(j.seconds)}s)</span>
-            </span>
-          </span>
+          <li key={`${j.section}-${i}`} className="flex min-w-0 items-center">
+            {i > 0 ? (
+              <span
+                className="mx-1 shrink-0 text-lg font-light text-[color:var(--c-muted2)]"
+                aria-hidden
+              >
+                →
+              </span>
+            ) : null}
+            <div className="flex min-w-0 flex-col items-center gap-1">
+              <span className="rounded-[var(--radius-md)] border border-[color:var(--c-border2)] bg-[color:var(--c-surface2)] px-3 py-2 text-center text-sm font-medium capitalize text-[color:var(--c-text)] shadow-[0_2px_12px_rgba(0,0,0,0.2)]">
+                {j.section}
+              </span>
+              <span className="text-[10px] font-medium tabular-nums text-[color:var(--c-muted)]">
+                {Math.round(j.seconds)}s
+              </span>
+            </div>
+          </li>
         ))}
-      </div>
+      </ol>
     </div>
   );
 }

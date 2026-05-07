@@ -418,7 +418,7 @@ export default function CreateAgentWizard({ variant, userPlan, isGuest, onReques
     window.setTimeout(() => {
       setMacroStep((s) => (s < 4 ? ((s + 1) as MacroStep) : s));
       setRightTransition("in");
-    }, 180);
+    }, 250);
   }
 
   function goBack() {
@@ -426,7 +426,7 @@ export default function CreateAgentWizard({ variant, userPlan, isGuest, onReques
     window.setTimeout(() => {
       setMacroStep((s) => (s > 1 ? ((s - 1) as MacroStep) : s));
       setRightTransition("in");
-    }, 180);
+    }, 250);
   }
 
   const canProceedForward = useMemo(() => {
@@ -501,8 +501,8 @@ export default function CreateAgentWizard({ variant, userPlan, isGuest, onReques
 
   const rightPanelClass =
     rightTransition === "in"
-      ? "opacity-100 translate-x-0 transition-all duration-[250ms]"
-      : "opacity-0 -translate-x-5 transition-all duration-200";
+      ? "opacity-100 translate-x-0 transition-all duration-[250ms] ease-out"
+      : "opacity-0 translate-x-3 transition-all duration-[200ms] ease-in";
 
   const shell = (
     <>

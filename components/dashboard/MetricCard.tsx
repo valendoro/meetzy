@@ -57,7 +57,7 @@ export default function MetricCard({
           </p>
           <div className="mt-2 flex flex-wrap items-baseline gap-2">
             <div
-              className={`font-syne text-3xl font-bold tracking-tight text-[color:var(--c-text)] ${
+              className={`font-syne text-[2rem] font-extrabold leading-none tracking-tight text-[color:var(--c-text)] sm:text-[32px] ${
                 highlight === "hot" ? "text-red-300 drop-shadow-[0_0_12px_rgba(248,113,113,0.35)]" : ""
               }`}
             >

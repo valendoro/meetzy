@@ -1,53 +1,16 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { generateAvatar, isCloudinaryConfigured, isFalConfigured } from "@/lib/fal";
 import { getDbUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { buildAvatarPrompt, type AvatarArchetype } from "@/lib/avatar-prompt-builder";
-import { generateFluxAvatarImage, isFalConfigured } from "@/lib/fal";
-import type { Prisma } from "@prisma/client";
+import { siteToAvatarConfig } from "@/lib/avatar-config";
 
 const BodySchema = z.object({
   sitePublicId: z.string().min(1),
   variation: z.number().int().min(1).max(20).optional(),
 });
 
-export const maxDuration = 60;
-
-function archetypeFromSite(site: {
-  avatarConfig: Prisma.JsonValue;
-  avatarType: string | null;
-  avatarSubtype: string | null;
-}): AvatarArchetype {
-  const cfg = site.avatarConfig as { onboardingArchetype?: string } | null;
-  if (cfg?.onboardingArchetype && typeof cfg.onboardingArchetype === "string") {
-    return cfg.onboardingArchetype as AvatarArchetype;
-  }
-  if (site.avatarType === "human") {
-    return site.avatarSubtype === "female" ? "human_female" : "human_male";
-  }
-  if (site.avatarType === "animal") {
-    const s = site.avatarSubtype ?? "dog";
-    const map: Record<string, AvatarArchetype> = {
-      perro: "dog",
-      gato: "cat",
-      conejo: "rabbit",
-      zorro: "fox",
-      panda: "panda",
-      oso: "bear",
-    };
-    return map[s] ?? "dog";
-  }
-  const s = site.avatarSubtype ?? "cup";
-  const omap: Record<string, AvatarArchetype> = {
-    naranja: "orange",
-    manzana: "apple",
-    taza: "cup",
-    estrella: "star",
-    cohete: "rocket",
-    diamante: "diamond",
-  };
-  return omap[s] ?? "cup";
-}
+export const maxDuration = 120;
 
 export async function POST(req: Request) {
   try {
@@ -72,33 +35,36 @@ export async function POST(req: Request) {
       return NextResponse.json({ avatarUrl: null, fallback: true }, { status: 200 });
     }
 
-    const arch = archetypeFromSite(site);
-    const prompt = buildAvatarPrompt({
-      archetype: arch,
-      brandColor: site.brandColor,
-      brandColor2: site.brandColor2,
-      businessName: site.name,
-      agentName: site.agentName,
-      logoUrl: site.logoUrl,
-      variation: parsed.data.variation ?? site.avatarGenerations + 1,
-    });
-
-    const { url } = await generateFluxAvatarImage(prompt, parsed.data.variation ?? site.avatarGenerations + 1);
-    if (!url) {
-      return NextResponse.json({ avatarUrl: null, fallback: true }, { status: 200 });
+    if (!isCloudinaryConfigured()) {
+      return NextResponse.json(
+        { error: "Cloudinary no está configurado; no se puede guardar la imagen en CDN." },
+        { status: 503 },
+      );
     }
+
+    const config = siteToAvatarConfig(site);
+    const seed = parsed.data.variation ?? site.avatarGenerations + 1;
+    const avatar = await generateAvatar(config, { requireCloudinary: true, variationSeed: seed });
 
     const next = await prisma.site.update({
       where: { id: site.id },
       data: {
-        avatarImageUrl: url,
+        avatarImageUrl: avatar.imageUrl,
+        avatarStyle: config.style,
+        avatarPrompt: avatar.prompt,
         avatarGenerations: { increment: 1 },
+        avatarLastGenerated: new Date(),
       },
     });
 
-    return NextResponse.json({ avatarUrl: url, avatarGenerations: next.avatarGenerations });
+    return NextResponse.json({
+      avatarUrl: avatar.imageUrl,
+      avatarGenerations: next.avatarGenerations,
+      prompt: avatar.prompt,
+    });
   } catch (e) {
     console.error("POST /api/avatar/regenerate", e);
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+    const msg = e instanceof Error ? e.message : "Internal error";
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }

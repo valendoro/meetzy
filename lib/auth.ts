@@ -2,10 +2,25 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { isDynamicServerError } from "next/dist/client/components/hooks-server-context";
 import { prisma } from "@/lib/prisma";
 import type { User } from "@prisma/client";
+import { TESTING_MODE, TEST_USER_EMAIL, TEST_USER_ID } from "@/lib/testing-mode";
+
+export { getMockSession } from "@/lib/testing-mode";
 
 export { auth };
 
 export async function getDbUser(): Promise<User | null> {
+  if (TESTING_MODE) {
+    try {
+      const byId = await prisma.user.findUnique({ where: { id: TEST_USER_ID } });
+      if (byId) return byId;
+      return prisma.user.findUnique({ where: { email: TEST_USER_EMAIL } });
+    } catch (e) {
+      if (isDynamicServerError(e)) throw e;
+      console.error("[auth] getDbUser testing mode failed:", e);
+      return null;
+    }
+  }
+
   if (!process.env.CLERK_SECRET_KEY) {
     console.warn("[auth] CLERK_SECRET_KEY not set");
     return null;

@@ -10,6 +10,7 @@ import SiteSubnav from "@/components/dashboard/SiteSubnav";
 import IntentBadge from "@/components/dashboard/IntentBadge";
 import ConversationTranscript from "@/components/dashboard/ConversationTranscript";
 import { formatDurationSec } from "@/lib/format-duration";
+import { Button } from "@/components/ui/button";
 
 interface Row {
   id: string;
@@ -194,6 +195,9 @@ export default function ConversationsClient({
           <p className="mx-auto max-w-md text-sm leading-relaxed text-[color:var(--c-muted)]">
             Cuando el widget esté en tu sitio, cada chat va a aparecer acá con intención, duración y preview.
           </p>
+          <Button asChild className="mt-8 min-h-11 px-5">
+            <Link href={`/dashboard/${sitePublicId}/install`}>Instalar widget</Link>
+          </Button>
         </div>
       ) : (
         <div className="space-y-4">
@@ -207,7 +211,7 @@ export default function ConversationsClient({
                 <div className="min-w-0 flex-1">
                   <p className="text-xs text-[color:var(--c-muted)]">
                     {format(new Date(c.createdAt), "d MMM yyyy, HH:mm", { locale: es })} ·{" "}
-                    {formatDurationSec(c.sessionDuration)} · {c.messageCount} msgs
+                    {formatDurationSec(c.sessionDuration)} · {c.messageCount} mensajes
                     {c.country ? ` · ${c.country}` : ""}
                     {c.device ? ` · ${c.device}` : ""}
                   </p>

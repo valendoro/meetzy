@@ -45,3 +45,43 @@ export const scrapeRatelimit = new Proxy({} as Ratelimit, {
     return (getScrapeRatelimit() as unknown as Record<string | symbol, unknown>)[prop];
   },
 });
+
+let _avatarGenUserRL: Ratelimit | null = null;
+function getAvatarGenUserRatelimit(): typeof noopRatelimit | Ratelimit {
+  if (!hasRedis) return noopRatelimit;
+  if (!_avatarGenUserRL) {
+    _avatarGenUserRL = new Ratelimit({
+      redis: getRedis(),
+      limiter: Ratelimit.slidingWindow(10, "1 d"),
+      analytics: true,
+      prefix: "meetzy:avatar:generate:user",
+    });
+  }
+  return _avatarGenUserRL;
+}
+
+export const avatarGenerateUserRatelimit = new Proxy({} as Ratelimit, {
+  get(_t, prop) {
+    return (getAvatarGenUserRatelimit() as unknown as Record<string | symbol, unknown>)[prop];
+  },
+});
+
+let _avatarPreviewIpRL: Ratelimit | null = null;
+function getAvatarPreviewIpRatelimit(): typeof noopRatelimit | Ratelimit {
+  if (!hasRedis) return noopRatelimit;
+  if (!_avatarPreviewIpRL) {
+    _avatarPreviewIpRL = new Ratelimit({
+      redis: getRedis(),
+      limiter: Ratelimit.slidingWindow(5, "1 h"),
+      analytics: true,
+      prefix: "meetzy:avatar:preview:ip",
+    });
+  }
+  return _avatarPreviewIpRL;
+}
+
+export const avatarPreviewIpRatelimit = new Proxy({} as Ratelimit, {
+  get(_t, prop) {
+    return (getAvatarPreviewIpRatelimit() as unknown as Record<string | symbol, unknown>)[prop];
+  },
+});

@@ -20,12 +20,16 @@ export default function IntentBadge({ label, className = "" }: { label: string; 
   const text = LABELS_ES[k];
 
   const cls: Record<IntentLabel, string> = {
-    exploring: "border-transparent bg-[rgba(100,116,139,0.2)] text-[var(--intent-exploring)]",
-    interested: "border-transparent bg-[rgba(59,130,246,0.15)] text-[var(--intent-interested)]",
-    evaluating: "border-transparent bg-[rgba(234,179,8,0.15)] text-[var(--intent-evaluating)]",
-    ready_to_buy: "border-transparent bg-[rgba(249,115,22,0.15)] text-[var(--intent-ready)]",
+    exploring:
+      "border-[rgba(100,116,139,0.3)] bg-[rgba(100,116,139,0.15)] text-[var(--intent-exploring)]",
+    interested:
+      "border-[rgba(59,130,246,0.3)] bg-[rgba(59,130,246,0.15)] text-[var(--intent-interested)]",
+    evaluating:
+      "border-[rgba(234,179,8,0.3)] bg-[rgba(234,179,8,0.15)] text-[var(--intent-evaluating)]",
+    ready_to_buy:
+      "border-[rgba(249,115,22,0.3)] bg-[rgba(249,115,22,0.15)] text-[var(--intent-ready)]",
     hot_lead:
-      "intent-badge-hot border-[rgba(239,68,68,0.35)] bg-[rgba(239,68,68,0.12)] text-[var(--intent-hot)]",
+      "intent-badge-hot border-[rgba(239,68,68,0.3)] bg-[rgba(239,68,68,0.15)] text-[var(--intent-hot)]",
   };
 
   return (

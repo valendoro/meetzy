@@ -13,9 +13,9 @@ export default function ConversationTranscript({
       {messages.map((m, i) => (
         <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
           <div
-            className={`max-w-[min(92%,480px)] rounded-2xl px-4 py-2.5 text-sm ${
+            className={`max-w-[min(92%,480px)] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
               m.role === "user"
-                ? "rounded-tr-sm bg-[color:var(--c-accent)] text-white"
+                ? "rounded-tr-sm bg-[var(--accent)] text-white ring-1 ring-[rgba(255,255,255,0.12)]"
                 : "rounded-tl-sm border border-[color:var(--c-border)] bg-[color:var(--c-surface2)] text-[color:var(--c-text)]"
             }`}
           >

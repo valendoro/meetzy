@@ -11,6 +11,7 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate deploy",
     "db:seed": "npx tsx prisma/seed.ts",
+    "db:seed:test": "npx tsx prisma/seed-test.ts",
     "postinstall": "prisma generate || true"
   },
   "engines": {
@@ -41,6 +42,7 @@
     "@upstash/redis": "^1.38.0",
     "cheerio": "^1.2.0",
     "class-variance-authority": "^0.7.1",
+    "cloudinary": "^2.10.0",
     "clsx": "^2.1.1",
     "color": "^5.0.3",
     "date-fns": "^4.1.0",

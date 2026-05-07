@@ -3,9 +3,10 @@
  */
 
 export const AVATAR_STYLE_BASE = `3D cartoon character, Duolingo style, expressive and friendly,
-high quality render, soft studio lighting, pure white background,
-colorful and vibrant, big expressive eyes, smooth glossy textures,
-professional mascot design quality, centered composition, full body visible, cute`.replace(/\n/g, " ");
+high quality render, soft neutral lighting,
+transparent background, isolated on transparent, no background, no backdrop,
+cut-out character subject only, alpha channel, PNG-friendly, professional mascot,
+centered composition, big expressive eyes, smooth glossy textures`.replace(/\n/g, " ");
 
 export type AvatarArchetype =
   | "human_male"

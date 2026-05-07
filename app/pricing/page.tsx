@@ -13,16 +13,16 @@ export default function PricingPage() {
             MEET<span className="text-[var(--accent)]">ZY</span>
           </Link>
           <div className="flex items-center gap-4 text-sm">
-            <Link href="/" className="text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]">
+            <Link href="/" className="inline-flex min-h-10 items-center text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]">
               Inicio
             </Link>
-            <Link href="/dashboard" className="text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]">
+            <Link href="/dashboard" className="inline-flex min-h-10 items-center text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]">
               Dashboard
             </Link>
             <SignInButton mode="modal">
               <button
                 type="button"
-                className="rounded-[var(--radius-md)] bg-[var(--accent)] px-4 py-2 font-medium text-white shadow-[0_0_16px_rgba(99,102,241,0.25)] transition hover:bg-[var(--accent-hover)]"
+                className="inline-flex min-h-10 items-center rounded-[var(--radius-md)] bg-[var(--accent)] px-4 py-2 font-medium text-white shadow-[0_0_16px_rgba(99,102,241,0.25)] transition hover:bg-[var(--accent-hover)]"
               >
                 Entrar
               </button>

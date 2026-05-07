@@ -19,6 +19,7 @@ const UpdateSiteSchema = z.object({
   avatarSubtype: z.string().nullable().optional(),
   logoUrl: z.string().nullable().optional(),
   avatarImageUrl: z.string().nullable().optional(),
+  avatarStyle: z.enum(["realistic", "cartoon", "object"]).nullable().optional(),
   avatarConfig: z.record(z.string(), z.unknown()).nullable().optional(),
   voiceEnabled: z.boolean().optional(),
   voiceId: z.string().nullable().optional(),

@@ -25,7 +25,7 @@ export default function VerifyPage() {
             href="https://mail.google.com"
             target="_blank"
             rel="noreferrer"
-            className="rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-elevated)] px-4 py-2.5 text-sm font-medium text-[var(--text-primary)] transition-colors duration-150 hover:bg-[var(--bg-overlay)]"
+            className="inline-flex min-h-11 items-center justify-center rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-elevated)] px-4 py-2.5 text-sm font-medium text-[var(--text-primary)] transition-colors duration-150 hover:bg-[var(--bg-overlay)]"
           >
             Abrir Gmail
           </a>
@@ -33,7 +33,7 @@ export default function VerifyPage() {
             href="https://outlook.live.com"
             target="_blank"
             rel="noreferrer"
-            className="rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-elevated)] px-4 py-2.5 text-sm font-medium text-[var(--text-primary)] transition-colors duration-150 hover:bg-[var(--bg-overlay)]"
+            className="inline-flex min-h-11 items-center justify-center rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-elevated)] px-4 py-2.5 text-sm font-medium text-[var(--text-primary)] transition-colors duration-150 hover:bg-[var(--bg-overlay)]"
           >
             Abrir Outlook
           </a>

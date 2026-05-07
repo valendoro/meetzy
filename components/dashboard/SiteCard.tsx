@@ -112,7 +112,7 @@ export default function SiteCard({ site }: { site: SiteCardModel }) {
         <div className="relative flex size-[52px] shrink-0 items-center justify-center overflow-hidden rounded-xl font-syne text-sm font-bold text-white shadow-md">
           {site.avatarImageUrl ? (
             /* eslint-disable-next-line @next/next/no-img-element */
-            <img src={site.avatarImageUrl} alt="" className="size-full object-cover" />
+            <img src={site.avatarImageUrl} alt="" className="mz-avatar-img size-full object-contain" />
           ) : (
             <span style={{ backgroundColor: site.brandColor }} className="flex size-full items-center justify-center">
               {initials}

@@ -311,6 +311,7 @@ class MeetzyWidget {
     const imgUrl = this.config.avatarImageUrl?.trim();
     if (imgUrl) {
       const img = document.createElement("img");
+      img.className = "mz-avatar-img";
       img.src = imgUrl;
       img.alt = "";
       bub.appendChild(img);
@@ -423,6 +424,7 @@ class MeetzyWidget {
     const chatImgUrl = this.config.avatarImageUrl?.trim();
     if (chatImgUrl) {
       const img = document.createElement("img");
+      img.className = "mz-avatar-img";
       img.src = chatImgUrl;
       img.alt = "";
       av.appendChild(img);
@@ -708,6 +710,11 @@ class MeetzyWidget {
     return `
       @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap');
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      .mz-avatar-img {
+        background: transparent;
+        mix-blend-mode: normal;
+        object-fit: contain;
+      }
       @keyframes mz-breathe { 0%,100%{transform:scale(1) translateY(0)} 50%{transform:scale(1.015) translateY(-2px)} }
       @keyframes mz-talk { 0%,100%{transform:rotate(0deg)} 25%{transform:rotate(1.2deg) scale(1.02)} 75%{transform:rotate(-1.2deg) scale(1.02)} }
 
@@ -728,7 +735,7 @@ class MeetzyWidget {
       }
       .bub-init { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px; color: #fff; }
       .bub > img {
-        width: 52px; height: 52px; border-radius: 50%; object-fit: cover; display: block;
+        width: 52px; height: 52px; border-radius: 50%; display: block;
         animation: mz-breathe 3s ease-in-out infinite;
       }
       .bub > img.mz-talk { animation: mz-talk 0.35s ease-in-out infinite; }
@@ -812,8 +819,8 @@ class MeetzyWidget {
         display: flex; align-items: center; gap: 10px;
         padding: 13px 15px; border-bottom: 1px solid rgba(255,255,255,0.06); flex-shrink: 0;
       }
-      .chat-av { width: 38px; height: 38px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
-      .chat-av > img { width: 100%; height: 100%; object-fit: cover; display: block; animation: mz-breathe 3s ease-in-out infinite; }
+      .chat-av { width: 38px; height: 38px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: ${bc}; }
+      .chat-av > img { width: 100%; height: 100%; display: block; animation: mz-breathe 3s ease-in-out infinite; }
       .chat-av-init {
         width: 38px; height: 38px; border-radius: 50%; background: ${bc}; color: #fff;
         font-family: 'Syne', sans-serif; font-weight: 800; font-size: 13px;
@@ -910,10 +917,11 @@ function initFullPage(siteId: string, config: SiteConfig) {
   const bc = config.brandColor;
   shadow.innerHTML = `<style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    .mz-avatar-img{background:transparent;mix-blend-mode:normal;object-fit:contain;}
     .w{display:flex;width:100vw;height:100vh;background:#08080a;font-family:'DM Sans',sans-serif;color:#F0EDE8;}
     .s{width:240px;flex-shrink:0;background:#0d0d0d;border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;align-items:center;padding:40px 20px;gap:14px;}
     .av{width:90px;height:90px;border-radius:50%;background:${bc};color:#fff;font-family:'Syne',sans-serif;font-weight:800;font-size:32px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-    .av img{width:100%;height:100%;object-fit:cover;display:block;}
+    .av img{width:100%;height:100%;display:block;}
     .an{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;}
     .ar{font-size:11px;color:rgba(240,237,232,0.4);display:flex;align-items:center;gap:4px;}
     .ad{width:7px;height:7px;border-radius:50%;background:#22c55e;}
@@ -941,6 +949,7 @@ function initFullPage(siteId: string, config: SiteConfig) {
   const fpImg = config.avatarImageUrl?.trim();
   if (fpImg) {
     const im = document.createElement("img");
+    im.className = "mz-avatar-img";
     im.src = fpImg; im.alt = "";
     avWrap.appendChild(im);
   } else {

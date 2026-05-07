@@ -45,7 +45,10 @@ model Site {
   brandColor2          String           @default("#8b5cf6")
   logoUrl              String?
   avatarImageUrl       String?          // Imagen 3D generada (fal.ai) u optimizada
+  avatarStyle          String?          // "realistic" | "cartoon" | "object"
+  avatarPrompt         String?          // Prompt FLUX generado por GPT (regenerar)
   avatarGenerations    Int              @default(0)
+  avatarLastGenerated  DateTime?
   onboardingCompleted  Boolean          @default(false)
   onboardingStep       Int              @default(1)
   avatarConfig         Json?

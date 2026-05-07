@@ -437,15 +437,17 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
       <ConfettiCanvas active={celebrate} />
       {phase === 1 ? <OnboardingProgress step={step} primary={primary} brandColor={brandColor} /> : null}
 
-      <header className="absolute left-0 right-0 top-0 z-[50] flex flex-col gap-3 px-4 pb-2 pt-4 sm:px-8">
+      <header className="absolute left-0 right-0 top-0 z-[50] flex flex-col gap-2.5 px-4 pb-3 pt-4 sm:px-8"
+        style={{ background: "linear-gradient(to bottom, rgba(8,7,14,0.92) 0%, transparent 100%)", backdropFilter: "blur(8px)" }}
+      >
         <div className="flex items-center justify-between gap-3">
-          <Link href="/dashboard" className="ob-link-onb text-sm font-bold">
+          <Link href="/dashboard" className="ob-link-onb text-sm font-semibold">
             ← Volver
           </Link>
           <div className="flex items-center gap-2">
             {phase === 1 ? (
-              <span className="ob-chip hidden rounded-full px-3 py-1 font-mono text-[10px] text-white/50 sm:inline">
-                {progress.current}/{progress.total}
+              <span className="ob-chip rounded-full px-3 py-1 font-syne text-[10px] font-bold uppercase tracking-[0.1em] text-white/60">
+                Paso {progress.current} de {progress.total}
               </span>
             ) : null}
             <span className="ob-chip rounded-full px-3.5 py-1 text-[10px] uppercase tracking-[0.12em] text-white/55">
@@ -454,15 +456,15 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
           </div>
         </div>
         {phase === 1 ? (
-          <div className="ob-bar-wrap w-full max-w-md lg:max-w-none">
+          <div className="ob-bar-wrap w-full">
             <div className="ob-bar-fill" style={{ width: `${progress.pct}%` }} />
           </div>
         ) : null}
       </header>
 
       {phase === 1 && (
-        <div className="mx-auto flex min-h-screen max-w-[1500px] flex-col gap-8 px-4 pb-24 pt-[5.5rem] lg:flex-row lg:gap-0 lg:pb-12 lg:pl-[120px] lg:pr-6 lg:pt-24">
-          <div className="order-1 lg:order-2 lg:sticky lg:top-0 lg:h-screen lg:w-[56%] lg:max-w-none">
+        <div className="mx-auto flex min-h-screen max-w-[1400px] flex-col gap-8 px-4 pb-24 pt-[5.5rem] lg:flex-row lg:gap-6 lg:pb-12 lg:px-8 lg:pt-24">
+          <div className="order-1 lg:order-2 lg:sticky lg:top-0 lg:h-screen lg:flex-1">
             <OnboardingStage brandColor={brandColor}>
               <AvatarSvgPreview
                 stage={previewStage}
@@ -478,7 +480,7 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
             </OnboardingStage>
           </div>
 
-          <div className="order-2 flex w-full flex-1 flex-col gap-5 px-1 lg:order-1 lg:w-[44%] lg:max-w-xl lg:px-2">
+          <div className="order-2 flex w-full flex-1 flex-col gap-5 lg:order-1 lg:max-w-[560px]">
             <div
               className="ob-glass flex items-start gap-4 rounded-2xl p-5"
               style={{
@@ -842,7 +844,7 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
                   value={miloHelp}
                   onChange={(e) => setMiloHelp(e.target.value)}
                   placeholder="Preguntá lo que sea…"
-                  className="border-white/10 bg-white/[0.06] text-xs text-white"
+                  className="border-white/[0.15] bg-white/[0.09] text-xs text-white placeholder:text-white/30"
                   onKeyDown={(e) => e.key === "Enter" && void submitMiloHelp()}
                 />
                 <Button type="button" size="sm" variant="secondary" disabled={miloBusy} onClick={() => void submitMiloHelp()}>

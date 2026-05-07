@@ -14,12 +14,21 @@ export default async function DashboardPage() {
   const since7d = new Date(Date.now() - 7 * 86400000);
   const since30d = new Date(Date.now() - 30 * 86400000);
 
-  const [userData, sites] = await Promise.all([
+  const [userData, sites, convWeekTotal, convAllTotal] = await Promise.all([
     prisma.user.findUnique({ where: { id: dbUser.id }, select: { plan: true } }),
     prisma.site.findMany({
       where: { userId: dbUser.id },
       orderBy: { createdAt: "desc" },
       include: { _count: { select: { conversations: true } } },
+    }),
+    prisma.conversation.count({
+      where: {
+        site: { userId: dbUser.id },
+        createdAt: { gte: since7d },
+      },
+    }),
+    prisma.conversation.count({
+      where: { site: { userId: dbUser.id } },
     }),
   ]);
 
@@ -64,29 +73,55 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <header className="mb-12 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="font-syne text-[28px] font-extrabold tracking-[-0.045em] text-[var(--text-primary)] md:text-[32px]">
-            Mis agentes
-          </h1>
-          <p className="mt-2 max-w-xl text-[15px] font-light leading-relaxed text-[var(--text-secondary)]">
-            Administrá tus agentes y monitoreá su actividad.
-          </p>
-          <p className="mt-4 text-xs text-[var(--text-tertiary)]">
-            Plan{" "}
-            <span className="font-medium text-[var(--accent)]">{userData?.plan ?? "starter"}</span>
-          </p>
+      <section className="dash-home-hero">
+        <p className="dash-home-kicker">Panel activo</p>
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="min-w-0 max-w-2xl">
+            <h1 className="dash-home-title font-syne text-[clamp(1.85rem,4vw,2.65rem)] font-extrabold leading-[1.05] tracking-[-0.045em] text-[var(--text-primary)]">
+              Tus agentes, <span className="dash-home-gradient">un solo lugar</span>
+            </h1>
+            <p className="mt-4 text-[15px] leading-relaxed text-[var(--text-secondary)] sm:text-[16px]">
+              Creá, activá y seguí conversaciones con el contexto de tu marca. Todo lo operativo vive acá.
+            </p>
+          </div>
+          <CreateAgentLauncher
+            size="lg"
+            className="relative z-[2] h-12 shrink-0 rounded-[var(--radius-md)] bg-[var(--accent)] px-6 text-[15px] font-semibold text-white shadow-[0_0_28px_rgba(124,108,255,0.45)] transition hover:-translate-y-0.5 hover:bg-[var(--accent-hover)] hover:shadow-[0_0_36px_rgba(124,108,255,0.55)] active:translate-y-0"
+          >
+            ＋ Nuevo agente
+          </CreateAgentLauncher>
         </div>
-        <CreateAgentLauncher
-          size="lg"
-          className="h-11 rounded-[10px] bg-[var(--accent)] px-5 font-medium text-white shadow-[0_0_20px_rgba(99,102,241,0.25)] hover:bg-[var(--accent-hover)]"
-        >
-          ＋ Crear nuevo agente
-        </CreateAgentLauncher>
-      </header>
+
+        {sitesWithMetrics.length > 0 ? (
+          <div className="dash-home-stat-grid" aria-label="Resumen de cuenta">
+            <div className="dash-home-stat">
+              <p className="dash-home-stat-value tabular-nums">{sitesWithMetrics.length}</p>
+              <p className="dash-home-stat-label">Agentes</p>
+            </div>
+            <div className="dash-home-stat">
+              <p className="dash-home-stat-value tabular-nums">{convWeekTotal}</p>
+              <p className="dash-home-stat-label">Chats · 7 días</p>
+            </div>
+            <div className="dash-home-stat">
+              <p className="dash-home-stat-value tabular-nums">{convAllTotal}</p>
+              <p className="dash-home-stat-label">Chats · total</p>
+            </div>
+            <div className="dash-home-stat">
+              <p className="dash-home-stat-value font-syne text-base font-extrabold uppercase tracking-[0.12em] text-[var(--accent)] sm:text-lg">
+                {userData?.plan ?? "starter"}
+              </p>
+              <p className="dash-home-stat-label">Plan actual</p>
+            </div>
+          </div>
+        ) : (
+          <p className="mt-4 text-xs font-medium uppercase tracking-wider text-[var(--text-tertiary)]">
+            Plan <span className="text-[var(--accent)]">{userData?.plan ?? "starter"}</span>
+          </p>
+        )}
+      </section>
 
       {sitesWithMetrics.length === 0 ? (
-        <div className="mx-auto flex max-w-[440px] flex-col items-center px-4 py-12 text-center">
+        <div className="mx-auto flex max-w-[480px] flex-col items-center rounded-[var(--radius-xl)] border border-dashed border-[var(--border-default)] bg-[var(--bg-surface)] px-4 py-14 text-center shadow-[0_16px_48px_rgba(0,0,0,0.25)] ring-1 ring-[color-mix(in_srgb,var(--accent)_22%,transparent)]">
           <div className="relative mb-10 flex h-36 w-full max-w-[320px] items-center justify-center">
             <div className="dash-empty-float-1 absolute left-0 top-2 w-[30%] max-w-[100px] rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-3 shadow-[0_12px_40px_rgba(0,0,0,0.35)]">
               <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-[#3b82f6]/20 text-2xl">👔</div>
@@ -122,10 +157,15 @@ export default async function DashboardPage() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          {sitesWithMetrics.map((site) => (
-            <SiteCard key={site.id} site={site} />
-          ))}
+        <div>
+          <h2 className="mb-5 font-syne text-[1.125rem] font-bold tracking-[-0.02em] text-[var(--text-primary)]">
+            Agentes activos
+          </h2>
+          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+            {sitesWithMetrics.map((site) => (
+              <SiteCard key={site.id} site={site} />
+            ))}
+          </div>
         </div>
       )}
     </div>

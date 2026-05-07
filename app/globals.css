@@ -213,6 +213,105 @@
   mix-blend-mode: normal;
 }
 
+/* ── Dashboard home: hero inconfundible (v2 surface) ───────────────── */
+.dash-home-hero {
+  position: relative;
+  border-radius: var(--radius-xl);
+  padding: clamp(1.5rem, 3vw, 2.25rem) clamp(1.25rem, 3vw, 2.5rem);
+  margin-bottom: 2.25rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, var(--border-subtle));
+  background:
+    radial-gradient(ellipse 100% 120% at 0% 0%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 55%),
+    radial-gradient(ellipse 80% 80% at 100% 20%, rgba(232, 160, 144, 0.09), transparent 50%),
+    linear-gradient(165deg, var(--bg-surface) 0%, var(--bg-elevated) 100%);
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.38),
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+}
+
+.dash-home-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(120deg, transparent 40%, color-mix(in srgb, var(--accent) 6%, transparent) 85%, transparent);
+  opacity: 0.9;
+}
+
+.dash-home-hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.dash-home-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.dash-home-kicker::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--success) 55%, transparent);
+  animation: dash-pulse-dot 2s ease-in-out infinite;
+}
+
+.dash-home-title .dash-home-gradient {
+  background: linear-gradient(105deg, var(--text-primary) 0%, var(--text-primary) 35%, var(--accent) 75%, #c4b5fd 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dash-home-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 900px) {
+  .dash-home-stat-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.dash-home-stat {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-default);
+  background: color-mix(in srgb, var(--bg-overlay) 88%, transparent);
+  backdrop-filter: blur(10px);
+  padding: 0.85rem 1rem;
+}
+
+.dash-home-stat-value {
+  font-family: var(--font-syne, "Syne", sans-serif);
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.dash-home-stat-label {
+  margin-top: 0.35rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-tertiary);
+}
+
 .product-skeleton {
   background: linear-gradient(
     90deg,

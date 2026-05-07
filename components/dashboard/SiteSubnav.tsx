@@ -44,8 +44,8 @@ export default function SiteSubnav({
     description === null ? null : description ?? (current ? defaultDescriptions[current.key] : null);
 
   return (
-    <header className="mb-10 space-y-4">
-      <nav className="product-breadcrumb mb-0 font-[family-name:var(--font-dm-sans)] text-[13px] font-light" aria-label="Migas de pan">
+    <header className="mb-10 print:mb-6">
+      <nav className="product-breadcrumb mb-5 font-[family-name:var(--font-dm-sans)] text-[13px] font-light" aria-label="Migas de pan">
         <Link href="/dashboard" className="dash-focus-ring rounded-md">
           Mis agentes
         </Link>
@@ -55,13 +55,26 @@ export default function SiteSubnav({
         </Link>
       </nav>
       {heading ? (
-        <div className="flex flex-col gap-1 border-b border-[var(--border-subtle)] pb-6">
-          <h1 className="font-syne text-[1.65rem] font-extrabold leading-tight tracking-[-0.04em] text-[var(--text-primary)] sm:text-[1.85rem]">
-            {heading}
-          </h1>
-          {blurb ? (
-            <p className="max-w-2xl text-[14px] font-light leading-relaxed text-[var(--text-secondary)]">{blurb}</p>
-          ) : null}
+        <div className="space-y-5">
+          <div className="flex flex-col gap-1 border-b border-[var(--border-subtle)] pb-5 sm:pb-6">
+            <h1 className="font-syne text-[1.75rem] font-extrabold leading-[1.08] tracking-[-0.045em] text-[var(--text-primary)] sm:text-[2rem]">
+              {heading}
+            </h1>
+            {blurb ? (
+              <p className="max-w-2xl text-[15px] font-normal leading-relaxed text-[var(--text-secondary)]">{blurb}</p>
+            ) : null}
+          </div>
+          <div className="product-tabs-rail -mt-1 overflow-x-auto max-sm:-mx-1 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[var(--border-default)]">
+            {TABS.map((tab) => {
+              const href = tab.path ? `${base}${tab.path}` : base;
+              const isActive = active === tab.key;
+              return (
+                <Link key={tab.key} href={href} data-active={isActive ? "true" : "false"} className="shrink-0">
+                  {tab.label}
+                </Link>
+              );
+            })}
+          </div>
         </div>
       ) : null}
     </header>

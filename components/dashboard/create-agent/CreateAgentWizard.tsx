@@ -504,13 +504,25 @@ export default function CreateAgentWizard({ variant, userPlan, isGuest, onReques
       ? "opacity-100 translate-x-0 transition-all duration-[250ms] ease-out"
       : "opacity-0 translate-x-3 transition-all duration-[200ms] ease-in";
 
+  const isModal = variant === "modal";
+  const stepAsideClass = isModal
+    ? "border-[rgba(255,255,255,0.06)] bg-[#060608]"
+    : "border-[var(--border-subtle)] bg-[var(--bg-base)]";
+  const stepHeaderPad = isModal ? "px-5 py-7" : "p-7";
+  const stepNavPad = isModal ? "gap-2 px-5 pb-5" : "gap-3 px-6 pb-6";
+  const stepHelpClass = isModal
+    ? "mt-auto border-t border-[rgba(255,255,255,0.06)] px-5 py-5"
+    : "mt-auto border-t border-[var(--border-subtle)] p-6";
+  const footerBorder = isModal ? "border-[rgba(255,255,255,0.06)]" : "border-[var(--border-subtle)]";
+  const footerBg = isModal ? "bg-[#0C0C10]" : "bg-[var(--bg-surface)]";
+
   const shell = (
     <>
       <ConfettiCanvas active={celebrate} />
       <div
         className={
-          variant === "modal"
-            ? "relative flex max-h-[min(620px,90vh)] w-full max-w-[780px] flex-col overflow-hidden rounded-t-[22px] border border-[var(--border-default)] bg-[var(--bg-surface)] shadow-[0_24px_80px_rgba(0,0,0,0.7)] md:rounded-[24px]"
+          isModal
+            ? "relative flex h-full max-h-[min(620px,90vh)] min-h-0 w-full flex-col overflow-hidden bg-transparent"
             : "relative flex min-h-[100dvh] w-full flex-col overflow-hidden bg-[var(--bg-base)]"
         }
       >
@@ -528,13 +540,15 @@ export default function CreateAgentWizard({ variant, userPlan, isGuest, onReques
           </header>
         ) : null}
 
-        <div className="flex min-h-0 flex-1 flex-col md:flex-row">
-          <aside className="hidden w-[280px] shrink-0 flex-col border-b border-[var(--border-subtle)] bg-[var(--bg-base)] md:flex md:border-b-0 md:border-r md:border-[var(--border-subtle)]">
-            <div className="p-7">
-              <h2 className="font-syne text-lg font-bold tracking-[-0.02em] text-[var(--text-primary)]">Nuevo agente</h2>
-              <p className="mt-1 text-[13px] leading-relaxed text-[var(--text-tertiary)]">Configurá tu agente en minutos</p>
+        <div className="flex min-h-0 flex-1 flex-col md:grid md:h-full md:min-h-0 md:grid-cols-[240px_minmax(0,1fr)]">
+          <aside
+            className={`hidden h-full min-h-0 shrink-0 flex-col border-b md:flex md:border-b-0 md:border-r ${stepAsideClass}`}
+          >
+            <div className={stepHeaderPad}>
+              <h2 className="font-syne text-base font-bold tracking-[-0.02em] text-[var(--text-primary)]">Nuevo agente</h2>
+              <p className="mt-1 text-xs font-light leading-relaxed text-[var(--text-tertiary)]">Configurá tu agente en minutos</p>
             </div>
-            <nav className="flex flex-1 flex-col gap-3 px-6 pb-6" aria-label="Pasos">
+            <nav className={`flex flex-1 flex-col ${stepNavPad}`} aria-label="Pasos">
               {stepMeta.map((s, idx) => {
                 const st = stepStatus(s.n);
                 return (
@@ -575,7 +589,7 @@ export default function CreateAgentWizard({ variant, userPlan, isGuest, onReques
                 );
               })}
             </nav>
-            <div className="mt-auto border-t border-[var(--border-subtle)] p-6">
+            <div className={stepHelpClass}>
               <button type="button" className="flex items-center gap-1.5 text-xs text-[var(--text-tertiary)] transition-colors duration-150 hover:text-[var(--accent)]">
                 <HelpCircle className="size-3.5" />
                 ¿Necesitás ayuda?
@@ -583,9 +597,9 @@ export default function CreateAgentWizard({ variant, userPlan, isGuest, onReques
             </div>
           </aside>
 
-          <div className="relative flex min-w-0 flex-1 flex-col">
-            <div className="flex min-h-0 flex-1 flex-col md:flex-row">
-              <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-7 pb-28 md:px-8 md:py-8 md:pb-24">
+          <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row">
+              <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-7 md:px-8 md:py-8">
                 <div className={rightPanelClass}>
                   <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--text-tertiary)]">
                     Paso {macroStep} de 4
@@ -655,9 +669,21 @@ export default function CreateAgentWizard({ variant, userPlan, isGuest, onReques
               </div>
 
               {macroStep === 3 ? (
-                <div className="hidden w-[38%] shrink-0 border-l border-[var(--border-subtle)] bg-[var(--bg-base)] p-5 md:block">
+                <div
+                  className={`hidden w-[38%] shrink-0 border-l p-5 md:block ${
+                    isModal
+                      ? "border-[rgba(255,255,255,0.06)] bg-[#0C0C10]"
+                      : "border-[var(--border-subtle)] bg-[var(--bg-base)]"
+                  }`}
+                >
                   <p className="text-[10px] font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Preview</p>
-                  <div className="mt-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-base)] p-4">
+                  <div
+                    className={`mt-4 rounded-xl border p-4 ${
+                      isModal
+                        ? "border-[rgba(255,255,255,0.08)] bg-[#060608]"
+                        : "border-[var(--border-default)] bg-[var(--bg-base)]"
+                    }`}
+                  >
                     <AvatarSvgPreview
                       stage={previewStage}
                       archetype={archetype}
@@ -696,7 +722,9 @@ export default function CreateAgentWizard({ variant, userPlan, isGuest, onReques
             </div>
 
             {macroStep < 4 ? (
-              <footer className="absolute bottom-0 left-0 right-0 flex items-center justify-between gap-3 border-t border-[var(--border-subtle)] bg-[var(--bg-surface)]/95 px-4 py-3 backdrop-blur-md md:static md:bg-[var(--bg-surface)] md:px-8">
+              <footer
+                className={`flex shrink-0 items-center justify-between gap-3 border-t ${footerBorder} ${footerBg} px-4 py-3 md:px-8 md:py-4`}
+              >
                 <div>
                   {macroStep > 1 ? (
                     <Button type="button" variant="ghost" className="dash-focus-ring text-[var(--text-secondary)]" onClick={goBack}>
@@ -749,22 +777,34 @@ export default function CreateAgentWizard({ variant, userPlan, isGuest, onReques
   }
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-end justify-center md:items-center" role="dialog" aria-modal="true">
-      <button
-        type="button"
-        className="dash-modal-overlay absolute inset-0 cursor-default border-0"
-        aria-label="Cerrar"
-        onClick={requestClose}
-      />
-      <div className="dash-modal-panel relative z-[2] w-full md:mx-4">{shell}</div>
-      <button
-        type="button"
-        className="absolute right-4 top-4 z-[3] rounded-lg p-2 text-[var(--text-tertiary)] transition-colors duration-150 hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)] md:right-6 md:top-6"
-        onClick={requestClose}
-        aria-label="Cerrar"
+    <div className="fixed inset-0 z-[10000]" role="dialog" aria-modal="true">
+      <div
+        className="absolute inset-0"
+        style={{
+          background: "rgba(6, 6, 8, 0.85)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+        }}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) requestClose();
+        }}
       >
-        <X className="size-5" />
-      </button>
+        <div
+          className="dash-modal-panel pointer-events-auto absolute left-1/2 top-1/2 z-[1] flex h-[min(620px,90vh)] w-[min(780px,92vw)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-[24px] border border-[rgba(255,255,255,0.1)] bg-[#0C0C10] shadow-[0_24px_80px_rgba(0,0,0,0.7)]"
+          onClick={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
+        >
+          <button
+            type="button"
+            className="absolute right-3 top-3 z-[2] rounded-lg p-2 text-[var(--text-tertiary)] transition-colors duration-150 hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)] md:right-4 md:top-4"
+            onClick={requestClose}
+            aria-label="Cerrar"
+          >
+            <X className="size-5" />
+          </button>
+          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">{shell}</div>
+        </div>
+      </div>
     </div>
   );
 }

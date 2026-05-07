@@ -121,8 +121,13 @@ export default function DashboardChrome({
     router.push(`${DASH}/${nextSiteId}`);
   };
 
+  const dashSb = collapsed ? "64px" : "240px";
+
   return (
-    <div className="flex min-h-screen">
+    <div
+      className="meetzy-dash-root flex min-h-screen flex-col md:grid"
+      style={{ ["--dash-sb" as string]: dashSb }}
+    >
         <aside
           className={`dash-sidebar product-sidebar-shell sticky top-0 z-40 hidden h-screen shrink-0 flex-col md:flex ${
             collapsed ? "dash-sidebar--collapsed" : ""
@@ -133,9 +138,10 @@ export default function DashboardChrome({
             <div className={`mb-5 flex items-center gap-1 px-2 ${collapsed ? "flex-col" : "justify-between"}`}>
               <Link
                 href={DASH}
-                className="dash-logo-text inline-flex items-center gap-0 whitespace-nowrap font-syne text-lg font-extrabold tracking-[-0.04em] text-[var(--accent)] transition-opacity duration-150 hover:opacity-90"
+                title={collapsed ? "Meetzy · Inicio" : undefined}
+                className="dash-logo-text inline-flex items-center justify-center gap-0 whitespace-nowrap font-syne text-lg font-extrabold tracking-[-0.04em] text-[var(--accent)] transition-opacity duration-150 hover:opacity-90"
               >
-                MEETZY
+                {collapsed ? "M" : "MEETZY"}
               </Link>
               <button
                 type="button"
@@ -174,15 +180,20 @@ export default function DashboardChrome({
                 href={DASH}
                 data-active={pathname === DASH || pathname === `${DASH}/` ? "true" : "false"}
                 className="product-sidebar-link"
+                title={collapsed ? "Mis agentes" : undefined}
               >
                 <LayoutGrid className="size-4 shrink-0" strokeWidth={1.75} />
                 <span className="dash-sidebar-label">Mis agentes</span>
               </Link>
-              <CreateAgentLauncher variant="ghost" className="product-sidebar-link h-auto w-full justify-start px-[10px] font-normal">
+              <CreateAgentLauncher
+                variant="ghost"
+                className="product-sidebar-link h-auto w-full justify-start px-[10px] font-normal"
+                title={collapsed ? "Crear agente" : undefined}
+              >
                 <Bot className="size-4 shrink-0 opacity-90" strokeWidth={1.75} />
                 <span className="dash-sidebar-label">Crear agente</span>
               </CreateAgentLauncher>
-              <Link href="/pricing" className="product-sidebar-link" data-active="false">
+              <Link href="/pricing" className="product-sidebar-link" data-active="false" title={collapsed ? "Planes" : undefined}>
                 <ChevronRight className="size-4 shrink-0 opacity-90" strokeWidth={1.75} />
                 <span className="dash-sidebar-label">Planes</span>
               </Link>
@@ -197,7 +208,13 @@ export default function DashboardChrome({
                     const href = `${DASH}/${siteId}${suffix}`;
                     const active = isSiteNavActive(suffix);
                     return (
-                      <Link key={suffix || "root"} href={href} data-active={active ? "true" : "false"} className="product-sidebar-link">
+                      <Link
+                        key={suffix || "root"}
+                        href={href}
+                        data-active={active ? "true" : "false"}
+                        className="product-sidebar-link"
+                        title={collapsed ? label : undefined}
+                      >
                         <Icon className="size-4 shrink-0 opacity-90" strokeWidth={1.75} />
                         <span className="dash-sidebar-label">{label}</span>
                       </Link>
@@ -234,7 +251,7 @@ export default function DashboardChrome({
           </div>
         </aside>
 
-        <div className="flex min-w-0 flex-1 flex-col pb-16 md:pb-0">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-auto pb-16 md:pb-0">
           <main className="dash-page-enter mx-auto w-full max-w-[1280px] flex-1 px-4 py-9 sm:px-6 sm:py-10 lg:px-10 lg:py-11">{children}</main>
         </div>
 

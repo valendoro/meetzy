@@ -89,15 +89,15 @@ export default function DashboardChrome({
       <div className="flex min-h-screen">
         {/* Desktop sidebar */}
         <aside
-          className="sticky top-0 z-40 hidden h-screen w-60 shrink-0 flex-col border-r border-[var(--border-subtle)] bg-[var(--bg-surface)] md:flex"
+          className="product-sidebar-shell sticky top-0 z-40 hidden h-screen w-60 shrink-0 flex-col md:flex"
           style={{ paddingTop: 12 }}
         >
           <div className="flex flex-1 flex-col px-3 pb-4">
             <Link
               href={DASH}
-              className="mb-6 flex items-center gap-2 px-2 font-syne text-lg font-extrabold tracking-[-0.03em] text-[var(--text-primary)]"
+              className="mb-6 flex items-center gap-2 px-2 font-syne text-lg font-extrabold tracking-[-0.03em] text-[var(--text-primary)] transition-colors hover:text-[var(--product-champagne)]"
             >
-              MEET<span className="text-[var(--accent)]">ZY</span>
+              MEET<span className="bg-gradient-to-r from-[var(--accent)] to-[var(--product-gold)] bg-clip-text text-transparent">ZY</span>
             </Link>
 
             <nav className="flex flex-1 flex-col gap-1 text-[13px]" aria-label="Principal">
@@ -139,7 +139,7 @@ export default function DashboardChrome({
             </nav>
 
             <div className="mt-auto space-y-3 border-t border-[var(--border-subtle)] pt-4">
-              <div className="flex items-center gap-2 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-2 py-2">
+              <div className="product-user-panel flex items-center gap-2 px-2 py-2">
                 <UserButton
                   appearance={{
                     elements: { userButtonAvatarBox: "size-9" },
@@ -151,10 +151,10 @@ export default function DashboardChrome({
                 </div>
               </div>
               <div className="flex items-center justify-between px-1">
-                <span className="rounded-[var(--radius-sm)] border border-[var(--border-default)] bg-[var(--bg-elevated)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
+                <span className="product-plan-pill px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-[0.12em]">
                   {plan}
                 </span>
-                <Link href="/pricing" className="text-[11px] font-medium text-[var(--accent)] hover:underline">
+                <Link href="/pricing" className="text-[11px] font-medium text-[var(--product-gold)]/90 hover:text-[var(--product-champagne)] hover:underline">
                   Billing
                 </Link>
               </div>

@@ -6,6 +6,9 @@ import { ArrowRight, Loader2, Sparkles } from "lucide-react";
 import AvatarSvgPreview from "@/components/onboarding/AvatarSvgPreview";
 import ConfettiCanvas from "@/components/onboarding/ConfettiCanvas";
 import MiloCanvas from "@/components/onboarding/MiloCanvas";
+import OnboardingProgress, { onboardingProgressFraction } from "@/components/onboarding/OnboardingProgress";
+import OnboardingStage from "@/components/onboarding/OnboardingStage";
+import { SelectableTile } from "@/components/onboarding/SelectableTile";
 import type { PrimaryChar } from "@/components/onboarding/resolve-archetype";
 import { resolveArchetype } from "@/components/onboarding/resolve-archetype";
 import InstallSnippet from "@/components/dashboard/InstallSnippet";
@@ -106,8 +109,11 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
   const [createdSiteId, setCreatedSiteId] = useState<string | null>(null);
   const [celebrate, setCelebrate] = useState(false);
   const genTimer = useRef<number | null>(null);
+  const [miloMode, setMiloMode] = useState<"idle" | "speak">("speak");
 
   const archetype = useMemo(() => resolveArchetype(primary, subtype), [primary, subtype]);
+
+  const progress = useMemo(() => onboardingProgressFraction(step, primary), [step, primary]);
 
   const agentTypeLabel = useMemo(() => {
     const c = AGENT_CARDS.find((x) => x.id === agentType);
@@ -189,6 +195,12 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
   useEffect(() => {
     persist();
   }, [persist]);
+
+  useEffect(() => {
+    setMiloMode("speak");
+    const t = window.setTimeout(() => setMiloMode("idle"), 1100);
+    return () => clearTimeout(t);
+  }, [step]);
 
   const miloLine = useMemo(() => {
     switch (step) {
@@ -423,49 +435,68 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
   return (
     <div className="meetzy-onboarding-root relative overflow-x-hidden">
       <ConfettiCanvas active={celebrate} />
-      <header className="absolute left-0 right-0 top-0 z-[50] flex items-center justify-between px-4 py-4 sm:px-8">
-        <Link href="/dashboard" className="font-syne text-sm font-bold tracking-tight text-white/80 hover:text-white">
-          ← Volver
-        </Link>
-        <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs text-white/50">
-          Plan <span className="text-white/90">{userPlan}</span>
-        </span>
+      {phase === 1 ? <OnboardingProgress step={step} primary={primary} brandColor={brandColor} /> : null}
+
+      <header className="absolute left-0 right-0 top-0 z-[50] flex flex-col gap-3 px-4 pb-2 pt-4 sm:px-8">
+        <div className="flex items-center justify-between gap-3">
+          <Link href="/dashboard" className="ob-link-onb text-sm font-bold">
+            ← Volver
+          </Link>
+          <div className="flex items-center gap-2">
+            {phase === 1 ? (
+              <span className="ob-chip hidden rounded-full px-3 py-1 font-mono text-[10px] text-white/50 sm:inline">
+                {progress.current}/{progress.total}
+              </span>
+            ) : null}
+            <span className="ob-chip rounded-full px-3.5 py-1 text-[10px] uppercase tracking-[0.12em] text-white/55">
+              Plan <span className="font-syne font-extrabold text-white/95">{userPlan}</span>
+            </span>
+          </div>
+        </div>
+        {phase === 1 ? (
+          <div className="ob-bar-wrap w-full max-w-md lg:max-w-none">
+            <div className="ob-bar-fill" style={{ width: `${progress.pct}%` }} />
+          </div>
+        ) : null}
       </header>
 
       {phase === 1 && (
-        <div className="mx-auto flex min-h-screen max-w-[1400px] flex-col gap-8 px-4 pb-24 pt-16 lg:flex-row lg:gap-0 lg:pb-12 lg:pt-20">
-          {/* Preview sticky — mobile first */}
-          <div
-            className="order-1 flex min-h-[320px] flex-1 flex-col items-center justify-center px-4 py-10 lg:order-2 lg:sticky lg:top-0 lg:h-screen lg:w-[55%] lg:max-w-none"
-            style={{
-              background: `radial-gradient(ellipse at 50% 40%, ${brandColor}22 0%, transparent 65%)`,
-            }}
-          >
-            <AvatarSvgPreview
-              stage={previewStage}
-              archetype={archetype}
-              brandColor={brandColor}
-              businessName={businessName}
-              agentName={agentName || "Tu agente"}
-              agentTypeLabel={agentTypeLabel}
-              logoUrl={logoUrl}
-              imageUrl={avatarUrl}
-              personalityClass={personalityAnim}
-            />
+        <div className="mx-auto flex min-h-screen max-w-[1500px] flex-col gap-8 px-4 pb-24 pt-[5.5rem] lg:flex-row lg:gap-0 lg:pb-12 lg:pl-[120px] lg:pr-6 lg:pt-24">
+          <div className="order-1 lg:order-2 lg:sticky lg:top-0 lg:h-screen lg:w-[56%] lg:max-w-none">
+            <OnboardingStage brandColor={brandColor}>
+              <AvatarSvgPreview
+                stage={previewStage}
+                archetype={archetype}
+                brandColor={brandColor}
+                businessName={businessName}
+                agentName={agentName || "Tu agente"}
+                agentTypeLabel={agentTypeLabel}
+                logoUrl={logoUrl}
+                imageUrl={avatarUrl}
+                personalityClass={personalityAnim}
+              />
+            </OnboardingStage>
           </div>
 
-          {/* Chat column */}
-          <div className="order-2 flex w-full flex-1 flex-col gap-5 px-2 lg:order-1 lg:w-[45%] lg:max-w-xl lg:px-8">
-            <div className="flex items-start gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4 backdrop-blur-sm">
-              <MiloCanvas talking={step === "atype"} className="shrink-0 drop-shadow-[0_8px_24px_rgba(99,102,241,0.35)]" />
-              <p className="min-w-0 flex-1 text-sm leading-relaxed text-white/90">{miloLine}</p>
+          <div className="order-2 flex w-full flex-1 flex-col gap-5 px-1 lg:order-1 lg:w-[44%] lg:max-w-xl lg:px-2">
+            <div
+              className="ob-glass ob-milo-glow flex items-start gap-4 rounded-[22px] p-5"
+              style={{ ["--ob-milo-brand" as string]: brandColor }}
+            >
+              <MiloCanvas mode={miloMode} brandTint={brandColor} className="shrink-0" />
+              <div className="min-w-0 flex-1">
+                <p className="font-syne text-[10px] font-extrabold uppercase tracking-[0.22em] text-[color:var(--ob-gold)] opacity-95">
+                  Milo · tu guía
+                </p>
+                <p className="mt-2 text-[15px] leading-[1.55] text-white/92">{miloLine}</p>
+              </div>
             </div>
 
             {miloHelpReply ? (
               <p className="rounded-xl border border-indigo-500/20 bg-indigo-500/5 px-3 py-2 text-xs text-indigo-100">{miloHelpReply}</p>
             ) : null}
 
-            <div className="space-y-4 rounded-2xl border border-white/[0.06] bg-black/20 p-5">
+            <div className="ob-glass space-y-4 rounded-[22px] p-5 sm:p-6">
               {step === "biz" && (
                 <>
                   <Input
@@ -492,17 +523,15 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
                       ["animal", "🦊", "Animal"],
                     ] as const
                   ).map(([id, emoji, label]) => (
-                    <button
+                    <SelectableTile
                       key={id}
-                      type="button"
+                      selected={primary === id}
                       onClick={() => advanceCharPrimary(id as PrimaryChar)}
-                      className={`flex flex-col items-center gap-2 rounded-2xl border p-4 text-center transition-all hover:-translate-y-1 hover:border-indigo-400/50 hover:shadow-[0_12px_40px_rgba(99,102,241,0.15)] ${
-                        primary === id ? "border-indigo-400 bg-indigo-500/15" : "border-white/10 bg-white/[0.04]"
-                      }`}
+                      className="min-h-[108px] py-5"
                     >
-                      <span className="text-3xl">{emoji}</span>
-                      <span className="text-xs font-semibold text-white/90">{label}</span>
-                    </button>
+                      <span className="text-3xl transition-transform duration-300 group-hover:scale-110">{emoji}</span>
+                      <span className="font-syne text-[11px] font-extrabold uppercase tracking-[0.12em] text-white/90">{label}</span>
+                    </SelectableTile>
                   ))}
                 </div>
               )}
@@ -515,18 +544,18 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
                       ["female", "♀", "Mujer"],
                     ] as const
                   ).map(([id, sym, label]) => (
-                    <button
+                    <SelectableTile
                       key={id}
-                      type="button"
+                      selected={subtype === id}
                       onClick={() => {
                         setSubtype(id);
                         afterSecondary();
                       }}
-                      className="rounded-2xl border border-white/10 bg-white/[0.05] py-6 text-center hover:border-indigo-400/50"
+                      className="min-h-[120px] py-6"
                     >
-                      <span className="text-2xl">{sym}</span>
-                      <p className="mt-2 text-sm font-medium">{label}</p>
-                    </button>
+                      <span className="text-3xl text-white/90">{sym}</span>
+                      <span className="font-syne text-sm font-bold">{label}</span>
+                    </SelectableTile>
                   ))}
                 </div>
               )}
@@ -539,18 +568,18 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
                       ["manzana", "🍎", "Manzana"],
                     ] as const
                   ).map(([id, e, l]) => (
-                    <button
+                    <SelectableTile
                       key={id}
-                      type="button"
+                      selected={subtype === id}
                       onClick={() => {
                         setSubtype(id);
                         afterSecondary();
                       }}
-                      className="rounded-2xl border border-white/10 bg-white/[0.05] py-5 hover:border-indigo-400/50"
+                      className="py-6"
                     >
-                      <span className="text-3xl">{e}</span>
-                      <p className="mt-1 text-sm">{l}</p>
-                    </button>
+                      <span className="text-4xl">{e}</span>
+                      <span className="font-medium text-white/85">{l}</span>
+                    </SelectableTile>
                   ))}
                 </div>
               )}
@@ -565,18 +594,18 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
                       ["diamante", "💎", "Diamante"],
                     ] as const
                   ).map(([id, e, l]) => (
-                    <button
+                    <SelectableTile
                       key={id}
-                      type="button"
+                      selected={subtype === id}
                       onClick={() => {
                         setSubtype(id);
                         afterSecondary();
                       }}
-                      className="rounded-xl border border-white/10 bg-white/[0.05] py-4 text-sm hover:border-indigo-400/50"
+                      className="py-4"
                     >
                       <span className="text-2xl">{e}</span>
-                      <p>{l}</p>
-                    </button>
+                      <span className="text-sm text-white/85">{l}</span>
+                    </SelectableTile>
                   ))}
                 </div>
               )}
@@ -593,18 +622,18 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
                       ["oso", "🐻", "Oso"],
                     ] as const
                   ).map(([id, e, l]) => (
-                    <button
+                    <SelectableTile
                       key={id}
-                      type="button"
+                      selected={subtype === id}
                       onClick={() => {
                         setSubtype(id);
                         afterSecondary();
                       }}
-                      className="rounded-xl border border-white/10 bg-white/[0.05] py-3 text-sm hover:border-indigo-400/50"
+                      className="py-3"
                     >
-                      <span className="text-xl">{e}</span>
-                      <p>{l}</p>
-                    </button>
+                      <span className="text-xl sm:text-2xl">{e}</span>
+                      <span className="text-xs font-semibold text-white/85">{l}</span>
+                    </SelectableTile>
                   ))}
                 </div>
               )}
@@ -740,28 +769,26 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
                 <>
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     {AGENT_CARDS.map((c) => (
-                      <button
+                      <SelectableTile
                         key={c.id}
-                        type="button"
+                        selected={agentType === c.id}
                         onClick={() => setAgentType(c.id)}
-                        className={`rounded-2xl border p-4 text-left transition-all hover:-translate-y-0.5 ${
-                          agentType === c.id ? "border-indigo-400 bg-indigo-500/15" : "border-white/10 bg-white/[0.04]"
-                        }`}
+                        className="items-start p-5 text-left"
                       >
                         <span className="text-2xl">{c.emoji}</span>
-                        <p className="mt-2 font-syne font-bold text-white">{c.title}</p>
-                        <p className="mt-1 text-xs text-white/50">{c.desc}</p>
-                      </button>
+                        <p className="font-syne text-base font-extrabold text-white">{c.title}</p>
+                        <p className="text-xs leading-snug text-white/50">{c.desc}</p>
+                      </SelectableTile>
                     ))}
                   </div>
                   <button
                     type="button"
                     disabled={!phase1Complete}
                     onClick={() => startPhase2()}
-                    className="mz-ob-shimmer-cta relative w-full overflow-hidden rounded-2xl py-4 text-sm font-bold text-white shadow-[0_0_40px_rgba(99,102,241,0.35)] disabled:opacity-40"
+                    className="ob-cta-generate relative mt-3 w-full overflow-hidden py-4 text-white disabled:opacity-40"
                   >
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                      Generar mi agente <Sparkles className="size-4" />
+                    <span className="relative z-[1] flex items-center justify-center gap-2">
+                      Generar mi agente <Sparkles className="size-4 opacity-90" />
                     </span>
                   </button>
                 </>
@@ -795,8 +822,8 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
               ) : null}
             </div>
 
-            <div className="rounded-xl border border-white/[0.06] bg-black/30 p-3">
-              <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-white/35">¿Duda rápida? Milo responde</p>
+            <div className="ob-glass rounded-[18px] p-4">
+              <p className="mb-2 font-syne text-[10px] font-extrabold uppercase tracking-[0.18em] text-white/40">¿Duda rápida?</p>
               <div className="flex gap-2">
                 <Input
                   value={miloHelp}
@@ -815,12 +842,20 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
       )}
 
       {phase === 2 && (
-        <div className="flex min-h-screen flex-col items-center justify-center px-6 pb-24 pt-24">
-          <div className="mb-10 max-w-md text-center">
+        <div className="relative flex min-h-screen flex-col items-center justify-center px-6 pb-24 pt-28 lg:pt-24">
+          <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+            <div
+              className="absolute left-1/2 top-[36%] h-[min(90vw,540px)] w-[min(90vw,540px)] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-40 blur-3xl"
+              style={{ background: `radial-gradient(circle, ${brandColor}33 0%, transparent 70%)` }}
+            />
+          </div>
+          <div className="relative z-[1] mb-10 max-w-md text-center">
             {!avatarUrl || genBusy ? (
               <>
-                <div className="mx-auto mb-8 flex justify-center">
-                  <div className="scale-125">
+                <div className="relative mx-auto mb-10 flex h-[220px] w-[220px] items-center justify-center sm:h-[260px] sm:w-[260px]">
+                  <div className="ob-gen-ring pointer-events-none rounded-full" aria-hidden />
+                  <div className="ob-gen-ring pointer-events-none rounded-full" aria-hidden />
+                  <div className="relative z-[2] scale-110 sm:scale-125">
                     <AvatarSvgPreview
                       stage="svg"
                       archetype={archetype}
@@ -833,18 +868,18 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
                     />
                   </div>
                 </div>
-                <p className="mb-2 font-syne text-lg text-white">
+                <p className="mb-2 font-syne text-xl font-extrabold text-white md:text-2xl">
                   {["Analizando tu marca…", "Diseñando tu personaje…", "Aplicando tu identidad…", "Dando vida al agente…"][genStep] ??
                     "Listo"}
                 </p>
                 <p className="text-sm text-white/50">{genMessage}</p>
-                <div className="mx-auto mt-6 h-1 max-w-xs overflow-hidden rounded-full bg-white/10">
+                <div className="ob-bar-wrap mx-auto mt-8 max-w-sm">
                   <div
-                    className="h-full bg-indigo-500 transition-all duration-500"
+                    className="ob-bar-fill h-full"
                     style={{ width: `${Math.min(100, (genStep + 1) * 25)}%` }}
                   />
                 </div>
-                {genBusy ? <Loader2 className="mx-auto mt-6 size-8 animate-spin text-indigo-400" /> : null}
+                {genBusy ? <Loader2 className="mx-auto mt-8 size-8 animate-spin text-[color:var(--ob-gold)]" /> : null}
               </>
             ) : (
               <>
@@ -890,7 +925,7 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
                 <img src={avatarUrl} alt="" className="mz-ob-breathe size-32 rounded-3xl object-cover ring-2 ring-white/10 sm:size-40" />
               ) : null}
             </div>
-            <h1 className="font-syne text-3xl font-bold text-white">¡{agentName} está listo!</h1>
+            <h1 className="ob-title-gradient font-syne text-3xl font-extrabold md:text-4xl">¡{agentName} está listo!</h1>
             <p className="mt-2 text-white/55">Copiá el código en tu web. Verificamos la instalación automáticamente.</p>
           </div>
 

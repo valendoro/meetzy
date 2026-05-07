@@ -88,7 +88,7 @@ export default function SiteCard({ site }: { site: SiteCardModel }) {
   const intentTotal = site.intentMix.reduce((a, b) => a + b.count, 0) || 1;
 
   return (
-    <div className="group flex flex-col rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-6 shadow-[var(--shadow-sm)] transition-all duration-200 hover:border-[var(--border-default)] hover:shadow-[var(--shadow-md)]">
+    <div className="product-site-card group flex flex-col p-6">
       <div className="mb-5 flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <div
@@ -132,7 +132,7 @@ export default function SiteCard({ site }: { site: SiteCardModel }) {
         </div>
       </div>
 
-      <div className="mb-5 grid grid-cols-3 gap-2 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-3">
+      <div className="product-stat-rail mb-5 grid grid-cols-3 gap-2 p-3">
         <div className="text-center">
           <p className="font-syne text-xl font-extrabold tabular-nums tracking-tight text-[var(--text-primary)]">{site.conversationsToday}</p>
           <p className="text-[10px] font-medium uppercase tracking-wide text-[var(--text-tertiary)]">Hoy</p>

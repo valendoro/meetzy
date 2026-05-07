@@ -29,35 +29,37 @@ export default function AvatarSvgPreview({
 
   if (stage === "image" && imageUrl) {
     return (
-      <div className="flex flex-col items-center gap-5">
-        <div
-          className={`relative flex size-44 items-center justify-center sm:size-52 ${breathe}`}
-          style={{ filter: "drop-shadow(0 20px 40px rgba(99,102,241,0.25))" }}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={imageUrl}
-            alt=""
-            className="mz-ob-scan size-full max-h-[min(52vw,280px)] rounded-3xl object-cover ring-2 ring-white/10"
-          />
-          {logoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={logoUrl} alt="" className="absolute bottom-3 right-3 size-10 rounded-lg bg-white/90 object-contain p-1 shadow-lg" />
-          ) : null}
+      <div className="flex flex-col items-center gap-6">
+        <div className="ob-avatar-float relative">
+          <div
+            className={`relative flex size-[11.5rem] items-center justify-center sm:size-[14rem] ${breathe}`}
+            style={{ filter: "drop-shadow(0 28px 56px rgba(0,0,0,0.55)) drop-shadow(0 0 48px rgba(99,102,241,0.22))" }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={imageUrl}
+              alt=""
+              className="mz-ob-scan size-full max-h-[min(52vw,300px)] rounded-[28px] object-cover ring-1 ring-white/15"
+            />
+            {logoUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={logoUrl} alt="" className="absolute bottom-3 right-3 size-11 rounded-xl bg-white/95 object-contain p-1 shadow-xl ring-1 ring-black/10" />
+            ) : null}
+          </div>
         </div>
-        <div className="text-center font-syne text-lg font-bold tracking-tight text-white">{agentName || "Tu agente"}</div>
-        <span className="rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1 text-xs font-semibold text-indigo-200">
+        <div className="text-center font-syne text-xl font-extrabold tracking-tight text-white md:text-2xl">{agentName || "Tu agente"}</div>
+        <span className="rounded-full border border-[color:var(--ob-gold)]/35 bg-[color:var(--ob-gold)]/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-[color:var(--ob-champagne)]">
           {agentTypeLabel}
         </span>
-        <div className="mt-2 w-full max-w-[280px] rounded-2xl border border-white/10 bg-black/30 p-3 text-left text-xs text-white/70 shadow-inner">
-          <div className="mb-2 flex items-center gap-2">
-            <div className="size-7 shrink-0 overflow-hidden rounded-full bg-white/10 ring-1 ring-white/15">
+        <div className="ob-glass mt-1 w-full max-w-[300px] rounded-[22px] p-4 text-left text-[13px] leading-relaxed text-white/75">
+          <div className="mb-2.5 flex items-center gap-2.5">
+            <div className="size-8 shrink-0 overflow-hidden rounded-full ring-1 ring-white/15">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={imageUrl} alt="" className="size-full object-cover" />
             </div>
-            <span className="font-medium text-white">{agentName}</span>
+            <span className="font-syne font-bold text-white/95">{agentName}</span>
           </div>
-          <p className="leading-relaxed">¡Hola! ¿En qué te puedo ayudar hoy?</p>
+          <p className="text-white/60">¡Hola! ¿En qué te puedo ayudar hoy?</p>
         </div>
       </div>
     );
@@ -65,26 +67,33 @@ export default function AvatarSvgPreview({
 
   if (stage === "placeholder" || !archetype) {
     return (
-      <div className="flex flex-col items-center gap-4">
-        <div
-          className="relative flex size-44 items-center justify-center rounded-[28px] border border-white/10 bg-white/[0.03] sm:size-52"
-          style={{
-            boxShadow: `inset 0 0 60px ${brandColor}22`,
-          }}
-        >
+      <div className="flex flex-col items-center gap-5">
+        <div className="ob-avatar-float relative flex size-[11.5rem] items-center justify-center sm:size-[14rem]">
           <div
-            className="absolute inset-4 rounded-2xl opacity-40"
+            className="absolute inset-[-6px] rounded-[32px] opacity-70"
             style={{
-              background: `linear-gradient(110deg, transparent 40%, ${brandColor}44 50%, transparent 60%)`,
-              backgroundSize: "200% 100%",
-              animation: "mz-shimmer 2.2s linear infinite",
+              background: `conic-gradient(from 90deg, transparent, ${brandColor}44, transparent 55%)`,
+              animation: "ob-aurora-spin 12s linear infinite",
             }}
           />
-          <div className="relative text-center text-sm text-white/35">Tu agente aparecerá acá</div>
+          <div
+            className="relative flex size-full items-center justify-center rounded-[28px] border border-white/[0.1] bg-white/[0.03]"
+            style={{
+              boxShadow: `inset 0 0 80px ${brandColor}18, 0 12px 40px rgba(0,0,0,0.4)`,
+            }}
+          >
+            <div
+              className="absolute inset-4 rounded-2xl opacity-45"
+              style={{
+                background: `linear-gradient(110deg, transparent 38%, ${brandColor}55 50%, transparent 62%)`,
+                backgroundSize: "200% 100%",
+                animation: "mz-shimmer 2.2s linear infinite",
+              }}
+            />
+            <p className="relative px-6 text-center font-syne text-sm font-semibold text-white/40">Tu agente aparecerá acá</p>
+          </div>
         </div>
-        {businessName ? (
-          <p className="font-syne text-sm font-semibold text-white/50">{businessName}</p>
-        ) : null}
+        {businessName ? <p className="font-syne text-sm font-bold tracking-wide text-white/45">{businessName}</p> : null}
       </div>
     );
   }
@@ -140,17 +149,20 @@ export default function AvatarSvgPreview({
   );
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <svg
-        viewBox="0 0 200 200"
-        className="h-44 w-44 sm:h-52 sm:w-52 drop-shadow-[0_16px_40px_rgba(99,102,241,0.2)]"
-        role="img"
-        aria-label="Preview del avatar"
-      >
-        {body}
-      </svg>
-      {agentName ? <p className="font-syne text-base font-bold text-white">{agentName}</p> : null}
-      {businessName ? <p className="text-xs text-white/40">{businessName}</p> : null}
+    <div className="flex flex-col items-center gap-5">
+      <div className="ob-avatar-float relative">
+        <svg
+          viewBox="0 0 200 200"
+          className="h-44 w-44 sm:h-56 sm:w-56"
+          style={{ filter: "drop-shadow(0 24px 48px rgba(0,0,0,0.45)) drop-shadow(0 0 36px rgba(99,102,241,0.15))" }}
+          role="img"
+          aria-label="Preview del avatar"
+        >
+          {body}
+        </svg>
+      </div>
+      {agentName ? <p className="font-syne text-lg font-extrabold tracking-tight text-white">{agentName}</p> : null}
+      {businessName ? <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-white/35">{businessName}</p> : null}
     </div>
   );
 }

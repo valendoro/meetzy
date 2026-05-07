@@ -66,10 +66,14 @@ export default async function DashboardPage() {
     <div>
       <header className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="font-syne text-2xl font-bold tracking-[-0.02em] text-[var(--text-primary)] md:text-3xl">Mis agentes</h1>
+          <h1 className="font-syne text-2xl font-extrabold tracking-[-0.02em] text-[var(--text-primary)] md:text-3xl">
+            Mis agentes
+          </h1>
           <p className="mt-2 text-sm text-[var(--text-secondary)]">
             Plan actual:{" "}
-            <span className="font-medium capitalize text-[var(--text-primary)]">{userData?.plan ?? "starter"}</span>
+            <span className="font-syne font-bold capitalize tracking-wide text-[var(--product-champagne)]">
+              {userData?.plan ?? "starter"}
+            </span>
           </p>
         </div>
         <Button asChild size="lg">
@@ -78,9 +82,9 @@ export default async function DashboardPage() {
       </header>
 
       {sitesWithMetrics.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-[var(--radius-xl)] border border-dashed border-[var(--border-default)] bg-[var(--bg-surface)] px-6 py-24 text-center">
+        <div className="product-empty-state relative flex flex-col items-center justify-center overflow-hidden px-6 py-24 text-center">
           <div
-            className="mb-6 flex size-20 items-center justify-center rounded-[var(--radius-lg)] text-3xl"
+            className="relative z-[1] mb-6 flex size-20 items-center justify-center rounded-[var(--radius-lg)] text-3xl"
             style={{
               background: "var(--accent-subtle)",
               border: "1px solid var(--accent-border)",
@@ -89,13 +93,17 @@ export default async function DashboardPage() {
           >
             🤖
           </div>
-          <h2 className="font-syne text-xl font-bold tracking-tight text-[var(--text-primary)]">Creá tu primer agente</h2>
-          <p className="mt-2 max-w-md text-sm leading-relaxed text-[var(--text-secondary)]">
+          <h2 className="relative z-[1] font-syne text-xl font-bold tracking-tight text-[var(--text-primary)]">
+            Creá tu primer agente
+          </h2>
+          <p className="relative z-[1] mt-2 max-w-md text-sm leading-relaxed text-[var(--text-secondary)]">
             Instalalo en tu web en minutos. Un asistente que entiende tu negocio y conversa con cada visitante.
           </p>
-          <Button asChild size="lg" className="mt-8">
-            <Link href="/dashboard/new">Crear mi primer agente</Link>
-          </Button>
+          <div className="relative z-[1] mt-8">
+            <Button asChild size="lg">
+              <Link href="/dashboard/new">Crear mi primer agente</Link>
+            </Button>
+          </div>
         </div>
       ) : (
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-2">

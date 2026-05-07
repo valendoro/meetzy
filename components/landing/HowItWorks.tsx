@@ -83,11 +83,12 @@ export default function HowItWorks() {
                 <div className="how-card" style={{ padding: "2rem", height: "100%", position: "relative", overflow: "hidden" }}>
                   {/* Ghost number */}
                   <div style={{
-                    position: "absolute", top: 12, right: 16,
+                    position: "absolute", top: 8, right: 14,
                     fontFamily: "var(--font-syne)", fontWeight: 800,
-                    fontSize: "4.5rem", lineHeight: 1,
-                    color: "rgba(255,255,255,0.028)",
+                    fontSize: "5rem", lineHeight: 1,
+                    color: "rgba(255,255,255,0.055)",
                     userSelect: "none", pointerEvents: "none",
+                    letterSpacing: "-0.04em",
                   }}>
                     {step.n}
                   </div>
@@ -151,18 +152,28 @@ export default function HowItWorks() {
       </div>
 
       <style>{`
-        @media (min-width: 768px) { .how-grid { grid-template-columns: repeat(3, 1fr) !important; } }
+        .how-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+        @media (min-width: 768px) { .how-grid { grid-template-columns: repeat(3, 1fr); } }
         .how-card {
-          background: linear-gradient(165deg, var(--c-surface) 0%, var(--c-surface2) 100%);
-          border: 1px solid var(--c-border);
+          position: relative;
+          background: linear-gradient(155deg, rgba(26,25,40,0.98) 0%, rgba(18,17,30,0.99) 100%);
+          border: 1px solid rgba(255,255,255,0.08);
           border-radius: var(--radius-lg);
           transition: border-color 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease;
-          box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+          box-shadow: 0 6px 32px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.04) inset;
+          overflow: hidden;
+        }
+        .how-card::after {
+          content: "";
+          position: absolute;
+          top: 0; left: 0; right: 0;
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(124,108,255,0.5), rgba(232,160,144,0.3), transparent);
         }
         .how-card:hover {
-          border-color: var(--c-border2);
-          transform: translateY(-4px);
-          box-shadow: 0 20px 52px rgba(0,0,0,0.38), 0 0 0 1px rgba(124,108,255,0.06);
+          border-color: rgba(124,108,255,0.28);
+          transform: translateY(-5px);
+          box-shadow: 0 24px 60px rgba(0,0,0,0.55), 0 0 40px rgba(124,108,255,0.06);
         }
         .how-connector {
           display: none;
@@ -171,11 +182,11 @@ export default function HowItWorks() {
           .how-connector {
             display: block;
             position: absolute;
-            top: 34px;
-            left: calc(33.33% - 22px);
-            right: calc(33.33% - 22px);
+            top: 38px;
+            left: calc(33.33% - 20px);
+            right: calc(33.33% - 20px);
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(124,108,255,0.3), rgba(124,108,255,0.3), transparent);
+            background: linear-gradient(90deg, rgba(124,108,255,0.5), rgba(232,160,144,0.4), rgba(124,108,255,0.5));
             pointer-events: none;
             z-index: 0;
           }

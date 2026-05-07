@@ -78,60 +78,67 @@ export default function Pricing() {
             {PLANS.map((plan, i) => (
               <ScrollReveal key={plan.id} className={`reveal-d${i + 1}`}>
                 <div style={{
-                  position: "relative", borderRadius: 20, padding: plan.highlighted ? "2rem" : "1.75rem",
+                  position: "relative", borderRadius: 22, padding: plan.highlighted ? "2.25rem" : "1.75rem",
                   display: "flex", flexDirection: "column",
                   ...(plan.highlighted ? {
-                    background: "rgba(124,108,255,0.09)",
-                    border: "1px solid rgba(124,108,255,0.38)",
-                    boxShadow: "0 0 60px rgba(124,108,255,0.12), 0 24px 60px rgba(0,0,0,0.35)",
-                    transform: "scale(1.02)",
+                    background: "linear-gradient(155deg, rgba(50,44,90,0.98) 0%, rgba(35,32,68,0.99) 50%, rgba(28,26,52,1) 100%)",
+                    border: "1px solid rgba(124,108,255,0.45)",
+                    boxShadow: "0 0 80px rgba(124,108,255,0.18), 0 32px 72px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04) inset",
+                    transform: "scale(1.03)",
                   } : {
-                    background: "var(--c-surface)",
-                    border: "1px solid var(--c-border)",
+                    background: "linear-gradient(155deg, rgba(24,23,36,0.98) 0%, rgba(18,17,28,0.99) 100%)",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    boxShadow: "0 4px 28px rgba(0,0,0,0.4)",
                   }),
                 }}>
+                  {plan.highlighted && (
+                    <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, borderRadius: "22px 22px 0 0", background: "linear-gradient(90deg, #7c6cff, #e8a090, #7c6cff)" }} />
+                  )}
                   {plan.badge && (
-                    <div style={{ position: "absolute", top: -14, left: "50%", transform: "translateX(-50%)" }}>
+                    <div style={{ position: "absolute", top: -15, left: "50%", transform: "translateX(-50%)" }}>
                       <span style={{
-                        background: "var(--c-accent)", color: "#fff", fontSize: "0.68rem",
-                        fontWeight: 700, padding: "4px 12px", borderRadius: 100, letterSpacing: "0.06em",
-                        textTransform: "uppercase",
+                        background: "linear-gradient(135deg, #9083ff, #7c6cff)",
+                        color: "#fff", fontSize: "0.68rem",
+                        fontWeight: 800, padding: "5px 14px", borderRadius: 100, letterSpacing: "0.08em",
+                        textTransform: "uppercase", whiteSpace: "nowrap",
+                        boxShadow: "0 4px 16px rgba(124,108,255,0.5)",
                       }}>{plan.badge}</span>
                     </div>
                   )}
 
-                  <p style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 12,
-                    color: plan.highlighted ? "rgba(183,176,255,0.92)" : "var(--c-muted2)" }}>{plan.name}</p>
+                  <p style={{ fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 12,
+                    color: plan.highlighted ? "rgba(183,176,255,0.9)" : "var(--c-muted2)" }}>{plan.name}</p>
 
-                  <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 8 }}>
-                    <span style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: plan.highlighted ? "2.8rem" : "2.4rem", letterSpacing: "-0.04em", color: "var(--c-text)" }}>
+                  <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 6 }}>
+                    <span style={{ fontFamily: "var(--font-syne)", fontWeight: 800, fontSize: plan.highlighted ? "3rem" : "2.4rem", letterSpacing: "-0.045em", color: "var(--c-text)", lineHeight: 1 }}>
                       {plan.price}
                     </span>
                     <span style={{ fontSize: "0.85rem", color: "var(--c-muted2)" }}>/mes</span>
                   </div>
-                  <p style={{ fontSize: "0.85rem", color: "var(--c-muted)", marginBottom: 24 }}>{plan.tagline}</p>
+                  <p style={{ fontSize: "0.84rem", color: "var(--c-muted)", marginBottom: 24, lineHeight: 1.5 }}>{plan.tagline}</p>
 
-                  <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 10, flex: 1, marginBottom: 24 }}>
+                  <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 10, flex: 1, marginBottom: 28 }}>
                     {plan.features.map(f => (
-                      <li key={f} style={{ display: "flex", alignItems: "flex-start", gap: 10, fontSize: "0.85rem" }}>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: 2, color: plan.highlighted ? "var(--c-warm)" : "var(--c-accent)" }}>
+                      <li key={f} style={{ display: "flex", alignItems: "flex-start", gap: 10, fontSize: "0.845rem" }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0, marginTop: 2, color: plan.highlighted ? "#e8a090" : "var(--c-accent)" }}>
                           <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
-                        <span style={{ color: "var(--c-muted)" }}>{f}</span>
+                        <span style={{ color: plan.highlighted ? "rgba(243,241,236,0.78)" : "var(--c-muted)" }}>{f}</span>
                       </li>
                     ))}
                   </ul>
 
                   <Link href={plan.href} style={{
-                    display: "block", textAlign: "center", fontWeight: 600, fontSize: "0.875rem",
-                    padding: "12px", borderRadius: 12, textDecoration: "none", transition: "all 0.15s ease",
+                    display: "block", textAlign: "center", fontWeight: 700, fontSize: "0.875rem",
+                    padding: "13px", borderRadius: 12, textDecoration: "none", transition: "all 0.18s ease",
                     ...(plan.highlighted ? {
-                      background: "var(--c-accent)",
+                      background: "linear-gradient(135deg, #9083ff 0%, #7c6cff 50%, #6548f0 100%)",
                       color: "#fff",
-                      boxShadow: "0 0 28px rgba(124,108,255,0.4)",
+                      boxShadow: "0 0 0 1px rgba(255,255,255,0.1) inset, 0 8px 32px rgba(124,108,255,0.55)",
                     } : {
-                      border: "1px solid var(--c-border2)",
+                      border: "1px solid rgba(255,255,255,0.12)",
                       color: "var(--c-muted)",
+                      background: "rgba(255,255,255,0.03)",
                     }),
                   }}>
                     {plan.cta}

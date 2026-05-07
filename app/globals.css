@@ -1246,48 +1246,59 @@ body::after {
    STATS (landing)
 ══════════════════════════════════════ */
 .stats-strip {
-  border-top: 1px solid var(--c-border);
-  border-bottom: 1px solid var(--c-border);
-  background: linear-gradient(180deg, var(--c-bg-subtle) 0%, var(--c-bg) 100%);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: linear-gradient(180deg, rgba(18,17,26,0.95) 0%, rgba(11,10,15,0.98) 100%);
+  position: relative;
+}
+.stats-strip::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(124,108,255,0.4), rgba(232,160,144,0.3), transparent);
 }
 .stats-grid-desktop {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 0;
   text-align: center;
 }
+@media (min-width: 640px) {
+  .stats-grid-desktop { grid-template-columns: repeat(4, 1fr); }
+}
 .stat-cell {
-  padding: 3.25rem 1.25rem;
+  padding: 3rem 1.25rem;
   position: relative;
 }
-@media (min-width: 900px) {
+@media (min-width: 640px) {
   .stat-cell:not(:last-child)::after {
     content: "";
     position: absolute;
     right: 0;
-    top: 28%;
-    bottom: 28%;
+    top: 25%;
+    bottom: 25%;
     width: 1px;
-    background: linear-gradient(
-      180deg,
-      transparent,
-      rgba(255, 255, 255, 0.07),
-      transparent
-    );
+    background: linear-gradient(180deg, transparent, rgba(255,255,255,0.08), transparent);
   }
 }
 .stat-value {
   font-family: var(--font-syne);
   font-weight: 800;
-  font-size: clamp(2rem, 3.5vw, 2.75rem);
-  letter-spacing: -0.04em;
+  font-size: clamp(2.2rem, 4vw, 3rem);
+  letter-spacing: -0.045em;
   color: var(--c-text);
   line-height: 1;
   margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--c-text) 0%, rgba(243,241,236,0.78) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 .stat-label {
-  font-size: 0.8125rem;
-  color: var(--c-muted);
+  font-size: 0.8rem;
+  color: var(--c-muted2);
+  letter-spacing: 0.03em;
 }
 
 /* ══════════════════════════════════════

@@ -101,12 +101,12 @@ export default function ConversationsClient({
 
       <Dialog.Root open={dialogOpen} onOpenChange={onDialogOpenChange}>
         <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 z-[100] bg-black/55 backdrop-blur-[2px]" />
+          <Dialog.Overlay className="fixed inset-0 z-[100] bg-[rgba(6,6,8,0.85)] backdrop-blur-[12px]" />
           <Dialog.Content
-            className="fixed left-1/2 top-1/2 z-[101] flex max-h-[min(90vh,720px)] w-[min(calc(100vw-24px),640px)] -translate-x-1/2 -translate-y-1/2 flex-col rounded-[var(--radius-lg)] border border-[color:var(--c-border)] bg-[color:var(--c-bg)] shadow-[0_24px_80px_rgba(0,0,0,0.45)]"
+            className="dash-modal-panel fixed z-[101] flex max-h-[min(88dvh,720px)] w-full max-w-[min(calc(100vw-24px),640px)] flex-col border border-[color:var(--c-border2)] bg-[color:var(--c-surface2)] shadow-[0_24px_80px_rgba(0,0,0,0.45)] max-md:inset-x-0 max-md:bottom-0 max-md:top-auto max-md:max-h-[min(88dvh,720px)] max-md:translate-x-0 max-md:translate-y-0 max-md:rounded-b-none max-md:rounded-t-[var(--radius-xl)] md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-[var(--radius-lg)]"
             onOpenAutoFocus={(e) => e.preventDefault()}
           >
-            <div className="flex items-start justify-between gap-3 border-b border-[color:var(--c-border)] px-5 py-4">
+            <div className="flex items-start justify-between gap-3 border-b border-[color:var(--c-border2)] px-5 py-4">
               <div className="min-w-0">
                 <Dialog.Title className="font-syne text-base font-bold text-[color:var(--c-text)]">
                   Transcripción
@@ -128,7 +128,7 @@ export default function ConversationsClient({
                 <X className="size-5" />
               </Dialog.Close>
             </div>
-            <div className="min-h-0 flex-1 overflow-y-auto p-5 [scrollbar-color:rgba(124,108,255,0.35)_transparent]">
+            <div className="min-h-0 flex-1 overflow-y-auto p-5 [scrollbar-color:rgba(99,102,241,0.35)_transparent]">
               {transcriptLoading ? (
                 <div className="space-y-3">
                   <div className="dash-skeleton h-20" />
@@ -142,7 +142,7 @@ export default function ConversationsClient({
               ) : null}
             </div>
             {activeRow ? (
-              <div className="flex flex-wrap items-center justify-end gap-2 border-t border-[color:var(--c-border)] px-5 py-3">
+              <div className="flex flex-wrap items-center justify-end gap-2 border-t border-[color:var(--c-border2)] px-5 py-3">
                 <Link
                   href={`/dashboard/${sitePublicId}/visitors/${activeRow.visitorId}`}
                   className="text-xs font-semibold text-[color:var(--c-accent)] hover:underline"

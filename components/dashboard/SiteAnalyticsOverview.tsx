@@ -1,11 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import {
   ResponsiveContainer,
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -33,7 +33,7 @@ interface AnalyticsPayload {
   topQuestions: { question: string; count: number }[];
 }
 
-const ACCENT = "#7c6cff";
+const ACCENT = "#6366f1";
 
 const INTENT_COLORS: Record<string, string> = {
   exploring: "#94A3B8",
@@ -52,13 +52,13 @@ const RANGE_OPTIONS: { value: Range; label: string }[] = [
 
 const tooltipProps = {
   contentStyle: {
-    background: "rgba(22, 21, 31, 0.97)",
-    border: "1px solid rgba(124, 108, 255, 0.22)",
+    background: "rgba(18, 18, 26, 0.98)",
+    border: "1px solid rgba(99, 102, 241, 0.22)",
     borderRadius: 12,
     boxShadow: "0 16px 48px rgba(0, 0, 0, 0.45)",
   },
-  labelStyle: { color: "var(--c-text)", fontWeight: 600 },
-  itemStyle: { color: "rgba(243, 241, 236, 0.72)" },
+  labelStyle: { color: "var(--text-primary)", fontWeight: 600 } satisfies CSSProperties,
+  itemStyle: { color: "var(--text-secondary)" } satisfies CSSProperties,
 };
 
 export default function SiteAnalyticsOverview({
@@ -159,7 +159,7 @@ export default function SiteAnalyticsOverview({
       <div className="dash-hero flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0 space-y-2">
           <div className="flex flex-wrap items-center gap-3">
-            <h2 className="font-syne text-xl font-bold tracking-tight text-[color:var(--c-text)] sm:text-2xl">
+            <h2 className="font-syne text-xl font-bold tracking-tight text-[color:var(--text-primary)] sm:text-2xl">
               {siteName}
             </h2>
             <span className={isActive ? "dash-status-live" : "dash-status-live dash-status-live--off"}>
@@ -171,7 +171,7 @@ export default function SiteAnalyticsOverview({
             href={siteUrl.startsWith("http") ? siteUrl : `https://${siteUrl}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-sm text-[color:var(--c-muted)] transition-colors hover:text-[color:var(--c-accent)]"
+            className="inline-flex items-center gap-1.5 text-sm text-[color:var(--text-secondary)] transition-colors hover:text-[color:var(--accent)]"
           >
             <span className="truncate">{displayUrl}</span>
             <span className="shrink-0 text-[0.7rem] opacity-60" aria-hidden>
@@ -281,7 +281,13 @@ export default function SiteAnalyticsOverview({
               <h3 className="dash-chart-head">Sesiones por día</h3>
               <div className="h-64 w-full min-w-0">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={data.sessions.byDay} margin={{ top: 6, right: 6, left: -18, bottom: 4 }}>
+                  <AreaChart data={data.sessions.byDay} margin={{ top: 6, right: 6, left: -18, bottom: 4 }}>
+                    <defs>
+                      <linearGradient id="meetzySessionsArea" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor={ACCENT} stopOpacity={0.22} />
+                        <stop offset="100%" stopColor={ACCENT} stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
                     <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
                     <XAxis
                       dataKey="date"
@@ -300,15 +306,16 @@ export default function SiteAnalyticsOverview({
                       {...tooltipProps}
                       formatter={(v) => [Number(v ?? 0), "Sesiones"]}
                     />
-                    <Line
+                    <Area
                       type="monotone"
                       dataKey="count"
                       stroke={ACCENT}
                       strokeWidth={2.5}
+                      fill="url(#meetzySessionsArea)"
                       dot={false}
                       activeDot={{ r: 5, fill: ACCENT, stroke: "#fff", strokeWidth: 1 }}
                     />
-                  </LineChart>
+                  </AreaChart>
                 </ResponsiveContainer>
               </div>
             </div>

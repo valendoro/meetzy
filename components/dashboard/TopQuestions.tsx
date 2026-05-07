@@ -44,9 +44,9 @@ export default function TopQuestions({
           {items.slice(0, 10).map((q, i) => (
             <li
               key={i}
-              className="flex gap-3 rounded-[var(--radius-md)] border border-[color:var(--c-border)]/70 bg-[color:var(--c-surface2)]/35 px-3 py-2.5 text-sm transition-colors hover:border-[rgba(124,108,255,0.28)]"
+              className="flex gap-3 rounded-[var(--radius-md)] border border-[color:var(--c-border2)]/80 bg-[color:var(--c-surface2)]/35 px-3 py-2.5 text-sm transition-colors hover:border-[rgba(99,102,241,0.35)]"
             >
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[color:var(--c-accent-dim)] text-xs font-bold text-[color:var(--c-text)] ring-1 ring-[rgba(124,108,255,0.22)]">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[color:var(--c-accent-dim)] text-xs font-bold text-[color:var(--c-text)] ring-1 ring-[rgba(99,102,241,0.22)]">
                 {i + 1}
               </span>
               <span className="text-[color:var(--c-muted)] leading-snug">

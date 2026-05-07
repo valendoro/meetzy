@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Clipboard, ExternalLink } from "lucide-react";
+import { Clipboard, ExternalLink, LayoutDashboard } from "lucide-react";
 import DeleteSiteButton from "@/components/dashboard/DeleteSiteButton";
 import { useProductToast } from "@/components/providers/product-toast";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +16,14 @@ const INTENT_SEGMENTS: { key: string; color: string }[] = [
   { key: "hot_lead", color: "var(--intent-hot)" },
 ];
 
+const INTENT_BADGE: Record<string, { label: string; tone: string }> = {
+  hot_lead: { label: "Hot", tone: "border-[rgba(239,68,68,0.35)] bg-[rgba(239,68,68,0.1)] text-[var(--intent-hot)]" },
+  ready_to_buy: { label: "Listo", tone: "border-[rgba(249,115,22,0.35)] bg-[rgba(249,115,22,0.08)] text-[var(--intent-ready)]" },
+  evaluating: { label: "Evaluando", tone: "border-[rgba(234,179,8,0.35)] bg-[rgba(234,179,8,0.08)] text-[var(--intent-evaluating)]" },
+  interested: { label: "Interés", tone: "border-[rgba(59,130,246,0.35)] bg-[rgba(59,130,246,0.08)] text-[var(--intent-interested)]" },
+  exploring: { label: "Explorando", tone: "border-[var(--border-default)] bg-[var(--bg-overlay)] text-[var(--intent-exploring)]" },
+};
+
 export interface SiteCardModel {
   id: string;
   siteId: string;
@@ -26,6 +34,7 @@ export interface SiteCardModel {
   agentName: string;
   brandColor: string;
   avatarType: string | null;
+  avatarImageUrl: string | null;
   conversationsToday: number;
   conversationsWeek: number;
   conversationsMonth: number;
@@ -35,7 +44,7 @@ export interface SiteCardModel {
 
 export default function SiteCard({ site }: { site: SiteCardModel }) {
   const { push } = useProductToast();
-  const [copied, setCopied] = useState(false);
+  const [copyLabel, setCopyLabel] = useState("Copiar script");
   const [active, setActive] = useState(site.isActive);
   const [toggling, setToggling] = useState(false);
 
@@ -57,7 +66,7 @@ export default function SiteCard({ site }: { site: SiteCardModel }) {
       if (res.ok) {
         const next = !active;
         setActive(next);
-        push(next ? "Agente activo en tu web" : "Agente pausado", "success");
+        push(next ? "Agente activado" : "Agente pausado", "success");
       } else {
         push("No se pudo actualizar el estado. Intentá de nuevo.", "error");
       }
@@ -76,9 +85,11 @@ export default function SiteCard({ site }: { site: SiteCardModel }) {
 <script src="${process.env.NEXT_PUBLIC_APP_URL ?? "https://app.meetzy.ai"}/widget.js" async></script>`;
     try {
       await navigator.clipboard.writeText(script);
-      setCopied(true);
-      push("Snippet copiado al portapapeles", "success");
-      window.setTimeout(() => setCopied(false), 2000);
+      setCopyLabel("✓ Copiado!");
+      push("Código copiado", "success");
+      window.setTimeout(() => {
+        setCopyLabel("Copiar script");
+      }, 2000);
     } catch {
       push("No se pudo copiar. Revisá los permisos del navegador.", "error");
     }
@@ -86,32 +97,45 @@ export default function SiteCard({ site }: { site: SiteCardModel }) {
 
   const plan = site.plan.toLowerCase();
   const intentTotal = site.intentMix.reduce((a, b) => a + b.count, 0) || 1;
+  const topIntent = site.intentMix.reduce<{ intentLabel: string; count: number } | null>(
+    (best, cur) => (!best || cur.count > best.count ? cur : best),
+    null,
+  );
+  const intentBadge = topIntent ? (INTENT_BADGE[topIntent.intentLabel] ?? INTENT_BADGE.exploring) : INTENT_BADGE.exploring;
 
   return (
-    <div className="product-site-card group flex flex-col p-6">
-      <div className="mb-5 flex items-start justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-3">
-          <div
-            className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-[var(--radius-md)] font-syne text-lg font-extrabold text-white tabular-nums overflow-hidden"
-            style={{ backgroundColor: site.brandColor, boxShadow: `0 4px 20px ${site.brandColor}50` }}
-          >
-            <div className="absolute inset-0 opacity-30" style={{ background: `linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 60%)` }} />
-            <span className="relative z-10">{initials}</span>
-          </div>
-          <div className="min-w-0">
-            <h3 className="truncate font-syne text-base font-bold tracking-tight text-[var(--text-primary)]">{site.agentName}</h3>
-            <p className="truncate text-sm text-[var(--text-secondary)]">{site.name}</p>
-          </div>
+    <article className="product-site-card flex flex-col overflow-hidden p-0">
+      <header
+        className="flex h-20 items-center gap-3.5 border-b border-[var(--border-subtle)] px-5"
+        style={{ background: `linear-gradient(135deg, color-mix(in srgb, ${site.brandColor} 15%, transparent), transparent)` }}
+      >
+        <div className="relative flex size-[52px] shrink-0 items-center justify-center overflow-hidden rounded-xl font-syne text-sm font-bold text-white shadow-md">
+          {site.avatarImageUrl ? (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img src={site.avatarImageUrl} alt="" className="size-full object-cover" />
+          ) : (
+            <span style={{ backgroundColor: site.brandColor }} className="flex size-full items-center justify-center">
+              {initials}
+            </span>
+          )}
+        </div>
+        <div className="min-w-0 flex-1">
+          <h3 className="truncate font-syne text-base font-bold tracking-tight text-[var(--text-primary)]">{site.agentName}</h3>
+          <p className="truncate text-xs text-[var(--text-tertiary)]">
+            {site.url.replace(/^https?:\/\//, "").replace(/\/$/, "")}
+          </p>
         </div>
         <div className="flex shrink-0 flex-col items-end gap-2">
           {plan === "elite" ? (
-            <Badge className="border border-amber-500/30 bg-amber-500/10 normal-case text-amber-400">{site.plan}</Badge>
+            <Badge className="border border-amber-500/30 bg-amber-500/10 text-[10px] font-normal normal-case text-amber-400">
+              {site.plan}
+            </Badge>
           ) : plan === "pro" ? (
-            <Badge variant="accent" className="normal-case">
+            <Badge variant="accent" className="text-[10px] font-normal normal-case">
               {site.plan}
             </Badge>
           ) : (
-            <Badge variant="default" className="normal-case">
+            <Badge variant="default" className="text-[10px] font-normal normal-case">
               {site.plan}
             </Badge>
           )}
@@ -119,38 +143,45 @@ export default function SiteCard({ site }: { site: SiteCardModel }) {
             type="button"
             onClick={() => void toggleActive()}
             disabled={toggling}
-            className={`relative h-6 w-11 rounded-full transition-colors duration-150 ${
+            className={`relative h-6 w-11 shrink-0 rounded-full transition-colors duration-150 ${
               active ? "bg-[var(--accent)]" : "bg-[var(--bg-overlay)]"
-            } ${toggling ? "opacity-50" : ""}`}
+            } ${toggling ? "opacity-50" : ""} dash-focus-ring`}
             title={active ? "Pausar" : "Activar"}
           >
             <span
-              className={`absolute top-0.5 size-5 rounded-full bg-white shadow transition-transform duration-150 ${
+              className={`absolute top-0.5 size-5 rounded-full bg-white shadow transition-transform duration-150 ease-out ${
                 active ? "translate-x-5" : "translate-x-0.5"
               }`}
             />
           </button>
         </div>
-      </div>
+      </header>
 
-      <div className="product-stat-rail mb-5 grid grid-cols-3 gap-2 p-3">
+      <div className="grid grid-cols-3 px-5 py-4">
         <div className="text-center">
-          <p className="font-syne text-xl font-extrabold tabular-nums tracking-tight text-[var(--text-primary)]">{site.conversationsToday}</p>
-          <p className="text-[10px] font-medium uppercase tracking-wide text-[var(--text-tertiary)]">Hoy</p>
+          <p className="font-syne text-2xl font-extrabold tabular-nums tracking-[-0.02em] text-[var(--text-primary)]">
+            {site.conversationsToday}
+          </p>
+          <p className="mt-0.5 text-[11px] font-normal text-[var(--text-tertiary)]">Hoy</p>
         </div>
         <div className="border-x border-[var(--border-subtle)] text-center">
-          <p className="font-syne text-xl font-extrabold tabular-nums tracking-tight text-[var(--text-primary)]">{site.conversationsWeek}</p>
-          <p className="text-[10px] font-medium uppercase tracking-wide text-[var(--text-tertiary)]">7 días</p>
+          <p className="font-syne text-2xl font-extrabold tabular-nums tracking-[-0.02em] text-[var(--text-primary)]">
+            {site.conversationsWeek}
+          </p>
+          <p className="mt-0.5 text-[11px] font-normal text-[var(--text-tertiary)]">7 días</p>
         </div>
-        <div className="text-center">
-          <p className="font-syne text-xl font-extrabold tabular-nums tracking-tight text-[var(--text-primary)]">{site.conversationsMonth}</p>
-          <p className="text-[10px] font-medium uppercase tracking-wide text-[var(--text-tertiary)]">30 días</p>
+        <div className="flex flex-col items-center justify-start gap-1.5 text-center">
+          <span
+            className={`rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${intentBadge.tone}`}
+          >
+            {intentBadge.label}
+          </span>
+          <p className="text-[11px] font-normal text-[var(--text-tertiary)]">Intent</p>
         </div>
       </div>
 
-      <div className="mb-5">
-        <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Intent (7 días)</p>
-        <div className="flex h-2 w-full overflow-hidden rounded-[var(--radius-full)] bg-[var(--bg-overlay)]">
+      <div className="px-5 pb-4">
+        <div className="flex h-1.5 w-full overflow-hidden rounded-[3px] bg-[var(--bg-overlay)]">
           {INTENT_SEGMENTS.map(({ key, color }) => {
             const row = site.intentMix.find((i) => i.intentLabel === key);
             const pct = ((row?.count ?? 0) / intentTotal) * 100;
@@ -167,35 +198,47 @@ export default function SiteCard({ site }: { site: SiteCardModel }) {
         </div>
       </div>
 
-      <div className="mt-auto flex flex-wrap items-center gap-2 border-t border-[var(--border-subtle)] pt-4">
+      <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border-subtle)] px-5 py-3">
+        <p className="text-[12px] font-light text-[var(--text-tertiary)]">
+          {site._count.conversations > 0 ? `${site._count.conversations} conversaciones` : "Sin conversaciones aún"}
+        </p>
+        <div className="flex flex-wrap items-center gap-2">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => void copyScript()}
+            className="h-8 gap-1 text-[12px] text-[var(--text-secondary)] hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]"
+          >
+            <Clipboard className="size-3.5" strokeWidth={2} />
+            {copyLabel}
+          </Button>
+          <Button variant="secondary" size="sm" className="h-8 gap-1 text-[12px]" asChild>
+            <Link href={`/dashboard/${site.siteId}`}>
+              <LayoutDashboard className="size-3.5" />
+              Ver dashboard
+            </Link>
+          </Button>
+        </div>
+      </footer>
+
+      <div className="flex items-center justify-between border-t border-[var(--border-subtle)] px-5 py-2">
         <a
           href={site.url.startsWith("http") ? site.url : `https://${site.url}`}
           target="_blank"
           rel="noreferrer"
-          className="flex min-w-0 max-w-[55%] items-center gap-1 truncate text-xs text-[var(--accent)] hover:underline"
+          className="flex min-w-0 items-center gap-1 truncate text-[11px] text-[var(--accent)] transition-colors duration-150 hover:text-[var(--accent-hover)]"
         >
-          <ExternalLink className="size-3.5 shrink-0 opacity-80" />
-          <span className="truncate">{site.url.replace(/^https?:\/\//, "")}</span>
+          <ExternalLink className="size-3 shrink-0 opacity-80" />
+          <span className="truncate">Sitio en vivo</span>
         </a>
-        <div className="ml-auto flex flex-wrap gap-2">
-          <Button type="button" variant="secondary" size="sm" onClick={() => void copyScript()} className="gap-1.5">
-            <Clipboard className="size-3.5" strokeWidth={2} />
-            {copied ? "Copiado" : "Script"}
-          </Button>
-          <Button size="sm" asChild>
-            <Link href={`/dashboard/${site.siteId}`}>Dashboard</Link>
-          </Button>
-        </div>
-      </div>
-
-      <div className="mt-4 flex justify-end">
         <DeleteSiteButton
           siteId={site.siteId}
           siteName={site.name}
           variant="card"
-          className="text-xs text-[var(--error)]/90 hover:text-[var(--error)] hover:underline"
+          className="text-[11px] text-[var(--error)]/85 hover:text-[var(--error)] hover:underline"
         />
       </div>
-    </div>
+    </article>
   );
 }

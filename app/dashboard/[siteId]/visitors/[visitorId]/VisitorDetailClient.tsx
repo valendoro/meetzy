@@ -130,8 +130,8 @@ export default function VisitorDetailClient({
   const emailTo = profile.email ?? latest?.visitorEmail;
 
   const tooltipStyle = {
-    background: "rgba(22, 21, 31, 0.96)",
-    border: "1px solid rgba(124, 108, 255, 0.22)",
+    background: "rgba(18, 18, 26, 0.98)",
+    border: "1px solid rgba(99, 102, 241, 0.22)",
     borderRadius: "12px",
     fontSize: "12px",
     color: "var(--c-text)",
@@ -143,7 +143,7 @@ export default function VisitorDetailClient({
       <SiteSubnav siteId={sitePublicId} siteName={siteName} active="visitors" pageTitle="Perfil" />
 
       <div className="dash-hero flex flex-col gap-5 sm:flex-row sm:items-start">
-        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[var(--radius-lg)] bg-[color:var(--c-accent-dim)] font-syne text-2xl font-bold text-[color:var(--c-text)] ring-1 ring-[rgba(124,108,255,0.22)]">
+        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[var(--radius-lg)] bg-[color:var(--c-accent-dim)] font-syne text-2xl font-bold text-[color:var(--c-text)] ring-1 ring-[rgba(99,102,241,0.25)]">
           {bigInitials(profile.name, profile.email, profile.visitorId)}
         </div>
         <div className="min-w-0 flex-1 space-y-2">
@@ -208,7 +208,7 @@ export default function VisitorDetailClient({
                       contentStyle={tooltipStyle}
                       formatter={(value) => [`${String(value ?? 0)}s`, "Tiempo"]}
                     />
-                    <Bar dataKey="sec" fill="#7c6cff" radius={[0, 6, 6, 0]} />
+                    <Bar dataKey="sec" fill="#6366f1" radius={[0, 6, 6, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>

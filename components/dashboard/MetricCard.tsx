@@ -41,11 +41,11 @@ export default function MetricCard({
       <div className="relative z-[1] flex gap-4">
         {icon ? (
           <div
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--radius-md)] text-lg"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--radius-md)] text-[color:var(--accent)]"
             style={{
               background: "var(--c-accent-dim)",
-              border: "1px solid rgba(124, 108, 255, 0.28)",
-              boxShadow: "0 0 20px rgba(124, 108, 255, 0.08)",
+              border: "1px solid color-mix(in srgb, var(--c-accent) 32%, transparent)",
+              boxShadow: "0 0 20px color-mix(in srgb, var(--c-accent) 12%, transparent)",
             }}
           >
             {icon}

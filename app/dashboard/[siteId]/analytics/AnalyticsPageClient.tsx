@@ -178,8 +178,8 @@ export default function AnalyticsPageClient({
 
           <div className="dash-card p-5 pl-6">
             <h2 className="dash-chart-head">Fuentes de tráfico</h2>
-            <div className="overflow-x-auto rounded-[var(--radius-md)] border border-[color:var(--c-border)]/60 bg-[color:var(--c-surface2)]/25">
-              <table className="w-full min-w-[520px] text-left text-sm">
+            <div className="overflow-x-auto rounded-[var(--radius-md)] border border-[color:var(--c-border2)]/80 bg-[color:var(--c-surface3)]/40">
+              <table className="dash-inner-table w-full min-w-[520px] text-left text-sm">
                 <thead>
                   <tr>
                     <th className="px-4 py-3 text-[0.6875rem] font-semibold uppercase tracking-wider text-[color:var(--c-muted2)]">

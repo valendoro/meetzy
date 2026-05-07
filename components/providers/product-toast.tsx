@@ -31,13 +31,15 @@ export function ProductToastProvider({ children }: { children: React.ReactNode }
     <ToastContext.Provider value={{ push }}>
       {children}
       <div
-        className="pointer-events-none fixed right-4 top-4 z-[200] flex max-w-[420px] flex-col gap-2"
+        className="pointer-events-none fixed right-4 top-4 z-[10000] flex max-w-[420px] flex-col gap-2"
         aria-live="polite"
       >
         {toasts.map((t) => (
-          <div
+          <button
             key={t.id}
-            className={`pointer-events-auto product-toast ${
+            type="button"
+            onClick={() => setToasts((prev) => prev.filter((x) => x.id !== t.id))}
+            className={`pointer-events-auto product-toast w-full cursor-pointer text-left ${
               t.variant === "success"
                 ? "product-toast--success"
                 : t.variant === "error"
@@ -48,7 +50,7 @@ export function ProductToastProvider({ children }: { children: React.ReactNode }
             }`}
           >
             {t.message}
-          </div>
+          </button>
         ))}
       </div>
     </ToastContext.Provider>

@@ -1,9 +1,8 @@
 import { getDbUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import SiteCard, { type SiteCardModel } from "@/components/dashboard/SiteCard";
-import { Button } from "@/components/ui/button";
+import { CreateAgentLauncher } from "@/components/dashboard/CreateAgentLauncher";
 
 export const metadata = { title: "Dashboard" };
 
@@ -53,6 +52,7 @@ export default async function DashboardPage() {
         agentName: site.agentName,
         brandColor: site.brandColor,
         avatarType: site.avatarType,
+        avatarImageUrl: site.avatarImageUrl,
         conversationsToday,
         conversationsWeek,
         conversationsMonth,
@@ -64,62 +64,65 @@ export default async function DashboardPage() {
 
   return (
     <div>
-      <header className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <header className="mb-12 flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[var(--accent-border)] bg-[var(--accent-subtle)] px-3 py-1">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--accent)] opacity-60" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--accent)]" />
-            </span>
-            <span className="font-syne text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--accent)]">
-              Plan {userData?.plan ?? "starter"}
-            </span>
-          </div>
-          <h1 className="font-syne text-3xl font-extrabold tracking-[-0.03em] text-[var(--text-primary)] md:text-4xl">
+          <h1 className="font-syne text-[28px] font-extrabold tracking-[-0.045em] text-[var(--text-primary)] md:text-[32px]">
             Mis agentes
           </h1>
-          <p className="mt-2 text-sm text-[var(--text-secondary)]">
-            Administrá tus agentes de IA y monitoreá su actividad.
+          <p className="mt-2 max-w-xl text-[15px] font-light leading-relaxed text-[var(--text-secondary)]">
+            Administrá tus agentes y monitoreá su actividad.
+          </p>
+          <p className="mt-4 text-xs text-[var(--text-tertiary)]">
+            Plan{" "}
+            <span className="font-medium text-[var(--accent)]">{userData?.plan ?? "starter"}</span>
           </p>
         </div>
-        <Button asChild size="lg">
-          <Link href="/dashboard/new">+ Crear nuevo agente</Link>
-        </Button>
+        <CreateAgentLauncher
+          size="lg"
+          className="h-11 rounded-[10px] bg-[var(--accent)] px-5 font-medium text-white shadow-[0_0_20px_rgba(99,102,241,0.25)] hover:bg-[var(--accent-hover)]"
+        >
+          ＋ Crear nuevo agente
+        </CreateAgentLauncher>
       </header>
 
       {sitesWithMetrics.length === 0 ? (
-        <div className="product-empty-state relative flex flex-col items-center justify-center overflow-hidden px-6 py-24 text-center">
-          <div
-            className="relative z-[1] mb-6 flex size-20 items-center justify-center rounded-[var(--radius-lg)]"
-            style={{
-              background: "var(--accent-subtle)",
-              border: "1px solid var(--accent-border)",
-              boxShadow: "var(--shadow-accent)",
-              color: "var(--accent)",
-            }}
-          >
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="11" width="18" height="10" rx="2" />
-              <circle cx="12" cy="5" r="2" />
-              <path d="M12 7v4" />
-              <line x1="8" y1="16" x2="8" y2="16" strokeWidth="2.5" strokeLinecap="round" />
-              <line x1="16" y1="16" x2="16" y2="16" strokeWidth="2.5" strokeLinecap="round" />
-            </svg>
+        <div className="mx-auto flex max-w-[440px] flex-col items-center px-4 py-12 text-center">
+          <div className="relative mb-10 flex h-36 w-full max-w-[320px] items-center justify-center">
+            <div className="dash-empty-float-1 absolute left-0 top-2 w-[30%] max-w-[100px] rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-3 shadow-[0_12px_40px_rgba(0,0,0,0.35)]">
+              <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-[#3b82f6]/20 text-2xl">👔</div>
+              <p className="mt-2 text-[10px] text-[var(--text-tertiary)]">Humano</p>
+            </div>
+            <div className="dash-empty-float-2 absolute right-2 top-0 w-[30%] max-w-[100px] rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-3 shadow-[0_12px_40px_rgba(0,0,0,0.35)]">
+              <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-[#f97316]/25 text-2xl">🍊</div>
+              <p className="mt-2 text-[10px] text-[var(--text-tertiary)]">Marca</p>
+            </div>
+            <div className="dash-empty-float-3 absolute bottom-0 left-1/3 w-[30%] max-w-[100px] rounded-2xl border border-[var(--border-default)] bg-[var(--bg-surface)] p-3 shadow-[0_12px_40px_rgba(0,0,0,0.35)]">
+              <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-[#22c55e]/20 text-2xl">🐶</div>
+              <p className="mt-2 text-[10px] text-[var(--text-tertiary)]">Mascota</p>
+            </div>
           </div>
-          <h2 className="relative z-[1] font-syne text-xl font-bold tracking-tight text-[var(--text-primary)]">
-            Creá tu primer agente
+          <h2 className="font-syne text-xl font-bold tracking-[-0.02em] text-[var(--text-primary)] md:text-2xl">
+            Tu primer agente te está esperando
           </h2>
-          <p className="relative z-[1] mt-2 max-w-md text-sm leading-relaxed text-[var(--text-secondary)]">
-            Instalalo en tu web en minutos. Un asistente que entiende tu negocio y conversa con cada visitante.
+          <p className="mt-3 text-sm font-light leading-relaxed text-[var(--text-secondary)]">
+            En 10 minutos tenés un agente con tu identidad que entiende tu negocio y conversa con cada visitante.
           </p>
-          <div className="relative z-[1] mt-8">
-            <Button asChild size="lg">
-              <Link href="/dashboard/new">Crear mi primer agente</Link>
-            </Button>
+          <CreateAgentLauncher
+            size="lg"
+            className="mt-8 h-12 rounded-[10px] bg-[var(--accent)] px-6 text-base font-medium text-white hover:bg-[var(--accent-hover)]"
+          >
+            Crear mi primer agente →
+          </CreateAgentLauncher>
+          <div className="mt-10 flex w-full flex-wrap justify-center gap-6 text-[11px] font-medium uppercase tracking-wider text-[var(--text-tertiary)]">
+            <span>Sin código</span>
+            <span>·</span>
+            <span>Sin contratos</span>
+            <span>·</span>
+            <span>Listo en 10 min</span>
           </div>
         </div>
       ) : (
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {sitesWithMetrics.map((site) => (
             <SiteCard key={site.id} site={site} />
           ))}

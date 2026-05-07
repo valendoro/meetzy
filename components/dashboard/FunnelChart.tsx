@@ -25,17 +25,17 @@ export default function FunnelChart({
     <div className="h-72 w-full min-w-0">
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-          <CartesianGrid stroke="rgba(255,255,255,0.06)" />
-          <XAxis dataKey="stage" tick={{ fill: "#9ca3af", fontSize: 10 }} interval={0} angle={-12} textAnchor="end" height={48} />
-          <YAxis tick={{ fill: "#9ca3af", fontSize: 10 }} allowDecimals={false} />
+          <CartesianGrid stroke="rgba(255,255,255,0.05)" />
+          <XAxis dataKey="stage" tick={{ fill: "rgba(238,234,228,0.38)", fontSize: 10 }} interval={0} angle={-12} textAnchor="end" height={48} />
+          <YAxis tick={{ fill: "rgba(238,234,228,0.38)", fontSize: 10 }} allowDecimals={false} />
           <Tooltip
             contentStyle={{
-              background: "rgba(22, 21, 31, 0.97)",
-              border: "1px solid rgba(124, 108, 255, 0.22)",
+              background: "rgba(18, 18, 26, 0.98)",
+              border: "1px solid rgba(99, 102, 241, 0.22)",
               borderRadius: 12,
             }}
           />
-          <Bar dataKey="count" fill="#7c6cff" radius={[6, 6, 0, 0]} maxBarSize={44} />
+          <Bar dataKey="count" fill="#6366f1" radius={[6, 6, 0, 0]} maxBarSize={44} />
         </BarChart>
       </ResponsiveContainer>
     </div>

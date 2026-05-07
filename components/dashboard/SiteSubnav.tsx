@@ -24,34 +24,26 @@ export default function SiteSubnav({
   pageTitle?: string;
 }) {
   const base = `/dashboard/${siteId}`;
+  const current = TABS.find((t) => t.key === active);
 
   return (
     <div className="mb-10">
-      <nav className="product-breadcrumb" aria-label="Migas de pan">
-        <Link href="/dashboard">Mis agentes</Link>
+      <nav className="product-breadcrumb font-[family-name:var(--font-dm-sans)] text-[13px] font-light" aria-label="Migas de pan">
+        <Link href="/dashboard" className="dash-focus-ring rounded-md">
+          Mis agentes
+        </Link>
         <span className="text-[var(--text-tertiary)]">/</span>
-        <Link href={base} className="max-w-[220px] truncate sm:max-w-none">
+        <Link href={base} className="max-w-[220px] truncate sm:max-w-none dash-focus-ring rounded-md">
           {siteName}
         </Link>
-        {pageTitle ? (
+        {current ? (
           <>
             <span className="text-[var(--text-tertiary)]">/</span>
-            <span className="text-[var(--text-primary)]">{pageTitle}</span>
+            <span className="text-[var(--text-primary)]">{pageTitle ?? current.label}</span>
           </>
         ) : null}
       </nav>
-
-      <div className="product-tabs-rail" role="tablist" aria-label="Secciones del sitio">
-        {TABS.map((t) => {
-          const href = `${base}${t.path}`;
-          const isActive = t.key === active;
-          return (
-            <Link key={t.key} href={href} role="tab" aria-selected={isActive} scroll={false} data-active={isActive ? "true" : "false"}>
-              {t.label}
-            </Link>
-          );
-        })}
-      </div>
+      <p className="mt-1 text-[11px] font-medium uppercase tracking-[0.12em] text-[var(--text-tertiary)]">{current?.label}</p>
     </div>
   );
 }

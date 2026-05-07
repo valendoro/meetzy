@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 
-/** Ficha seleccionable — capas vidrio + acento champagne (premium) */
+/** Ficha seleccionable — panel de vidrio + acento indigo al seleccionar */
 export function SelectableTile({
   selected,
   onClick,

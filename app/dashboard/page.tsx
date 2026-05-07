@@ -66,18 +66,24 @@ export default async function DashboardPage() {
     <div>
       <header className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="font-syne text-2xl font-extrabold tracking-[-0.02em] text-[var(--text-primary)] md:text-3xl">
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[var(--accent-border)] bg-[var(--accent-subtle)] px-3 py-1">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--accent)] opacity-60" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--accent)]" />
+            </span>
+            <span className="font-syne text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--accent)]">
+              Plan {userData?.plan ?? "starter"}
+            </span>
+          </div>
+          <h1 className="font-syne text-3xl font-extrabold tracking-[-0.03em] text-[var(--text-primary)] md:text-4xl">
             Mis agentes
           </h1>
           <p className="mt-2 text-sm text-[var(--text-secondary)]">
-            Plan actual:{" "}
-            <span className="font-syne font-semibold capitalize tracking-wide text-[var(--accent)]">
-              {userData?.plan ?? "starter"}
-            </span>
+            Administrá tus agentes de IA y monitoreá su actividad.
           </p>
         </div>
         <Button asChild size="lg">
-          <Link href="/dashboard/new">Crear nuevo agente</Link>
+          <Link href="/dashboard/new">+ Crear nuevo agente</Link>
         </Button>
       </header>
 

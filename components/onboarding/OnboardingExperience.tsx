@@ -480,15 +480,17 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
 
           <div className="order-2 flex w-full flex-1 flex-col gap-5 px-1 lg:order-1 lg:w-[44%] lg:max-w-xl lg:px-2">
             <div
-              className="ob-glass ob-milo-glow flex items-start gap-4 rounded-[22px] p-5"
-              style={{ ["--ob-milo-brand" as string]: brandColor }}
+              className="ob-glass flex items-start gap-4 rounded-2xl p-5"
+              style={{
+                ["--ob-milo-brand" as string]: brandColor,
+                borderLeftColor: `${brandColor}40`,
+                borderLeftWidth: "2px",
+              }}
             >
               <MiloCanvas mode={miloMode} brandTint={brandColor} className="shrink-0" />
               <div className="min-w-0 flex-1">
-                <p className="font-syne text-[10px] font-extrabold uppercase tracking-[0.22em] text-[color:var(--ob-gold)] opacity-95">
-                  Milo · tu guía
-                </p>
-                <p className="mt-2 text-[15px] leading-[1.55] text-white/92">{miloLine}</p>
+                <p className="font-syne text-[10px] font-extrabold uppercase tracking-[0.16em] text-white/40">Milo · tu guía</p>
+                <p className="mt-1.5 text-[14px] leading-relaxed text-white/90">{miloLine}</p>
               </div>
             </div>
 
@@ -496,15 +498,18 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
               <p className="rounded-xl border border-indigo-500/20 bg-indigo-500/5 px-3 py-2 text-xs text-indigo-100">{miloHelpReply}</p>
             ) : null}
 
-            <div className="ob-glass space-y-4 rounded-[22px] p-5 sm:p-6">
+            <div className="ob-glass space-y-4 rounded-2xl p-5 sm:p-6">
               {step === "biz" && (
                 <>
-                  <Input
-                    placeholder="Ej: Café del Sol"
-                    value={businessName}
-                    onChange={(e) => setBusinessName(e.target.value)}
-                    className="border-white/10 bg-white/[0.06] text-white placeholder:text-white/35"
-                  />
+                  <div>
+                    <p className="mb-1 font-syne text-[10px] font-bold uppercase tracking-[0.14em] text-white/40">Nombre del negocio</p>
+                    <Input
+                      placeholder="Ej: Café del Sol"
+                      value={businessName}
+                      onChange={(e) => setBusinessName(e.target.value)}
+                      className="border-white/[0.15] bg-white/[0.09] text-white placeholder:text-white/30 focus:border-indigo-500/60 focus:bg-white/[0.12]"
+                    />
+                  </div>
                   <Button className="w-full" disabled={!businessName.trim()} onClick={() => setStep("char-primary")}>
                     Siguiente <ArrowRight className="size-4" />
                   </Button>
@@ -530,7 +535,7 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
                       className="min-h-[108px] py-5"
                     >
                       <span className="text-3xl transition-transform duration-300 group-hover:scale-110">{emoji}</span>
-                      <span className="font-syne text-[11px] font-extrabold uppercase tracking-[0.12em] text-white/90">{label}</span>
+                    <span className="font-syne text-[11px] font-semibold text-white/80">{label}</span>
                     </SelectableTile>
                   ))}
                 </div>
@@ -640,7 +645,8 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
 
               {step === "color" && (
                 <>
-                  <div className="flex flex-wrap gap-2">
+                  <p className="font-syne text-[10px] font-bold uppercase tracking-[0.14em] text-white/40">Color de tu marca</p>
+                  <div className="flex flex-wrap gap-3">
                     {SWATCHES.map((c) => (
                       <button
                         key={c}
@@ -653,10 +659,10 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
                             setBrandColor2(c);
                           }
                         }}
-                        className={`size-10 rounded-full ring-2 ring-offset-2 ring-offset-[#060608] ${
-                          brandColor === c ? "ring-indigo-400" : "ring-transparent"
+                        className={`size-11 rounded-xl transition-all duration-200 ring-2 ring-offset-2 ring-offset-[#14131e] ${
+                          brandColor === c ? "ring-white scale-110" : "ring-transparent hover:scale-105"
                         }`}
-                        style={{ background: c }}
+                        style={{ background: c, boxShadow: brandColor === c ? `0 4px 16px ${c}70` : "none" }}
                         aria-label={c}
                       />
                     ))}
@@ -674,18 +680,18 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
                           /* keep */
                         }
                       }}
-                      className="h-11 w-14 cursor-pointer rounded-lg border border-white/10 bg-transparent"
+                      className="h-11 w-14 cursor-pointer rounded-xl border border-white/15 bg-transparent"
                     />
                     <Input
                       value={brandColor}
                       onChange={(e) => setBrandColor(e.target.value)}
-                      className="flex-1 border-white/10 bg-white/[0.06] font-mono text-sm text-white"
+                      className="flex-1 border-white/[0.15] bg-white/[0.09] font-mono text-sm text-white"
                     />
                   </div>
                   <Button
                     onClick={() => setStep("logo")}
                     className="w-full"
-                    style={{ boxShadow: `0 0 32px ${brandColor}44` }}
+                    style={{ boxShadow: `0 4px 24px ${brandColor}50` }}
                   >
                     Siguiente
                   </Button>
@@ -694,8 +700,9 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
 
               {step === "logo" && (
                 <>
+                  <p className="font-syne text-[10px] font-bold uppercase tracking-[0.14em] text-white/40">Logo (opcional)</p>
                   <div className="flex flex-wrap gap-2">
-                    <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-white/15 bg-white/[0.06] px-4 py-3 text-sm hover:border-indigo-400/40">
+                    <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-white/[0.15] bg-white/[0.09] px-4 py-3 text-sm text-white/80 transition-colors hover:border-indigo-400/50 hover:bg-white/[0.12]">
                       <span>📁 Subir logo</span>
                       <input
                         type="file"
@@ -734,12 +741,15 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
 
               {step === "agent" && (
                 <>
-                  <Input
-                    placeholder="Ej: Luna, Max, Coco, Sofía…"
-                    value={agentName}
-                    onChange={(e) => setAgentName(e.target.value)}
-                    className="border-white/10 bg-white/[0.06] text-white"
-                  />
+                  <div>
+                    <p className="mb-1 font-syne text-[10px] font-bold uppercase tracking-[0.14em] text-white/40">Nombre del agente</p>
+                    <Input
+                      placeholder="Ej: Luna, Max, Coco, Sofía…"
+                      value={agentName}
+                      onChange={(e) => setAgentName(e.target.value)}
+                      className="border-white/[0.15] bg-white/[0.09] text-white placeholder:text-white/30 focus:border-indigo-500/60"
+                    />
+                  </div>
                   <Button className="w-full" disabled={!agentName.trim()} onClick={() => setStep("url")}>
                     Siguiente
                   </Button>
@@ -748,16 +758,19 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
 
               {step === "url" && (
                 <>
-                  <div className="flex flex-col gap-2 sm:flex-row">
-                    <Input
-                      placeholder="https://tuempresa.com"
-                      value={url}
-                      onChange={(e) => setUrl(e.target.value)}
-                      className="flex-1 border-white/10 bg-white/[0.06] text-white"
-                    />
-                    <Button type="button" variant="secondary" disabled={analyzeBusy} onClick={() => void runAnalyze()}>
-                      {analyzeBusy ? <Loader2 className="animate-spin" /> : "Analizar"}
-                    </Button>
+                  <div>
+                    <p className="mb-1 font-syne text-[10px] font-bold uppercase tracking-[0.14em] text-white/40">URL de tu web</p>
+                    <div className="flex flex-col gap-2 sm:flex-row">
+                      <Input
+                        placeholder="https://tuempresa.com"
+                        value={url}
+                        onChange={(e) => setUrl(e.target.value)}
+                        className="flex-1 border-white/[0.15] bg-white/[0.09] text-white placeholder:text-white/30 focus:border-indigo-500/60"
+                      />
+                      <Button type="button" variant="secondary" disabled={analyzeBusy} onClick={() => void runAnalyze()}>
+                        {analyzeBusy ? <Loader2 className="animate-spin" /> : "Analizar"}
+                      </Button>
+                    </div>
                   </div>
                   <Button className="w-full" disabled={!url.trim()} onClick={() => setStep("atype")}>
                     Siguiente
@@ -822,7 +835,7 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
               ) : null}
             </div>
 
-            <div className="ob-glass rounded-[18px] p-4">
+            <div className="ob-glass rounded-xl p-4">
               <p className="mb-2 font-syne text-[10px] font-extrabold uppercase tracking-[0.18em] text-white/40">¿Duda rápida?</p>
               <div className="flex gap-2">
                 <Input
@@ -879,7 +892,7 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
                     style={{ width: `${Math.min(100, (genStep + 1) * 25)}%` }}
                   />
                 </div>
-                {genBusy ? <Loader2 className="mx-auto mt-8 size-8 animate-spin text-[color:var(--ob-gold)]" /> : null}
+                {genBusy ? <Loader2 className="mx-auto mt-8 size-8 animate-spin text-[var(--accent)]" /> : null}
               </>
             ) : (
               <>

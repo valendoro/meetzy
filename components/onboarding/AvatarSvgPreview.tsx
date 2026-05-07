@@ -48,7 +48,7 @@ export default function AvatarSvgPreview({
           </div>
         </div>
         <div className="text-center font-syne text-xl font-extrabold tracking-tight text-white md:text-2xl">{agentName || "Tu agente"}</div>
-        <span className="rounded-full border border-[color:var(--ob-gold)]/35 bg-[color:var(--ob-gold)]/10 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-[color:var(--ob-champagne)]">
+        <span className="rounded-full border border-[var(--accent)]/35 bg-[var(--accent)]/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--accent)]">
           {agentTypeLabel}
         </span>
         <div className="ob-glass mt-1 w-full max-w-[300px] rounded-[22px] p-4 text-left text-[13px] leading-relaxed text-white/75">

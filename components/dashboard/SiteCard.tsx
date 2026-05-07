@@ -92,10 +92,11 @@ export default function SiteCard({ site }: { site: SiteCardModel }) {
       <div className="mb-5 flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
           <div
-            className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[var(--radius-md)] font-syne text-lg font-extrabold text-white tabular-nums"
-            style={{ backgroundColor: site.brandColor }}
+            className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-[var(--radius-md)] font-syne text-lg font-extrabold text-white tabular-nums overflow-hidden"
+            style={{ backgroundColor: site.brandColor, boxShadow: `0 4px 20px ${site.brandColor}50` }}
           >
-            {initials}
+            <div className="absolute inset-0 opacity-30" style={{ background: `linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 60%)` }} />
+            <span className="relative z-10">{initials}</span>
           </div>
           <div className="min-w-0">
             <h3 className="truncate font-syne text-base font-bold tracking-tight text-[var(--text-primary)]">{site.agentName}</h3>

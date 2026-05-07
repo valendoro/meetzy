@@ -2,6 +2,7 @@ import Link from "next/link";
 
 const TABS = [
   { key: "overview", label: "Resumen", path: "" },
+  { key: "install", label: "Instalación", path: "/install" },
   { key: "visitors", label: "Visitantes", path: "/visitors" },
   { key: "conversations", label: "Conversaciones", path: "/conversations" },
   { key: "analytics", label: "Analytics", path: "/analytics" },
@@ -22,34 +23,30 @@ export default function SiteSubnav({
   active: SiteSubnavTab;
   pageTitle?: string;
 }) {
+  const base = `/dashboard/${siteId}`;
+
   return (
     <div className="mb-10">
-      <nav className="dash-breadcrumb" aria-label="Migas de pan">
-        <Link href="/dashboard">Mis sitios</Link>
-        <span className="dash-breadcrumb-sep">/</span>
-        <Link href={`/dashboard/${siteId}`} className="max-w-[200px] truncate sm:max-w-none">
+      <nav className="product-breadcrumb" aria-label="Migas de pan">
+        <Link href="/dashboard">Mis agentes</Link>
+        <span className="text-[var(--text-tertiary)]">/</span>
+        <Link href={base} className="max-w-[220px] truncate sm:max-w-none">
           {siteName}
         </Link>
         {pageTitle ? (
           <>
-            <span className="dash-breadcrumb-sep">/</span>
-            <span className="text-[color:var(--c-text)]">{pageTitle}</span>
+            <span className="text-[var(--text-tertiary)]">/</span>
+            <span className="text-[var(--text-primary)]">{pageTitle}</span>
           </>
         ) : null}
       </nav>
 
-      <div className="dash-subnav-rail" role="tablist" aria-label="Secciones del sitio">
+      <div className="product-tabs-rail" role="tablist" aria-label="Secciones del sitio">
         {TABS.map((t) => {
-          const href = `/dashboard/${siteId}${t.path}`;
+          const href = `${base}${t.path}`;
           const isActive = t.key === active;
           return (
-            <Link
-              key={t.key}
-              href={href}
-              role="tab"
-              aria-selected={isActive}
-              scroll={false}
-            >
+            <Link key={t.key} href={href} role="tab" aria-selected={isActive} scroll={false} data-active={isActive ? "true" : "false"}>
               {t.label}
             </Link>
           );

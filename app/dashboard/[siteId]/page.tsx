@@ -1,7 +1,7 @@
 import { getDbUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
-import InstallScript from "@/components/dashboard/InstallScript";
+import InstallSnippet from "@/components/dashboard/InstallSnippet";
 import SiteAnalyticsOverview from "@/components/dashboard/SiteAnalyticsOverview";
 import SiteSubnav from "@/components/dashboard/SiteSubnav";
 
@@ -34,7 +34,15 @@ export default async function SiteDetailPage({ params }: { params: Promise<{ sit
         />
       </div>
 
-      <InstallScript siteId={site.siteId} appUrl={appUrl} />
+      <div className="dash-card p-6 pl-7">
+        <h2 className="dash-chart-head mb-4 text-[1.05rem]">Instalación</h2>
+        <InstallSnippet siteId={site.siteId} appUrl={appUrl} />
+        <p className="mt-4 text-xs leading-relaxed text-[color:var(--c-muted2)]">
+          <a href={`/dashboard/${siteId}/install`} className="font-medium text-[color:var(--c-accent)] hover:underline">
+            Ver guía completa y verificación en vivo →
+          </a>
+        </p>
+      </div>
     </div>
   );
 }

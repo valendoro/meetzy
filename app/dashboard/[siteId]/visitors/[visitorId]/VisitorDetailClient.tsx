@@ -8,6 +8,7 @@ import IntentBadge from "@/components/dashboard/IntentBadge";
 import SessionTimeline from "@/components/dashboard/SessionTimeline";
 import JourneyMap from "@/components/dashboard/JourneyMap";
 import IntentSignalsList from "@/components/dashboard/IntentSignals";
+import { useProductToast } from "@/components/providers/product-toast";
 import { formatDurationSec } from "@/lib/format-duration";
 import { countryFlagEmoji } from "@/lib/country-flag";
 import type { VisitorProfile } from "@prisma/client";
@@ -39,6 +40,7 @@ export default function VisitorDetailClient({
   siteName: string;
   visitorId: string;
 }) {
+  const { push } = useProductToast();
   const [data, setData] = useState<Payload | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -51,24 +53,38 @@ export default function VisitorDetailClient({
   }, [sitePublicId, visitorId]);
 
   const markContacted = async () => {
-    await fetch(`/api/sites/${sitePublicId}/visitors/${visitorId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ markContacted: true }),
-    });
-    const r = await fetch(`/api/sites/${sitePublicId}/visitors/${visitorId}`);
-    if (r.ok) setData((await r.json()) as Payload);
+    try {
+      const r = await fetch(`/api/sites/${sitePublicId}/visitors/${visitorId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ markContacted: true }),
+      });
+      if (!r.ok) {
+        push("No se pudo actualizar el perfil", "error");
+        return;
+      }
+      push("Marcado como contactado", "success");
+      const refetch = await fetch(`/api/sites/${sitePublicId}/visitors/${visitorId}`);
+      if (refetch.ok) setData((await refetch.json()) as Payload);
+    } catch {
+      push("Error de red", "error");
+    }
   };
 
   const exportProfile = () => {
     if (!data) return;
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `visitante-${visitorId}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    try {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `visitante-${visitorId}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      push("Perfil exportado (JSON)", "success");
+    } catch {
+      push("No se pudo exportar", "error");
+    }
   };
 
   if (loading) {

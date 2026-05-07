@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Syne, DM_Sans } from "next/font/google";
+import { Syne, DM_Sans, JetBrains_Mono } from "next/font/google";
 import { ClerkProvider, Show, UserButton, SignInButton, SignUpButton } from "@clerk/nextjs";
 import "./globals.css";
 
@@ -17,6 +17,13 @@ const dmSans = DM_Sans({
   display: "swap",
 });
 
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains",
+  weight: ["400", "500"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: {
     default: "Meetzy — La web que entiende.",
@@ -31,19 +38,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="es"
-      className={`${syne.variable} ${dmSans.variable}`}
+      className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
       <body className="min-h-screen antialiased">
         <ClerkProvider
           appearance={{
             variables: {
-              colorPrimary: "#7c6cff",
-              colorBackground: "#0b0a0f",
-              colorInputBackground: "#16151f",
-              colorInputText: "#f3f1ec",
-              colorText: "#f3f1ec",
-              colorTextSecondary: "rgba(243,241,236,0.5)",
+              colorPrimary: "#6366f1",
+              colorBackground: "#060608",
+              colorInputBackground: "#12121a",
+              colorInputText: "#eeeae4",
+              colorText: "#eeeae4",
+              colorTextSecondary: "rgba(238,234,228,0.65)",
               borderRadius: "12px",
               fontFamily: "DM Sans, sans-serif",
             },

@@ -1,12 +1,16 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import dynamic from "next/dynamic";
+import { useProductToast } from "@/components/providers/product-toast";
+import { Button } from "@/components/ui/button";
 
 const AvatarCanvas = dynamic(() => import("@/components/avatar/AvatarCanvas"), {
   ssr: false,
-  loading: () => <div className="w-[160px] h-[160px] rounded-full bg-[#1a1a1a] shimmer" />,
+  loading: () => (
+    <div className="size-[160px] rounded-full bg-[var(--bg-overlay)] shimmer" />
+  ),
 });
 
 interface SiteData {
@@ -29,8 +33,11 @@ const AVATAR_TYPES = [
   { value: "object", label: "Estrella", subtype: "estrella", emoji: "⭐" },
 ];
 
+const panel = "rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-6 shadow-[var(--shadow-sm)]";
+
 export default function AvatarConfigurator({ site }: { site: SiteData }) {
   const router = useRouter();
+  const { push } = useProductToast();
   const [avatarType, setAvatarType] = useState(site.avatarType ?? "human");
   const [avatarSubtype, setAvatarSubtype] = useState(site.avatarSubtype ?? "male");
   const [brandColor, setBrandColor] = useState(site.brandColor);
@@ -38,7 +45,6 @@ export default function AvatarConfigurator({ site }: { site: SiteData }) {
   const [logoUrl, setLogoUrl] = useState(site.logoUrl ?? "");
   const [isTalking, setIsTalking] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
 
   async function handleSave() {
     setSaving(true);
@@ -55,108 +61,101 @@ export default function AvatarConfigurator({ site }: { site: SiteData }) {
         }),
       });
       if (res.ok) {
-        setSaved(true);
-        setTimeout(() => setSaved(false), 2000);
+        push("Avatar guardado", "success");
         router.refresh();
+      } else {
+        push("No se pudo guardar el avatar", "error");
       }
+    } catch {
+      push("Error de red", "error");
     } finally {
       setSaving(false);
     }
   }
 
-  const inputClass =
-    "w-full bg-[#0e0e0e] border border-[#222] text-[#F0EDE8] rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-accent transition-colors placeholder:text-[#444]";
-
   return (
-    <div className="grid md:grid-cols-2 gap-8 max-w-4xl">
-      {/* Left — Controls */}
+    <div className="grid max-w-4xl gap-8 md:grid-cols-2">
       <div className="space-y-6">
-        <div className="bg-[#111] border border-[#1e1e1e] rounded-2xl p-6 space-y-4">
-          <h2 className="font-syne font-bold text-base text-[#F0EDE8]">Tipo de avatar</h2>
+        <div className={`${panel} space-y-4`}>
+          <h2 className="font-syne text-base font-bold text-[var(--text-primary)]">Tipo de avatar</h2>
           <div className="grid grid-cols-3 gap-2">
-            {AVATAR_TYPES.map((t) => (
-              <button
-                key={`${t.value}-${t.subtype}`}
-                onClick={() => { setAvatarType(t.value); setAvatarSubtype(t.subtype); }}
-                className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border transition-all ${
-                  avatarType === t.value && avatarSubtype === t.subtype
-                    ? "border-accent bg-accent/10 text-[#F0EDE8]"
-                    : "border-[#222] text-[#6b6b6b] hover:border-[#333]"
-                }`}
-              >
-                <span className="text-2xl">{t.emoji}</span>
-                <span className="text-xs font-medium">{t.label}</span>
-              </button>
-            ))}
+            {AVATAR_TYPES.map((t) => {
+              const sel = avatarType === t.value && avatarSubtype === t.subtype;
+              return (
+                <button
+                  key={`${t.value}-${t.subtype}`}
+                  type="button"
+                  onClick={() => {
+                    setAvatarType(t.value);
+                    setAvatarSubtype(t.subtype);
+                  }}
+                  className={`flex flex-col items-center gap-1.5 rounded-[var(--radius-md)] border p-3 text-center transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--border-focus)] ${
+                    sel
+                      ? "border-[var(--accent)] bg-[var(--accent-subtle)] text-[var(--text-primary)]"
+                      : "border-[var(--border-subtle)] text-[var(--text-tertiary)] hover:border-[var(--border-default)] hover:text-[var(--text-secondary)]"
+                  }`}
+                >
+                  <span className="text-2xl">{t.emoji}</span>
+                  <span className="text-xs font-medium">{t.label}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        <div className="bg-[#111] border border-[#1e1e1e] rounded-2xl p-6 space-y-4">
-          <h2 className="font-syne font-bold text-base text-[#F0EDE8]">Identidad visual</h2>
+        <div className={`${panel} space-y-4`}>
+          <h2 className="font-syne text-base font-bold text-[var(--text-primary)]">Identidad visual</h2>
 
           <div>
-            <label className="block text-xs text-[#6b6b6b] mb-2">Color primario</label>
+            <label className="mb-2 block text-xs font-medium text-[var(--text-tertiary)]">Color primario</label>
             <div className="flex items-center gap-2">
               <input
                 type="color"
                 value={brandColor}
                 onChange={(e) => setBrandColor(e.target.value)}
-                className="w-10 h-10 rounded-lg border border-[#222] cursor-pointer bg-transparent"
+                className="size-10 shrink-0 cursor-pointer rounded-[var(--radius-md)] border border-[var(--border-default)] bg-transparent"
               />
-              <input
-                value={brandColor}
-                onChange={(e) => setBrandColor(e.target.value)}
-                className={`${inputClass} flex-1`}
-              />
+              <input value={brandColor} onChange={(e) => setBrandColor(e.target.value)} className="dash-input flex-1 font-mono text-sm" />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs text-[#6b6b6b] mb-2">Color secundario</label>
+            <label className="mb-2 block text-xs font-medium text-[var(--text-tertiary)]">Color secundario</label>
             <div className="flex items-center gap-2">
               <input
                 type="color"
                 value={brandColor2}
                 onChange={(e) => setBrandColor2(e.target.value)}
-                className="w-10 h-10 rounded-lg border border-[#222] cursor-pointer bg-transparent"
+                className="size-10 shrink-0 cursor-pointer rounded-[var(--radius-md)] border border-[var(--border-default)] bg-transparent"
               />
-              <input
-                value={brandColor2}
-                onChange={(e) => setBrandColor2(e.target.value)}
-                className={`${inputClass} flex-1`}
-              />
+              <input value={brandColor2} onChange={(e) => setBrandColor2(e.target.value)} className="dash-input flex-1 font-mono text-sm" />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs text-[#6b6b6b] mb-2">URL del logo (opcional)</label>
+            <label className="mb-2 block text-xs font-medium text-[var(--text-tertiary)]">URL del logo (opcional)</label>
             <input
               value={logoUrl}
               onChange={(e) => setLogoUrl(e.target.value)}
               placeholder="https://tuempresa.com/logo.png"
-              className={inputClass}
+              className="dash-input w-full"
             />
           </div>
         </div>
 
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="w-full bg-accent text-white font-medium py-3 rounded-xl hover:bg-accent/90 disabled:opacity-50 transition-all"
-        >
-          {saving ? "Guardando..." : saved ? "¡Guardado!" : "Guardar avatar"}
-        </button>
+        <Button type="button" className="w-full" size="lg" onClick={() => void handleSave()} disabled={saving}>
+          {saving ? "Guardando…" : "Guardar avatar"}
+        </Button>
       </div>
 
-      {/* Right — Live Preview */}
       <div className="flex flex-col items-center gap-6">
-        <div className="bg-[#111] border border-[#1e1e1e] rounded-2xl p-8 flex flex-col items-center gap-4 w-full">
-          <h2 className="font-syne font-bold text-base text-[#F0EDE8] self-start">Preview</h2>
+        <div className={`${panel} flex w-full flex-col items-center gap-4`}>
+          <h2 className="w-full self-start font-syne text-base font-bold text-[var(--text-primary)]">Preview</h2>
 
           <div className="relative">
             <div
-              className="w-40 h-40 rounded-full flex items-center justify-center overflow-hidden"
-              style={{ background: `${brandColor}15`, border: `2px solid ${brandColor}30` }}
+              className="flex size-40 items-center justify-center overflow-hidden rounded-full"
+              style={{ background: `${brandColor}18`, border: `2px solid ${brandColor}40` }}
             >
               <AvatarCanvas
                 config={{
@@ -172,33 +171,32 @@ export default function AvatarConfigurator({ site }: { site: SiteData }) {
               />
             </div>
             <div
-              className="absolute bottom-1 right-1 w-5 h-5 rounded-full border-2 border-[#111] bg-green-500"
+              className="absolute bottom-1 right-1 size-5 rounded-full border-2 border-[var(--bg-surface)] bg-emerald-500"
+              aria-hidden
             />
           </div>
 
-          <button
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
             onClick={() => setIsTalking(!isTalking)}
-            className={`px-4 py-2 rounded-xl text-sm font-medium border transition-all ${
-              isTalking
-                ? "bg-accent/10 border-accent/30 text-accent"
-                : "bg-[#1a1a1a] border-[#222] text-[#6b6b6b] hover:border-[#333]"
-            }`}
+            className={isTalking ? "border-[var(--accent-border)] bg-[var(--accent-subtle)] text-[var(--accent)]" : ""}
           >
             {isTalking ? "⏸ Detener animación" : "▶ Simular hablando"}
-          </button>
+          </Button>
 
-          <p className="text-xs text-[#6b6b6b] text-center">
-            El avatar parpadea, respira y sincroniza los labios cuando habla.
+          <p className="text-center text-xs text-[var(--text-tertiary)]">
+            El avatar parpadea, respira y sincroniza la boca cuando habla.
           </p>
         </div>
 
-        {/* Mini chat preview */}
-        <div className="bg-[#111] border border-[#1e1e1e] rounded-2xl p-5 w-full space-y-3">
-          <p className="text-xs text-[#6b6b6b] font-medium uppercase tracking-wider">Cómo se ve en el widget</p>
-          <div className="flex items-center gap-3 pb-3 border-b border-[#1a1a1a]">
+        <div className={`${panel} w-full space-y-3`}>
+          <p className="text-xs font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Vista en el widget</p>
+          <div className="flex items-center gap-3 border-b border-[var(--border-subtle)] pb-3">
             <div
-              className="w-10 h-10 rounded-full flex items-center justify-center overflow-hidden"
-              style={{ background: `${brandColor}15`, border: `1px solid ${brandColor}30` }}
+              className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full"
+              style={{ background: `${brandColor}18`, border: `1px solid ${brandColor}40` }}
             >
               <AvatarCanvas
                 config={{ type: avatarType, subtype: avatarSubtype, brandColor, brandColor2, size: 40 }}
@@ -206,15 +204,15 @@ export default function AvatarConfigurator({ site }: { site: SiteData }) {
               />
             </div>
             <div>
-              <p className="text-sm font-syne font-bold text-[#F0EDE8]">Agente</p>
+              <p className="font-syne text-sm font-bold text-[var(--text-primary)]">Agente</p>
               <div className="flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                <span className="text-xs text-[#6b6b6b]">En línea</span>
+                <span className="size-1.5 rounded-full bg-emerald-500" />
+                <span className="text-xs text-[var(--text-tertiary)]">En línea</span>
               </div>
             </div>
           </div>
-          <div className="max-w-[85%] bg-[#1a1a1a] rounded-2xl rounded-tl-sm px-3 py-2">
-            <p className="text-xs text-[#F0EDE8]">¡Hola! ¿En qué te puedo ayudar?</p>
+          <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-[var(--bg-elevated)] px-3 py-2">
+            <p className="text-xs text-[var(--text-primary)]">¡Hola! ¿En qué te puedo ayudar?</p>
           </div>
           <div className="max-w-[85%] ml-auto rounded-2xl rounded-tr-sm px-3 py-2" style={{ background: brandColor }}>
             <p className="text-xs text-white">¿Cuánto cuesta?</p>

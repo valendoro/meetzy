@@ -44,6 +44,10 @@ model Site {
   brandColor           String           @default("#6366f1")
   brandColor2          String           @default("#8b5cf6")
   logoUrl              String?
+  avatarImageUrl       String?          // Imagen 3D generada (fal.ai) u optimizada
+  avatarGenerations    Int              @default(0)
+  onboardingCompleted  Boolean          @default(false)
+  onboardingStep       Int              @default(1)
   avatarConfig         Json?
   voiceEnabled         Boolean          @default(false)
   voiceId              String?

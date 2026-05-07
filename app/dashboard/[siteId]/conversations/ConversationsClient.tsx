@@ -1,9 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
+import * as Dialog from "@radix-ui/react-dialog";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
+import { X } from "lucide-react";
 import SiteSubnav from "@/components/dashboard/SiteSubnav";
 import IntentBadge from "@/components/dashboard/IntentBadge";
 import ConversationTranscript from "@/components/dashboard/ConversationTranscript";
@@ -38,10 +40,12 @@ export default function ConversationsClient({
   const [loading, setLoading] = useState(true);
   const [intent, setIntent] = useState("all");
   const [hasEmail, setHasEmail] = useState("all");
-  const [openId, setOpenId] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [activeRow, setActiveRow] = useState<Row | null>(null);
   const [transcript, setTranscript] = useState<{ role: string; content: string; createdAt: string }[] | null>(
     null,
   );
+  const [transcriptLoading, setTranscriptLoading] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -60,14 +64,12 @@ export default function ConversationsClient({
     void load();
   }, [load]);
 
-  const openTranscript = async (id: string) => {
-    if (openId === id) {
-      setOpenId(null);
-      setTranscript(null);
-      return;
-    }
-    setOpenId(id);
-    const r = await fetch(`/api/sites/${sitePublicId}/conversations/${id}`);
+  const openTranscript = async (row: Row) => {
+    setActiveRow(row);
+    setDialogOpen(true);
+    setTranscript(null);
+    setTranscriptLoading(true);
+    const r = await fetch(`/api/sites/${sitePublicId}/conversations/${row.id}`);
     if (r.ok) {
       const j = (await r.json()) as {
         conversation: { messages: { role: string; content: string; createdAt: string }[] };
@@ -79,12 +81,79 @@ export default function ConversationsClient({
           createdAt: typeof m.createdAt === "string" ? m.createdAt : new Date(m.createdAt).toISOString(),
         })),
       );
+    } else {
+      setTranscript([]);
+    }
+    setTranscriptLoading(false);
+  };
+
+  const onDialogOpenChange = (open: boolean) => {
+    setDialogOpen(open);
+    if (!open) {
+      setActiveRow(null);
+      setTranscript(null);
     }
   };
 
   return (
     <div>
       <SiteSubnav siteId={sitePublicId} siteName={siteName} active="conversations" pageTitle="Conversaciones" />
+
+      <Dialog.Root open={dialogOpen} onOpenChange={onDialogOpenChange}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 z-[100] bg-black/55 backdrop-blur-[2px]" />
+          <Dialog.Content
+            className="fixed left-1/2 top-1/2 z-[101] flex max-h-[min(90vh,720px)] w-[min(calc(100vw-24px),640px)] -translate-x-1/2 -translate-y-1/2 flex-col rounded-[var(--radius-lg)] border border-[color:var(--c-border)] bg-[color:var(--c-bg)] shadow-[0_24px_80px_rgba(0,0,0,0.45)]"
+            onOpenAutoFocus={(e) => e.preventDefault()}
+          >
+            <div className="flex items-start justify-between gap-3 border-b border-[color:var(--c-border)] px-5 py-4">
+              <div className="min-w-0">
+                <Dialog.Title className="font-syne text-base font-bold text-[color:var(--c-text)]">
+                  Transcripción
+                </Dialog.Title>
+                {activeRow ? (
+                  <Dialog.Description className="mt-1 text-xs text-[color:var(--c-muted)]">
+                    {format(new Date(activeRow.createdAt), "d MMM yyyy, HH:mm", { locale: es })} ·{" "}
+                    {formatDurationSec(activeRow.sessionDuration)} · {activeRow.messageCount} mensajes
+                  </Dialog.Description>
+                ) : (
+                  <Dialog.Description className="sr-only">Mensajes de la conversación seleccionada</Dialog.Description>
+                )}
+              </div>
+              <Dialog.Close
+                type="button"
+                className="rounded-[var(--radius-md)] p-2 text-[color:var(--c-muted)] transition-colors hover:bg-[color:var(--c-surface2)] hover:text-[color:var(--c-text)]"
+                aria-label="Cerrar"
+              >
+                <X className="size-5" />
+              </Dialog.Close>
+            </div>
+            <div className="min-h-0 flex-1 overflow-y-auto p-5 [scrollbar-color:rgba(124,108,255,0.35)_transparent]">
+              {transcriptLoading ? (
+                <div className="space-y-3">
+                  <div className="dash-skeleton h-20" />
+                  <div className="dash-skeleton h-20" />
+                  <div className="dash-skeleton h-20" />
+                </div>
+              ) : transcript && transcript.length > 0 ? (
+                <ConversationTranscript messages={transcript} />
+              ) : transcript && transcript.length === 0 ? (
+                <p className="text-sm text-[color:var(--c-muted)]">No hay mensajes en esta conversación.</p>
+              ) : null}
+            </div>
+            {activeRow ? (
+              <div className="flex flex-wrap items-center justify-end gap-2 border-t border-[color:var(--c-border)] px-5 py-3">
+                <Link
+                  href={`/dashboard/${sitePublicId}/visitors/${activeRow.visitorId}`}
+                  className="text-xs font-semibold text-[color:var(--c-accent)] hover:underline"
+                >
+                  Ver perfil del visitante
+                </Link>
+              </div>
+            ) : null}
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
 
       <div className="dash-filter-bar">
         <select
@@ -118,11 +187,11 @@ export default function ConversationsClient({
         </div>
       ) : items.length === 0 ? (
         <div className="dash-empty">
-          <p className="text-3xl mb-4" aria-hidden>
+          <p className="mb-4 text-3xl" aria-hidden>
             💬
           </p>
-          <h3 className="font-syne text-lg font-bold text-[color:var(--c-text)] mb-2">Sin conversaciones aún</h3>
-          <p className="text-sm text-[color:var(--c-muted)] max-w-md mx-auto leading-relaxed">
+          <h3 className="mb-2 font-syne text-lg font-bold text-[color:var(--c-text)]">Sin conversaciones aún</h3>
+          <p className="mx-auto max-w-md text-sm leading-relaxed text-[color:var(--c-muted)]">
             Cuando el widget esté en tu sitio, cada chat va a aparecer acá con intención, duración y preview.
           </p>
         </div>
@@ -132,7 +201,7 @@ export default function ConversationsClient({
             <div key={c.id} className="dash-card overflow-hidden p-0 [&::before]:opacity-60">
               <button
                 type="button"
-                onClick={() => void openTranscript(c.id)}
+                onClick={() => void openTranscript(c)}
                 className="flex w-full flex-col gap-2 p-4 text-left transition-colors hover:bg-[color:var(--c-surface2)]/35 sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="min-w-0 flex-1">
@@ -161,11 +230,6 @@ export default function ConversationsClient({
                   </Link>
                 </div>
               </button>
-              {openId === c.id && transcript ? (
-                <div className="border-t border-[color:var(--c-border)] bg-[color:var(--c-bg-subtle)]/80 p-4">
-                  <ConversationTranscript messages={transcript} />
-                </div>
-              ) : null}
             </div>
           ))}
         </div>

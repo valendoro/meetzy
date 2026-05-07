@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import DeleteSiteButton from "@/components/dashboard/DeleteSiteButton";
+import { useProductToast } from "@/components/providers/product-toast";
 
 interface SiteData {
   siteId: string;
@@ -28,6 +29,7 @@ interface SiteData {
 
 export default function SiteSettingsForm({ site }: { site: SiteData }) {
   const router = useRouter();
+  const { push } = useProductToast();
   const [form, setForm] = useState({
     agentName: site.agentName,
     agentRole: site.agentRole,
@@ -66,14 +68,18 @@ export default function SiteSettingsForm({ site }: { site: SiteData }) {
       });
       if (!res.ok) {
         const data = (await res.json()) as { error?: string };
-        setError(data.error ?? "Error al guardar");
+        const msg = data.error ?? "Error al guardar";
+        setError(msg);
+        push(msg, "error");
       } else {
         setSaved(true);
+        push("Cambios guardados", "success");
         setTimeout(() => setSaved(false), 2000);
         router.refresh();
       }
     } catch {
       setError("Error inesperado");
+      push("Error inesperado al guardar", "error");
     } finally {
       setSaving(false);
     }

@@ -17,6 +17,7 @@ import {
 import MetricCard from "./MetricCard";
 import { formatDurationSec } from "@/lib/format-duration";
 import { countryFlagEmoji } from "@/lib/country-flag";
+import { useProductToast } from "@/components/providers/product-toast";
 
 type Range = "today" | "7d" | "30d" | "all";
 
@@ -73,6 +74,7 @@ export default function SiteAnalyticsOverview({
   appUrl: string;
   initialIsActive: boolean;
 }) {
+  const { push } = useProductToast();
   const [range, setRange] = useState<Range>("7d");
   const [data, setData] = useState<AnalyticsPayload | null>(null);
   const [loading, setLoading] = useState(true);
@@ -117,17 +119,31 @@ export default function SiteAnalyticsOverview({
       if (res.ok) {
         const j = (await res.json()) as { site: { isActive: boolean } };
         setIsActive(j.site.isActive);
+        push(j.site.isActive ? "Agente activo" : "Agente pausado", "success");
+      } else {
+        push("No se pudo cambiar el estado", "error");
       }
+    } catch {
+      push("Error de red", "error");
     } finally {
       setToggling(false);
     }
   };
 
   const copyScript = async () => {
-    const script = `<script>\n  window.MEETZYCONFIG = { siteId: "${siteId}" };\n</script>\n<script src="${appUrl}/widget.js" async></script>`;
-    await navigator.clipboard.writeText(script);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    const script = `<!-- Meetzy -->
+<script>
+  window.MEETZYCONFIG = { siteId: "${siteId}" };
+</script>
+<script src="${appUrl}/widget.js" async></script>`;
+    try {
+      await navigator.clipboard.writeText(script);
+      setCopied(true);
+      push("Script copiado", "success");
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      push("No se pudo copiar el script", "error");
+    }
   };
 
   const donutData = data

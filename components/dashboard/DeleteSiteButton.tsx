@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useProductToast } from "@/components/providers/product-toast";
 
 type DeleteSiteButtonProps = {
   /** `siteId` público del widget (slug en URL del dashboard). */
@@ -19,6 +20,7 @@ export default function DeleteSiteButton({
   className = "",
 }: DeleteSiteButtonProps) {
   const router = useRouter();
+  const { push } = useProductToast();
   const [loading, setLoading] = useState(false);
 
   async function handleDelete() {
@@ -32,9 +34,10 @@ export default function DeleteSiteButton({
       const res = await fetch(`/api/sites/${siteId}`, { method: "DELETE" });
       const data = (await res.json().catch(() => ({}))) as { error?: string };
       if (!res.ok) {
-        window.alert(data.error ?? "No se pudo eliminar el sitio");
+        push(data.error ?? "No se pudo eliminar el sitio", "error");
         return;
       }
+      push("Sitio y conversaciones eliminados", "success");
       if (variant === "card") {
         router.refresh();
       } else {

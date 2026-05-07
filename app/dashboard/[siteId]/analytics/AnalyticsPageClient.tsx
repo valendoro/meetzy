@@ -5,6 +5,7 @@ import SiteSubnav from "@/components/dashboard/SiteSubnav";
 import FunnelChart from "@/components/dashboard/FunnelChart";
 import HeatmapChart from "@/components/dashboard/HeatmapChart";
 import TopQuestions from "@/components/dashboard/TopQuestions";
+import { useProductToast } from "@/components/providers/product-toast";
 import Link from "next/link";
 
 type Range = "today" | "7d" | "30d" | "all";
@@ -26,6 +27,13 @@ interface EmailRow {
   capturedAt: string;
 }
 
+function isAnalyticsQuiet(d: AnalyticsResponse): boolean {
+  const funnelSum = Object.values(d.funnel).reduce((a, b) => a + b, 0);
+  const heatSum = d.hourlyHeatmap.flat().reduce((a, b) => a + b, 0);
+  const trafficSum = d.trafficSources.reduce((a, t) => a + t.sessions, 0);
+  return funnelSum === 0 && heatSum === 0 && trafficSum === 0;
+}
+
 export default function AnalyticsPageClient({
   sitePublicId,
   siteName,
@@ -33,15 +41,30 @@ export default function AnalyticsPageClient({
   sitePublicId: string;
   siteName: string;
 }) {
+  const { push } = useProductToast();
   const [range, setRange] = useState<Range>("30d");
   const [data, setData] = useState<AnalyticsResponse | null>(null);
   const [emails, setEmails] = useState<EmailRow[]>([]);
   const [qLoading, setQLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const load = useCallback(async () => {
-    const r = await fetch(`/api/sites/${sitePublicId}/analytics?range=${range}`);
-    if (r.ok) setData((await r.json()) as AnalyticsResponse);
-  }, [sitePublicId, range]);
+  const load = useCallback(async (): Promise<boolean> => {
+    setLoading(true);
+    try {
+      const r = await fetch(`/api/sites/${sitePublicId}/analytics?range=${range}`);
+      if (r.ok) {
+        setData((await r.json()) as AnalyticsResponse);
+        return true;
+      }
+      push("No se pudieron cargar las métricas", "error");
+      return false;
+    } catch {
+      push("Error de red al cargar analytics", "error");
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  }, [sitePublicId, range, push]);
 
   useEffect(() => {
     void load();
@@ -60,8 +83,15 @@ export default function AnalyticsPageClient({
   const regenerateQuestions = async () => {
     setQLoading(true);
     try {
-      await fetch(`/api/sites/${sitePublicId}/analytics/top-questions`, { method: "POST" });
-      await load();
+      const r = await fetch(`/api/sites/${sitePublicId}/analytics/top-questions`, { method: "POST" });
+      if (!r.ok) {
+        push("No se pudo actualizar el resumen de preguntas", "error");
+        return;
+      }
+      const ok = await load();
+      if (ok) push("Clusters de preguntas actualizados", "success");
+    } catch {
+      push("Error de red", "error");
     } finally {
       setQLoading(false);
     }
@@ -80,14 +110,14 @@ export default function AnalyticsPageClient({
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <div className="dash-segmented" role="group" aria-label="Rango">
-            {(["7d", "30d", "all"] as const).map((r) => (
+            {(["today", "7d", "30d", "all"] as const).map((r) => (
               <button
                 key={r}
                 type="button"
                 data-active={range === r ? "true" : "false"}
                 onClick={() => setRange(r)}
               >
-                {r === "7d" ? "7 días" : r === "30d" ? "30 días" : "Todo"}
+                {r === "today" ? "Hoy" : r === "7d" ? "7 días" : r === "30d" ? "30 días" : "Todo"}
               </button>
             ))}
           </div>
@@ -95,20 +125,42 @@ export default function AnalyticsPageClient({
             href={`/api/sites/${sitePublicId}/emails?format=csv`}
             target="_blank"
             className="btn-ghost btn-ghost--sm"
+            onClick={() => push("Descarga de CSV en curso…", "info")}
           >
             Exportar CSV
           </Link>
         </div>
       </div>
 
-      {data ? (
+      {loading && !data ? (
+        <div className="space-y-4">
+          <div className="dash-skeleton h-36 w-full" />
+          <div className="dash-skeleton h-56 w-full" />
+          <div className="dash-skeleton h-48 w-full" />
+        </div>
+      ) : data ? (
         <>
-          <TopQuestions
-            siteId={sitePublicId}
-            items={data.topQuestions}
-            onRegenerate={regenerateQuestions}
-            loading={qLoading}
-          />
+          <div className={loading ? "pointer-events-none opacity-55 transition-opacity" : ""}>
+            {isAnalyticsQuiet(data) ? (
+              <div className="dash-card border-dashed p-8 pl-9 text-center">
+                <p className="mb-2 font-syne text-base font-bold text-[color:var(--c-text)]">Sin actividad en este período</p>
+                <p className="mx-auto max-w-lg text-sm leading-relaxed text-[color:var(--c-muted)]">
+                  Cuando haya visitas con el widget instalado, vas a ver calor horario, embudo de intención y fuentes. Probá
+                  otro rango o revisá la{" "}
+                  <Link href={`/dashboard/${sitePublicId}/install`} className="font-medium text-[color:var(--c-accent)] hover:underline">
+                    instalación
+                  </Link>
+                  .
+                </p>
+              </div>
+            ) : null}
+
+            <TopQuestions
+              siteId={sitePublicId}
+              items={data.topQuestions}
+              onRegenerate={regenerateQuestions}
+              loading={qLoading}
+            />
 
           <div className="dash-card p-5 pl-6">
             <h2 className="dash-chart-head">Mapa de calor</h2>
@@ -157,6 +209,7 @@ export default function AnalyticsPageClient({
               </table>
             </div>
           </div>
+          </div>
         </>
       ) : (
         <div className="dash-skeleton h-48 w-full" />
@@ -165,9 +218,16 @@ export default function AnalyticsPageClient({
       <div className="dash-card p-5 pl-6">
         <h2 className="dash-chart-head">Emails capturados</h2>
         {!emails.length ? (
-          <p className="text-sm text-[color:var(--c-muted)] leading-relaxed">
-            Cuando alguien deje su correo en el chat, vas a verlo acá con contexto de intención.
-          </p>
+          <div className="rounded-[var(--radius-lg)] border border-dashed border-[color:var(--c-border)] bg-[color:var(--c-surface2)]/25 px-4 py-8 text-center">
+            <p className="mx-auto max-w-lg text-sm leading-relaxed text-[color:var(--c-muted)]">
+              Cuando un visitante deje su correo en el chat (captura en el flujo del agente), vas a verlo listado acá con
+              intención y score. Revisá la{" "}
+              <Link href={`/dashboard/${sitePublicId}/settings`} className="font-medium text-[color:var(--c-accent)] hover:underline">
+                configuración del agente
+              </Link>{" "}
+              para el tono y reglas.
+            </p>
+          </div>
         ) : (
           <ul className="space-y-1">
             {emails.map((e, i) => (

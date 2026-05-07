@@ -18,6 +18,7 @@ export async function GET(
         welcomeMessage: true,
         avatarType: true,
         avatarSubtype: true,
+        avatarImageUrl: true,
         avatarConfig: true,
         plan: true,
         voiceEnabled: true,

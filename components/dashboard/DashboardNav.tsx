@@ -43,15 +43,15 @@ export default function DashboardNav() {
               key={label}
               href={href}
               style={{
-                color: "var(--c-muted)",
+                color: "rgba(243, 241, 236, 0.58)",
                 textDecoration: "none",
                 transition: "color 0.15s",
               }}
-              onMouseEnter={e => {
+              onMouseEnter={(e) => {
                 (e.currentTarget as HTMLElement).style.color = "var(--c-text)";
               }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLElement).style.color = "var(--c-muted)";
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.color = "rgba(243, 241, 236, 0.58)";
               }}
             >
               {label}

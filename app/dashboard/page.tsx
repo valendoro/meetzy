@@ -2,48 +2,18 @@ import { getDbUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import SiteCard from "@/components/dashboard/SiteCard";
+import SiteCard, { type SiteCardModel } from "@/components/dashboard/SiteCard";
+import { Button } from "@/components/ui/button";
 
 export const metadata = { title: "Dashboard" };
-
-/** Plain props for the client `SiteCard` (only JSON-serializable fields). */
-function siteCardProps(
-  site: {
-    id: string;
-    siteId: string;
-    name: string;
-    url: string;
-    plan: string;
-    isActive: boolean;
-    agentName: string;
-    brandColor: string;
-    avatarType: string | null;
-    _count: { conversations: number };
-  },
-  conversationsToday: number
-) {
-  return {
-    id: site.id,
-    siteId: site.siteId,
-    name: site.name,
-    url: site.url,
-    plan: site.plan,
-    isActive: site.isActive,
-    agentName: site.agentName,
-    brandColor: site.brandColor,
-    avatarType: site.avatarType,
-    conversationsToday,
-    _count: site._count,
-  };
-}
 
 export default async function DashboardPage() {
   const dbUser = await getDbUser();
   if (!dbUser) redirect("/sign-in");
 
-  // "Last 24h" cutoff — Server Component request scope (not a React client render).
-  // eslint-disable-next-line react-hooks/purity -- Date bound to this HTTP request
   const since24h = new Date(Date.now() - 86400000);
+  const since7d = new Date(Date.now() - 7 * 86400000);
+  const since30d = new Date(Date.now() - 30 * 86400000);
 
   const [userData, sites] = await Promise.all([
     prisma.user.findUnique({ where: { id: dbUser.id }, select: { plan: true } }),
@@ -54,54 +24,82 @@ export default async function DashboardPage() {
     }),
   ]);
 
-  const recentCounts = await Promise.all(
-    sites.map(site =>
-      prisma.conversation.count({
-        where: { siteId: site.id, createdAt: { gte: since24h } },
-      })
-    )
-  );
+  const sitesWithMetrics: SiteCardModel[] = await Promise.all(
+    sites.map(async (site) => {
+      const [conversationsToday, conversationsWeek, conversationsMonth, intentGroups] = await Promise.all([
+        prisma.conversation.count({
+          where: { siteId: site.id, createdAt: { gte: since24h } },
+        }),
+        prisma.conversation.count({
+          where: { siteId: site.id, createdAt: { gte: since7d } },
+        }),
+        prisma.conversation.count({
+          where: { siteId: site.id, createdAt: { gte: since30d } },
+        }),
+        prisma.conversation.groupBy({
+          by: ["intentLabel"],
+          where: { siteId: site.id, createdAt: { gte: since7d } },
+          _count: { _all: true },
+        }),
+      ]);
 
-  const sitesWithMetrics = sites.map((site, i) =>
-    siteCardProps(site, recentCounts[i] ?? 0)
+      return {
+        id: site.id,
+        siteId: site.siteId,
+        name: site.name,
+        url: site.url,
+        plan: site.plan,
+        isActive: site.isActive,
+        agentName: site.agentName,
+        brandColor: site.brandColor,
+        avatarType: site.avatarType,
+        conversationsToday,
+        conversationsWeek,
+        conversationsMonth,
+        intentMix: intentGroups.map((g) => ({ intentLabel: g.intentLabel, count: g._count._all })),
+        _count: site._count,
+      };
+    }),
   );
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
+      <header className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="font-syne font-bold text-2xl text-text">Mis agentes</h1>
-          <p className="text-sm mt-1 text-muted">
-            Plan: <span className="text-accent capitalize font-medium">{userData?.plan ?? "starter"}</span>
+          <h1 className="font-syne text-2xl font-bold tracking-[-0.02em] text-[var(--text-primary)] md:text-3xl">Mis agentes</h1>
+          <p className="mt-2 text-sm text-[var(--text-secondary)]">
+            Plan actual:{" "}
+            <span className="font-medium capitalize text-[var(--text-primary)]">{userData?.plan ?? "starter"}</span>
           </p>
         </div>
-        <Link href="/dashboard/new" className="btn-primary" style={{ textDecoration: "none" }}>
-          + Nuevo agente
-        </Link>
-      </div>
+        <Button asChild size="lg">
+          <Link href="/dashboard/new">Crear nuevo agente</Link>
+        </Button>
+      </header>
 
       {sitesWithMetrics.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-24 text-center">
+        <div className="flex flex-col items-center justify-center rounded-[var(--radius-xl)] border border-dashed border-[var(--border-default)] bg-[var(--bg-surface)] px-6 py-24 text-center">
           <div
-            className="w-20 h-20 rounded-2xl flex items-center justify-center text-3xl mb-6"
+            className="mb-6 flex size-20 items-center justify-center rounded-[var(--radius-lg)] text-3xl"
             style={{
-              background: "var(--c-accent-dim)",
-              border: "1px solid rgba(124,108,255,0.28)",
+              background: "var(--accent-subtle)",
+              border: "1px solid var(--accent-border)",
+              boxShadow: "var(--shadow-accent)",
             }}
           >
             🤖
           </div>
-          <h2 className="font-syne font-bold text-xl text-text mb-2">Creá tu primer agente</h2>
-          <p className="text-sm mb-8 max-w-sm text-muted">
-            En 3 pasos tenés un agente AI con la identidad de tu marca instalado en tu web.
+          <h2 className="font-syne text-xl font-bold tracking-tight text-[var(--text-primary)]">Creá tu primer agente</h2>
+          <p className="mt-2 max-w-md text-sm leading-relaxed text-[var(--text-secondary)]">
+            Instalalo en tu web en minutos. Un asistente que entiende tu negocio y conversa con cada visitante.
           </p>
-          <Link href="/dashboard/new" className="btn-primary" style={{ textDecoration: "none", display: "inline-flex" }}>
-            Crear mi primer agente
-          </Link>
+          <Button asChild size="lg" className="mt-8">
+            <Link href="/dashboard/new">Crear mi primer agente</Link>
+          </Button>
         </div>
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {sitesWithMetrics.map(site => (
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-2">
+          {sitesWithMetrics.map((site) => (
             <SiteCard key={site.id} site={site} />
           ))}
         </div>

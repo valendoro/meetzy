@@ -16,7 +16,7 @@ export default {
         border: "#2a2936",
         text: "#f3f1ec",
         muted: "#8f8a82",
-        accent: "#7c6cff",
+        accent: "#6366f1",
         "accent-2": "#e8a090",
       },
       fontFamily: {

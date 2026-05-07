@@ -19,6 +19,8 @@ interface SiteConfig {
   welcomeMessage: string;
   avatarType: string | null;
   avatarSubtype: string | null;
+  /** Imagen IA u optimizada (onboarding / pro) */
+  avatarImageUrl: string | null;
   plan: string;
   voiceEnabled: boolean;
   calBookingUrl: string | null;
@@ -306,23 +308,31 @@ class MeetzyWidget {
     bub.className = "bub";
     bub.title = `Hablame con ${this.config.agentName}`;
 
-    const isPro = this.config.plan === "pro" || this.config.plan === "elite";
-    if (isPro && this.config.avatarType) {
-      const canvas = document.createElement("canvas");
-      canvas.width = 128; canvas.height = 128;
-      canvas.style.cssText = "width:52px;height:52px;border-radius:50%;";
-      bub.appendChild(canvas);
-      setTimeout(() => {
-        this.avatarRenderer = new AvatarRenderer(canvas, {
-          type: this.config.avatarType!,
-          subtype: this.config.avatarSubtype ?? "",
-          brandColor: this.config.brandColor,
-          brandColor2: this.config.brandColor2,
-        });
-        this.avatarRenderer.start();
-      }, 50);
+    const imgUrl = this.config.avatarImageUrl?.trim();
+    if (imgUrl) {
+      const img = document.createElement("img");
+      img.src = imgUrl;
+      img.alt = "";
+      bub.appendChild(img);
     } else {
-      bub.innerHTML = `<div class="bub-init">${this.config.agentName.slice(0, 2).toUpperCase()}</div>`;
+      const isPro = this.config.plan === "pro" || this.config.plan === "elite";
+      if (isPro && this.config.avatarType) {
+        const canvas = document.createElement("canvas");
+        canvas.width = 128; canvas.height = 128;
+        canvas.style.cssText = "width:52px;height:52px;border-radius:50%;";
+        bub.appendChild(canvas);
+        setTimeout(() => {
+          this.avatarRenderer = new AvatarRenderer(canvas, {
+            type: this.config.avatarType!,
+            subtype: this.config.avatarSubtype ?? "",
+            brandColor: this.config.brandColor,
+            brandColor2: this.config.brandColor2,
+          });
+          this.avatarRenderer.start();
+        }, 50);
+      } else {
+        bub.innerHTML = `<div class="bub-init">${this.config.agentName.slice(0, 2).toUpperCase()}</div>`;
+      }
     }
 
     bub.addEventListener("click", () => this.toggleChat());
@@ -410,22 +420,30 @@ class MeetzyWidget {
 
     const av = document.createElement("div");
     av.className = "chat-av";
-    const isPro = this.config.plan === "pro" || this.config.plan === "elite";
-    if (isPro && this.config.avatarType) {
-      const c = document.createElement("canvas");
-      c.width = 80; c.height = 80;
-      c.style.cssText = "width:38px;height:38px;border-radius:50%;";
-      av.appendChild(c);
-      setTimeout(() => {
-        new AvatarRenderer(c, {
-          type: this.config.avatarType!,
-          subtype: this.config.avatarSubtype ?? "",
-          brandColor: this.config.brandColor,
-          brandColor2: this.config.brandColor2,
-        }).start();
-      }, 80);
+    const chatImgUrl = this.config.avatarImageUrl?.trim();
+    if (chatImgUrl) {
+      const img = document.createElement("img");
+      img.src = chatImgUrl;
+      img.alt = "";
+      av.appendChild(img);
     } else {
-      av.innerHTML = `<div class="chat-av-init">${this.config.agentName.slice(0, 2).toUpperCase()}</div>`;
+      const isPro = this.config.plan === "pro" || this.config.plan === "elite";
+      if (isPro && this.config.avatarType) {
+        const c = document.createElement("canvas");
+        c.width = 80; c.height = 80;
+        c.style.cssText = "width:38px;height:38px;border-radius:50%;";
+        av.appendChild(c);
+        setTimeout(() => {
+          new AvatarRenderer(c, {
+            type: this.config.avatarType!,
+            subtype: this.config.avatarSubtype ?? "",
+            brandColor: this.config.brandColor,
+            brandColor2: this.config.brandColor2,
+          }).start();
+        }, 80);
+      } else {
+        av.innerHTML = `<div class="chat-av-init">${this.config.agentName.slice(0, 2).toUpperCase()}</div>`;
+      }
     }
     header.appendChild(av);
 
@@ -604,6 +622,8 @@ class MeetzyWidget {
     this.isStreaming = true;
     this.tracker.bumpActivity();
     this.avatarRenderer?.setTalking(true);
+    const bubImg = this.shadow.querySelector(".bub > img") as HTMLImageElement | null;
+    bubImg?.classList.add("mz-talk");
     const bbl = this.addStreamBubble();
 
     const ctx = this.tracker.get();
@@ -666,6 +686,7 @@ class MeetzyWidget {
     } finally {
       this.isStreaming = false;
       this.avatarRenderer?.setTalking(false);
+      bubImg?.classList.remove("mz-talk");
     }
   }
 
@@ -687,6 +708,8 @@ class MeetzyWidget {
     return `
       @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Syne:wght@700;800&display=swap');
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      @keyframes mz-breathe { 0%,100%{transform:scale(1) translateY(0)} 50%{transform:scale(1.015) translateY(-2px)} }
+      @keyframes mz-talk { 0%,100%{transform:rotate(0deg)} 25%{transform:rotate(1.2deg) scale(1.02)} 75%{transform:rotate(-1.2deg) scale(1.02)} }
 
       /* ── BUBBLE ── */
       .bub-wrap { position: relative; width: 64px; height: 64px; }
@@ -704,6 +727,11 @@ class MeetzyWidget {
         animation: mz-ring 3s ease-out infinite;
       }
       .bub-init { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px; color: #fff; }
+      .bub > img {
+        width: 52px; height: 52px; border-radius: 50%; object-fit: cover; display: block;
+        animation: mz-breathe 3s ease-in-out infinite;
+      }
+      .bub > img.mz-talk { animation: mz-talk 0.35s ease-in-out infinite; }
       .bub-badge {
         position: absolute; top: -6px; ${isLeft ? "left: -4px" : "right: -4px"};
         background: #111; border: 1px solid rgba(255,255,255,0.1);
@@ -785,6 +813,7 @@ class MeetzyWidget {
         padding: 13px 15px; border-bottom: 1px solid rgba(255,255,255,0.06); flex-shrink: 0;
       }
       .chat-av { width: 38px; height: 38px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+      .chat-av > img { width: 100%; height: 100%; object-fit: cover; display: block; animation: mz-breathe 3s ease-in-out infinite; }
       .chat-av-init {
         width: 38px; height: 38px; border-radius: 50%; background: ${bc}; color: #fff;
         font-family: 'Syne', sans-serif; font-weight: 800; font-size: 13px;
@@ -883,7 +912,8 @@ function initFullPage(siteId: string, config: SiteConfig) {
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     .w{display:flex;width:100vw;height:100vh;background:#08080a;font-family:'DM Sans',sans-serif;color:#F0EDE8;}
     .s{width:240px;flex-shrink:0;background:#0d0d0d;border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;align-items:center;padding:40px 20px;gap:14px;}
-    .av{width:90px;height:90px;border-radius:50%;background:${bc};color:#fff;font-family:'Syne',sans-serif;font-weight:800;font-size:32px;display:flex;align-items:center;justify-content:center;}
+    .av{width:90px;height:90px;border-radius:50%;background:${bc};color:#fff;font-family:'Syne',sans-serif;font-weight:800;font-size:32px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+    .av img{width:100%;height:100%;object-fit:cover;display:block;}
     .an{font-family:'Syne',sans-serif;font-weight:800;font-size:17px;}
     .ar{font-size:11px;color:rgba(240,237,232,0.4);display:flex;align-items:center;gap:4px;}
     .ad{width:7px;height:7px;border-radius:50%;background:#22c55e;}
@@ -907,7 +937,21 @@ function initFullPage(siteId: string, config: SiteConfig) {
   </style>`;
   const wrap = document.createElement("div"); wrap.className = "w"; shadow.appendChild(wrap);
   const sb = document.createElement("div"); sb.className = "s";
-  sb.innerHTML = `<div class="av">${config.agentName.slice(0,2).toUpperCase()}</div><div class="an">${config.agentName}</div><div class="ar"><span class="ad"></span>${config.agentRole}</div>`;
+  const avWrap = document.createElement("div"); avWrap.className = "av";
+  const fpImg = config.avatarImageUrl?.trim();
+  if (fpImg) {
+    const im = document.createElement("img");
+    im.src = fpImg; im.alt = "";
+    avWrap.appendChild(im);
+  } else {
+    avWrap.textContent = config.agentName.slice(0, 2).toUpperCase();
+  }
+  sb.appendChild(avWrap);
+  const an = document.createElement("div"); an.className = "an"; an.textContent = config.agentName;
+  sb.appendChild(an);
+  const ar = document.createElement("div"); ar.className = "ar";
+  ar.innerHTML = `<span class="ad"></span>${config.agentRole}`;
+  sb.appendChild(ar);
   wrap.appendChild(sb);
   const chat = document.createElement("div"); chat.className = "c";
   const msgs = document.createElement("div"); msgs.className = "m"; msgs.id = "fp-msgs";
@@ -1003,7 +1047,11 @@ async function init() {
   try {
     const res = await fetch(`${APP_URL}/api/sites/${siteId}/config`);
     if (!res.ok) return;
-    config = (await res.json()) as SiteConfig;
+    const raw = (await res.json()) as SiteConfig;
+    config = {
+      ...raw,
+      avatarImageUrl: raw.avatarImageUrl ?? null,
+    };
     if (!config.isActive) return;
   } catch { return; }
 

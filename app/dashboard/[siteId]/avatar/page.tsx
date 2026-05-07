@@ -2,8 +2,10 @@ import { getDbUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
+import { Lock, Sparkles } from "lucide-react";
 import AvatarConfigurator from "@/components/dashboard/AvatarConfigurator";
 import SiteSubnav from "@/components/dashboard/SiteSubnav";
+import { Button } from "@/components/ui/button";
 
 export const metadata = { title: "Avatar" };
 
@@ -22,15 +24,21 @@ export default async function AvatarPage({ params }: { params: Promise<{ siteId:
       <SiteSubnav siteId={siteId} siteName={site.name} active="avatar" pageTitle="Avatar" />
 
       {!isPro ? (
-        <div className="dash-panel max-w-lg mx-auto p-10 text-center">
-          <p className="text-3xl mb-4">🎭</p>
-          <h3 className="font-syne font-bold text-lg text-[color:var(--c-text)] mb-2">Avatar disponible en Plan Pro</h3>
-          <p className="text-sm mb-6 text-[color:var(--c-muted)]">
-            El avatar 2D animado con identidad de marca está disponible a partir del Plan Pro ($79/mes).
+        <div className="dash-panel mx-auto max-w-lg rounded-[var(--radius-xl)] border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-10 text-center shadow-[var(--shadow-sm)]">
+          <div className="mx-auto mb-5 flex size-14 items-center justify-center rounded-full border border-[var(--accent-border)] bg-[var(--accent-subtle)]">
+            <Lock className="size-7 text-[var(--accent)]" aria-hidden />
+          </div>
+          <h3 className="font-syne text-lg font-bold tracking-tight text-[var(--text-primary)]">Avatar de marca en Plan Pro</h3>
+          <p className="mt-3 text-sm leading-relaxed text-[var(--text-secondary)]">
+            Personajes 2D animados con tus colores y logo están incluidos en <strong className="text-[var(--text-primary)]">Pro</strong> y{" "}
+            <strong className="text-[var(--text-primary)]">Elite</strong>. En Starter el widget sigue funcionando con burbuja y texto.
           </p>
-          <Link href="/pricing" className="btn-primary no-underline inline-flex">
-            Ver planes →
-          </Link>
+          <Button asChild className="mt-8 gap-2">
+            <Link href="/pricing">
+              <Sparkles className="size-4" />
+              Ver planes
+            </Link>
+          </Button>
         </div>
       ) : (
         <AvatarConfigurator site={site} />

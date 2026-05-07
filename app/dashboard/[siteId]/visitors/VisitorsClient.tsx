@@ -1,12 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { Search } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import SiteSubnav from "@/components/dashboard/SiteSubnav";
 import IntentBadge from "@/components/dashboard/IntentBadge";
 import { formatDurationSec } from "@/lib/format-duration";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import type { VisitorProfile } from "@prisma/client";
 
 const PAGE = 20;
@@ -32,8 +35,17 @@ export default function VisitorsClient({
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [intent, setIntent] = useState("all");
   const [source, setSource] = useState("all");
+
+  useEffect(() => {
+    const t = window.setTimeout(() => {
+      setDebouncedSearch(search.trim());
+      setPage(1);
+    }, 400);
+    return () => window.clearTimeout(t);
+  }, [search]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -42,7 +54,7 @@ export default function VisitorsClient({
       intent,
       source,
     });
-    if (search.trim()) sp.set("search", search.trim());
+    if (debouncedSearch) sp.set("search", debouncedSearch);
     const r = await fetch(`/api/sites/${sitePublicId}/visitors?${sp}`);
     if (r.ok) {
       const j = (await r.json()) as {
@@ -53,7 +65,7 @@ export default function VisitorsClient({
       setTotalPages(j.totalPages);
     }
     setLoading(false);
-  }, [sitePublicId, page, intent, source, search]);
+  }, [sitePublicId, page, intent, source, debouncedSearch]);
 
   useEffect(() => {
     void load();
@@ -64,17 +76,21 @@ export default function VisitorsClient({
       <SiteSubnav siteId={sitePublicId} siteName={siteName} active="visitors" pageTitle="Visitantes" />
 
       <div className="dash-filter-bar">
-        <input
+        <Input
           type="search"
           placeholder="Buscar nombre, email, empresa…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && void load()}
-          className="dash-input min-w-[min(100%,220px)] flex-1 py-2.5 text-sm"
+          leftIcon={<Search className="size-4 opacity-70" strokeWidth={2} />}
+          className="min-w-0 flex-1 sm:min-w-[220px]"
         />
         <select
           value={intent}
-          onChange={(e) => setIntent(e.target.value)}
+          onChange={(e) => {
+            setIntent(e.target.value);
+            setPage(1);
+          }}
           className="dash-input w-auto min-w-[170px] py-2.5 text-sm"
         >
           <option value="all">Intent: todos</option>
@@ -86,7 +102,10 @@ export default function VisitorsClient({
         </select>
         <select
           value={source}
-          onChange={(e) => setSource(e.target.value)}
+          onChange={(e) => {
+            setSource(e.target.value);
+            setPage(1);
+          }}
           className="dash-input w-auto min-w-[150px] py-2.5 text-sm"
         >
           <option value="all">Fuente: todas</option>
@@ -95,9 +114,9 @@ export default function VisitorsClient({
           <option value="direct">Direct</option>
           <option value="referral">Referral</option>
         </select>
-        <button type="button" onClick={() => void load()} className="btn-primary" style={{ padding: "0.55rem 1.15rem", fontSize: "0.8125rem" }}>
+        <Button type="button" size="sm" variant="secondary" onClick={() => void load()} className="shrink-0">
           Aplicar
-        </button>
+        </Button>
       </div>
 
       {loading ? (
@@ -108,14 +127,17 @@ export default function VisitorsClient({
         </div>
       ) : items.length === 0 ? (
         <div className="dash-empty">
-          <p className="text-3xl mb-4" aria-hidden>
+          <p className="mb-4 text-3xl" aria-hidden>
             👤
           </p>
           <p className="font-syne text-lg font-bold text-[color:var(--c-text)]">Todavía no hay visitantes</p>
-          <p className="mt-2 max-w-md mx-auto text-sm text-[color:var(--c-muted)] leading-relaxed">
-            Instalá el script en tu sitio y empezá a chatear desde el widget: los perfiles aparecen solos con intent,
-            tiempo y fuente.
+          <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-[color:var(--c-muted)]">
+            Cuando el widget esté instalado y los usuarios chateen, vas a ver acá perfiles con intent, tiempo en sitio y
+            fuente de tráfico.
           </p>
+          <Button asChild className="mt-8">
+            <Link href={`/dashboard/${sitePublicId}/install`}>Ir a instalación</Link>
+          </Button>
         </div>
       ) : (
         <div className="dash-table-wrap overflow-x-auto">

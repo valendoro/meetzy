@@ -3,7 +3,8 @@ builder = "nixpacks"
 buildCommand = "npm run build"
 
 [deploy]
-preDeployCommand = ["npx prisma migrate deploy"]
+# Un solo string: Railway ejecuta migraciones antes del tráfico (evita columnas faltantes en Site).
+preDeployCommand = "npx prisma migrate deploy"
 startCommand = "npm start"
 healthcheckPath = "/"
 healthcheckTimeout = 60

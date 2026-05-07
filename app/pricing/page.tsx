@@ -1,10 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import Pricing from "@/components/landing/Pricing";
-
-export const metadata = {
-  title: "Precios",
-  description: "Planes simples y predecibles para cada negocio.",
-};
+import { SignInButton } from "@clerk/nextjs";
 
 export default function PricingPage() {
   return (
@@ -21,12 +19,14 @@ export default function PricingPage() {
             <Link href="/dashboard" className="text-[var(--text-secondary)] transition-colors hover:text-[var(--text-primary)]">
               Dashboard
             </Link>
-            <Link
-              href="/sign-in"
-              className="rounded-[var(--radius-md)] bg-[var(--accent)] px-4 py-2 font-medium text-white shadow-[0_0_16px_rgba(99,102,241,0.25)] transition hover:bg-[var(--accent-hover)]"
-            >
-              Entrar
-            </Link>
+            <SignInButton mode="modal">
+              <button
+                type="button"
+                className="rounded-[var(--radius-md)] bg-[var(--accent)] px-4 py-2 font-medium text-white shadow-[0_0_16px_rgba(99,102,241,0.25)] transition hover:bg-[var(--accent-hover)]"
+              >
+                Entrar
+              </button>
+            </SignInButton>
           </div>
         </div>
       </header>

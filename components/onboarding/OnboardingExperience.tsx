@@ -80,7 +80,7 @@ function canProceedSecondary(primary: PrimaryChar | null, subtype: string): bool
   return false;
 }
 
-export default function OnboardingExperience({ userPlan }: { userPlan: string }) {
+export default function OnboardingExperience({ userPlan, isGuest = false }: { userPlan: string; isGuest?: boolean }) {
   const { push } = useProductToast();
   const [phase, setPhase] = useState<1 | 2 | 3>(1);
   const [step, setStep] = useState<FlowStep>("biz");
@@ -350,6 +350,12 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
   function startPhase2() {
     if (!archetype || !agentType || !businessName.trim() || !agentName.trim() || !url.trim()) {
       push("Completá todos los pasos antes de generar.", "warning");
+      return;
+    }
+    if (isGuest) {
+      // State is already persisted in localStorage via persist() — just redirect to sign-up
+      persist();
+      window.location.href = `/sign-up?redirect_url=${encodeURIComponent("/dashboard/new")}`;
       return;
     }
     if (!systemPrompt.trim()) void runAnalyze();
@@ -803,9 +809,14 @@ export default function OnboardingExperience({ userPlan }: { userPlan: string })
                     className="ob-cta-generate relative mt-3 w-full overflow-hidden py-4 text-white disabled:opacity-40"
                   >
                     <span className="relative z-[1] flex items-center justify-center gap-2">
-                      Generar mi agente <Sparkles className="size-4 opacity-90" />
+                      {isGuest ? "Crear cuenta y generar" : "Generar mi agente"} <Sparkles className="size-4 opacity-90" />
                     </span>
                   </button>
+                  {isGuest && (
+                    <p className="mt-2 text-center text-[11px] text-white/35">
+                      Gratis · Sin tarjeta · 30 segundos
+                    </p>
+                  )}
                 </>
               )}
 

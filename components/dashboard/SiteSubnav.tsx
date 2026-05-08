@@ -43,10 +43,10 @@ export default function SiteSubnav({
     description === null ? null : description ?? (current ? defaultDescriptions[current.key] : null);
 
   return (
-    <header className="mb-12 print:mb-6">
+    <header className="mb-16 print:mb-8">
       {/* Breadcrumb */}
       <nav
-        className="mb-5 flex flex-wrap items-center gap-2 font-[family-name:var(--font-dm-sans)] text-[13px] font-light"
+        className="mb-7 flex flex-wrap items-center gap-2 font-[family-name:var(--font-dm-sans)] text-[13px] font-light"
         aria-label="Migas de pan"
       >
         <Link
@@ -66,19 +66,19 @@ export default function SiteSubnav({
 
       {heading ? (
         <div>
-          <div className="mb-8 flex flex-col gap-2">
-            <h1 className="font-syne text-[24px] font-extrabold leading-tight tracking-[-1.5px] text-[var(--text-primary)] sm:text-[28px]">
+          <div className="mb-10 flex flex-col gap-2.5">
+            <h1 className="font-syne text-[26px] font-extrabold leading-tight tracking-[-1.5px] text-[var(--text-primary)] sm:text-[30px]">
               {heading}
             </h1>
             {blurb ? (
-              <p className="max-w-2xl font-[family-name:var(--font-dm-sans)] text-[13px] font-light leading-relaxed text-[var(--text-secondary)]">
+              <p className="max-w-2xl font-[family-name:var(--font-dm-sans)] text-[14px] font-light leading-relaxed text-[var(--text-secondary)]">
                 {blurb}
               </p>
             ) : null}
           </div>
 
-          {/* Linear-style tabs */}
-          <div className="product-tabs-rail -mt-1 overflow-x-auto [&::-webkit-scrollbar]:h-0">
+          {/* Tabs */}
+          <div className="product-tabs-rail overflow-x-auto [&::-webkit-scrollbar]:h-0">
             {TABS.map((tab) => {
               const href = tab.path ? `${base}${tab.path}` : base;
               const isActive = active === tab.key;

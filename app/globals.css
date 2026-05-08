@@ -275,8 +275,8 @@
 .dash-home-stat-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-  margin-top: 2rem;
+  gap: 1.25rem;
+  margin-top: 2.5rem;
 }
 
 @media (min-width: 900px) {
@@ -286,10 +286,10 @@
 }
 
 .dash-home-stat {
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   border: 1px solid var(--border-subtle);
   background: var(--bg-elevated);
-  padding: 1.5rem 1.75rem;
+  padding: 1.75rem 2rem;
   transition: border-color 150ms ease;
   display: flex;
   flex-direction: column;
@@ -301,19 +301,19 @@
 
 .dash-home-stat-value {
   font-family: var(--font-mono);
-  font-size: 1.75rem;
+  font-size: 2.25rem;
   font-weight: 500;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
   line-height: 1;
   color: var(--text-primary);
 }
 
 .dash-home-stat-label {
-  margin-top: 0.45rem;
-  font-size: 0.625rem;
+  margin-top: 0.6rem;
+  font-size: 0.6875rem;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   color: var(--text-tertiary);
 }
 
@@ -577,8 +577,8 @@
 
 .product-sidebar-shell {
   background: var(--bg-surface);
-  border-right: 1px solid var(--border-subtle);
-  box-shadow: none;
+  border-right: 1px solid var(--border-default);
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
 }
 
 .product-user-panel {
@@ -1226,7 +1226,7 @@ button.onboard-primary-cta:focus-visible {
   background: transparent;
   backdrop-filter: none;
   box-shadow: none;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
   overflow-x: auto;
 }
 /* Selects inside the filter bar: fixed width, don't grow/shrink unexpectedly */

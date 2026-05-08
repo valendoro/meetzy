@@ -120,7 +120,7 @@ export default function DashboardChrome({
     router.push(`${DASH}/${nextSiteId}`);
   };
 
-  const dashSb = collapsed ? "56px" : "220px";
+  const dashSb = collapsed ? "64px" : "248px";
 
   return (
     <div
@@ -302,7 +302,7 @@ export default function DashboardChrome({
       </aside>
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-auto pb-16 md:pb-0">
-        <main className="dash-page-enter mx-auto w-full max-w-[1280px] flex-1 px-6 py-10 sm:px-10 lg:px-16 lg:py-14">
+        <main className="dash-page-enter mx-auto w-full max-w-[1480px] flex-1 px-8 py-14 sm:px-12 lg:px-20 xl:px-28 lg:py-16 xl:py-20">
           {children}
         </main>
       </div>

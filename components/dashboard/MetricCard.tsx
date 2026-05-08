@@ -37,7 +37,7 @@ export default function MetricCard({
 }) {
   return (
     <div
-      className="relative overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5 transition-colors duration-150 hover:border-[var(--border-default)]"
+      className="relative overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-6 transition-colors duration-150 hover:border-[var(--border-default)]"
       style={
         highlight === "hot"
           ? { borderColor: "rgba(239,68,68,0.25)", boxShadow: "0 0 16px rgba(239,68,68,0.06)" }
@@ -55,7 +55,7 @@ export default function MetricCard({
       <div className="relative z-[1] flex gap-3">
         {icon ? (
           <div
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[var(--radius-sm)] text-[var(--accent)]"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[var(--radius-sm)] text-[var(--accent)]"
             style={{
               background: "var(--accent-subtle)",
               border: "1px solid var(--accent-border)",

@@ -98,7 +98,7 @@ export default function AnalyticsPageClient({
   };
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-8">
       <SiteSubnav siteId={sitePublicId} siteName={siteName} active="analytics" pageTitle="Analytics" />
 
       <div className="dash-hero flex flex-wrap items-center justify-between gap-4">
@@ -133,10 +133,10 @@ export default function AnalyticsPageClient({
       </div>
 
       {loading && !data ? (
-        <div className="space-y-4">
-          <div className="dash-skeleton h-36 w-full" />
-          <div className="dash-skeleton h-56 w-full" />
-          <div className="dash-skeleton h-48 w-full" />
+        <div className="space-y-6">
+          <div className="dash-skeleton h-40 w-full" />
+          <div className="dash-skeleton h-64 w-full" />
+          <div className="dash-skeleton h-52 w-full" />
         </div>
       ) : data ? (
         <>
@@ -162,13 +162,13 @@ export default function AnalyticsPageClient({
               loading={qLoading}
             />
 
-          <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5">
+          <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-6">
             <h2 className="dash-chart-head">Mapa de calor</h2>
             <p className="-mt-2 mb-4 text-xs text-[var(--text-tertiary)]">Hora del día × día de la semana (sesiones).</p>
             <HeatmapChart matrix={data.hourlyHeatmap} />
           </div>
 
-          <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5">
+          <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-6">
             <h2 className="dash-chart-head">Embudo de intención</h2>
             <p className="-mt-2 mb-4 text-xs text-[var(--text-tertiary)]">
               Basado en el máximo de intención por visitante (perfiles).
@@ -176,22 +176,22 @@ export default function AnalyticsPageClient({
             <FunnelChart funnel={data.funnel} />
           </div>
 
-          <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5">
+          <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-6">
             <h2 className="dash-chart-head">Fuentes de tráfico</h2>
             <div className="overflow-x-auto rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-overlay)]">
               <table className="dash-inner-table w-full min-w-[520px] text-left text-sm">
                 <thead>
                   <tr>
-                    <th className="px-4 py-3 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
+                    <th className="px-5 py-4 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
                       Fuente
                     </th>
-                    <th className="px-4 py-3 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
+                    <th className="px-5 py-4 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
                       Sesiones
                     </th>
-                    <th className="px-4 py-3 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
+                    <th className="px-5 py-4 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
                       Intent promedio
                     </th>
-                    <th className="px-4 py-3 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
+                    <th className="px-5 py-4 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
                       Duración media (s)
                     </th>
                   </tr>
@@ -199,10 +199,10 @@ export default function AnalyticsPageClient({
                 <tbody>
                   {data.trafficSources.map((t) => (
                     <tr key={t.source}>
-                      <td className="px-4 py-3 capitalize text-[var(--text-primary)]">{t.source}</td>
-                      <td className="px-4 py-3 tabular-nums text-[var(--text-secondary)]">{t.sessions}</td>
-                      <td className="px-4 py-3 tabular-nums text-[var(--text-secondary)]">{t.avgIntent}</td>
-                      <td className="px-4 py-3 tabular-nums text-[var(--text-secondary)]">{t.avgDuration}</td>
+                      <td className="px-5 py-4 capitalize text-[var(--text-primary)]">{t.source}</td>
+                      <td className="px-5 py-4 tabular-nums text-[var(--text-secondary)]">{t.sessions}</td>
+                      <td className="px-5 py-4 tabular-nums text-[var(--text-secondary)]">{t.avgIntent}</td>
+                      <td className="px-5 py-4 tabular-nums text-[var(--text-secondary)]">{t.avgDuration}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -247,3 +247,4 @@ export default function AnalyticsPageClient({
     </div>
   );
 }
+

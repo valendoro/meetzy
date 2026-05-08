@@ -200,13 +200,13 @@ export default function ConversationsClient({
           </Button>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {items.map((c) => (
             <div key={c.id} className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] transition-colors duration-150 hover:border-[var(--border-default)]">
               <button
                 type="button"
                 onClick={() => void openTranscript(c)}
-                className="flex w-full flex-col gap-2 p-4 text-left transition-colors hover:bg-[var(--bg-overlay)] sm:flex-row sm:items-center sm:justify-between"
+                className="flex w-full flex-col gap-2 p-5 text-left transition-colors hover:bg-[var(--bg-overlay)] sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="min-w-0 flex-1">
                   <p className="text-xs text-[var(--text-secondary)]">

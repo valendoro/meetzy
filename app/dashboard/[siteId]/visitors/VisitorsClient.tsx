@@ -144,22 +144,22 @@ export default function VisitorsClient({
           <table className="w-full min-w-[720px] text-left text-sm">
             <thead>
               <tr>
-                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">#</th>
-                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Visitante</th>
-                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Intent</th>
-                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Empresa</th>
-                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Sesiones</th>
-                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Tiempo</th>
-                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Fuente</th>
-                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Última visita</th>
-                <th className="px-4 py-3.5" />
+                <th className="px-5 py-4 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">#</th>
+                <th className="px-5 py-4 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Visitante</th>
+                <th className="px-5 py-4 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Intent</th>
+                <th className="px-5 py-4 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Empresa</th>
+                <th className="px-5 py-4 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Sesiones</th>
+                <th className="px-5 py-4 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Tiempo</th>
+                <th className="px-5 py-4 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Fuente</th>
+                <th className="px-5 py-4 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Última visita</th>
+                <th className="px-5 py-4" />
               </tr>
             </thead>
             <tbody>
               {items.map((v, idx) => (
                 <tr key={v.id}>
-                  <td className="px-4 py-3 text-[var(--text-tertiary)]">{(page - 1) * PAGE + idx + 1}</td>
-                  <td className="px-4 py-3">
+                  <td className="px-5 py-4 text-[var(--text-tertiary)]">{(page - 1) * PAGE + idx + 1}</td>
+                  <td className="px-5 py-4">
                     <div className="flex items-center gap-3">
                       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--accent-subtle)] text-xs font-bold text-[var(--text-primary)]">
                         {initials(v.name, v.email, v.visitorId)}
@@ -172,17 +172,17 @@ export default function VisitorsClient({
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-5 py-4">
                     <IntentBadge label={v.maxIntentLabel} />
                   </td>
-                  <td className="px-4 py-3 text-[var(--text-secondary)]">{v.company ?? "—"}</td>
-                  <td className="px-4 py-3 text-[var(--text-primary)]">{v.totalVisits}</td>
-                  <td className="px-4 py-3 text-[var(--text-secondary)]">{formatDurationSec(v.totalTime)}</td>
-                  <td className="px-4 py-3 capitalize text-[var(--text-secondary)]">{v.topSource ?? "—"}</td>
-                  <td className="px-4 py-3 text-[var(--text-tertiary)]">
+                  <td className="px-5 py-4 text-[var(--text-secondary)]">{v.company ?? "—"}</td>
+                  <td className="px-5 py-4 text-[var(--text-primary)]">{v.totalVisits}</td>
+                  <td className="px-5 py-4 text-[var(--text-secondary)]">{formatDurationSec(v.totalTime)}</td>
+                  <td className="px-5 py-4 capitalize text-[var(--text-secondary)]">{v.topSource ?? "—"}</td>
+                  <td className="px-5 py-4 text-[var(--text-tertiary)]">
                     {formatDistanceToNow(v.lastSeenAt, { addSuffix: true, locale: es })}
                   </td>
-                  <td className="px-4 py-3.5 text-right">
+                  <td className="px-5 py-4.5 text-right">
                     <Link
                       href={`/dashboard/${sitePublicId}/visitors/${v.visitorId}`}
                       className="inline-flex min-h-10 items-center font-medium text-[var(--accent)] hover:underline"
@@ -222,4 +222,8 @@ export default function VisitorsClient({
       ) : null}
     </div>
   );
+}
+  </div>
+  );
+}
 }

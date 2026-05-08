@@ -200,7 +200,7 @@ export default function DashboardChrome({
           ) : null}
 
           {/* Nav */}
-          <nav className="flex flex-1 flex-col px-2 pt-3 gap-0.5" aria-label="Principal">
+          <nav className="flex flex-1 flex-col px-2 pt-3 gap-1" aria-label="Principal">
             {!collapsed && (
               <p className="dash-section-label mt-0">General</p>
             )}
@@ -302,7 +302,7 @@ export default function DashboardChrome({
       </aside>
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-auto pb-16 md:pb-0">
-        <main className="dash-page-enter mx-auto w-full max-w-[1280px] flex-1 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+        <main className="dash-page-enter mx-auto w-full max-w-[1280px] flex-1 px-5 py-8 sm:px-8 lg:px-12 lg:py-12">
           {children}
         </main>
       </div>
@@ -342,4 +342,5 @@ export default function DashboardChrome({
       </nav>
     </div>
   );
+}
 }

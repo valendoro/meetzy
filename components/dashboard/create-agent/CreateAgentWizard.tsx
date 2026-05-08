@@ -597,9 +597,9 @@ export default function CreateAgentWizard({ variant, userPlan, isGuest, onReques
             </div>
           </aside>
 
-          <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-            <div className="flex min-h-0 flex-1 flex-col overflow-hidden md:flex-row">
-              <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-6 py-7 md:px-8 md:py-8">
+          <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-[var(--bg-surface)]">
+            <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[var(--bg-surface)] md:flex-row">
+              <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain bg-[var(--bg-surface)] px-6 py-7 md:px-8 md:py-8">
                 <div className={rightPanelClass}>
                   <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--text-tertiary)]">
                     Paso {macroStep} de 4

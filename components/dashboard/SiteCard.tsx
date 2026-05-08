@@ -108,7 +108,7 @@ export default function SiteCard({ site }: { site: SiteCardModel }) {
     <article className="product-site-card flex flex-col overflow-hidden p-0">
       {/* Card header — 60px */}
       <header
-        className="flex h-[60px] items-center gap-3 border-b border-[var(--border-subtle)] px-4"
+        className="flex h-[68px] items-center gap-3 border-b border-[var(--border-subtle)] px-5"
         style={{
           background: `linear-gradient(135deg, color-mix(in srgb, ${site.brandColor} 8%, transparent), transparent 60%)`,
         }}
@@ -173,19 +173,19 @@ export default function SiteCard({ site }: { site: SiteCardModel }) {
 
       {/* Metrics row */}
       <div className="grid grid-cols-3 divide-x divide-[var(--border-subtle)] px-0 py-0">
-        <div className="px-4 py-3 text-center">
+        <div className="px-4 py-4 text-center">
           <p className="font-mono text-[22px] font-medium tabular-nums leading-tight text-[var(--text-primary)]">
             {site.conversationsToday}
           </p>
           <p className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-tertiary)]">Hoy</p>
         </div>
-        <div className="px-4 py-3 text-center">
+        <div className="px-4 py-4 text-center">
           <p className="font-mono text-[22px] font-medium tabular-nums leading-tight text-[var(--text-primary)]">
             {site.conversationsWeek}
           </p>
           <p className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-tertiary)]">7 días</p>
         </div>
-        <div className="flex flex-col items-center justify-center px-4 py-3">
+        <div className="flex flex-col items-center justify-center px-4 py-4">
           <span
             className={`rounded-[4px] border px-1.5 py-0.5 text-[10px] font-medium ${intentBadge.tone}`}
           >
@@ -199,7 +199,7 @@ export default function SiteCard({ site }: { site: SiteCardModel }) {
       </div>
 
       {/* Intent bar */}
-      <div className="px-4 pb-3">
+      <div className="px-5 pb-4">
         <div className="flex h-1 w-full overflow-hidden rounded-full bg-[var(--bg-overlay)]">
           {INTENT_SEGMENTS.map(({ key, color }) => {
             const row = site.intentMix.find((i) => i.intentLabel === key);
@@ -218,7 +218,7 @@ export default function SiteCard({ site }: { site: SiteCardModel }) {
       </div>
 
       {/* Footer */}
-      <footer className="flex items-center justify-between border-t border-[var(--border-subtle)] px-4 py-2.5">
+      <footer className="flex items-center justify-between border-t border-[var(--border-subtle)] px-5 py-3">
         <div className="flex items-center gap-1">
           <span
             className={`size-1.5 rounded-full ${active ? "bg-[var(--success)]" : "bg-[var(--text-tertiary)]"}`}
@@ -256,7 +256,7 @@ export default function SiteCard({ site }: { site: SiteCardModel }) {
       </footer>
 
       {/* Bottom: live site + delete */}
-      <div className="flex items-center justify-between border-t border-[var(--border-subtle)] px-4 py-1.5">
+      <div className="flex items-center justify-between border-t border-[var(--border-subtle)] px-5 py-2.5">
         <a
           href={site.url.startsWith("http") ? site.url : `https://${site.url}`}
           target="_blank"
@@ -275,4 +275,5 @@ export default function SiteCard({ site }: { site: SiteCardModel }) {
       </div>
     </article>
   );
+}
 }

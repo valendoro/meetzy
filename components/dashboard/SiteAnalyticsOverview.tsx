@@ -158,8 +158,8 @@ export default function SiteAnalyticsOverview({
   const displayUrl = siteUrl.replace(/^https?:\/\//, "").replace(/\/$/, "");
 
   return (
-    <div className="space-y-10">
-      <div className="dash-hero flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+    <div className="space-y-12">
+      <div className="dash-hero flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0 space-y-2">
           <div className="flex flex-wrap items-center gap-3">
             <h2 className="font-syne text-xl font-bold tracking-tight text-[var(--text-primary)] sm:text-2xl">
@@ -216,16 +216,16 @@ export default function SiteAnalyticsOverview({
       </div>
 
       {loading && !data ? (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="dash-skeleton h-32" />
+            <div key={i} className="dash-skeleton h-36" />
           ))}
         </div>
       ) : null}
 
       {data ? (
         <>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
             <MetricCard
               title="Sesiones"
               value={data.sessions.total}
@@ -279,10 +279,10 @@ export default function SiteAnalyticsOverview({
             />
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-2">
-            <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5 transition-colors duration-150 hover:border-[var(--border-default)]">
+          <div className="grid gap-7 lg:grid-cols-2">
+            <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-6 transition-colors duration-150 hover:border-[var(--border-default)]">
               <h3 className="dash-chart-head">Sesiones por día</h3>
-              <div className="h-64 w-full min-w-0">
+              <div className="h-72 w-full min-w-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={data.sessions.byDay} margin={{ top: 6, right: 6, left: -18, bottom: 4 }}>
                     <defs>
@@ -323,7 +323,7 @@ export default function SiteAnalyticsOverview({
               </div>
             </div>
 
-            <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5 transition-colors duration-150 hover:border-[var(--border-default)]">
+            <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-6 transition-colors duration-150 hover:border-[var(--border-default)]">
               <h3 className="dash-chart-head">Distribución de intención</h3>
               {donutData.length === 0 ? (
                 <div className="dash-empty py-14">
@@ -340,7 +340,7 @@ export default function SiteAnalyticsOverview({
                   </p>
                 </div>
               ) : (
-                <div className="h-64 w-full min-w-0">
+                <div className="h-72 w-full min-w-0">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
@@ -365,8 +365,8 @@ export default function SiteAnalyticsOverview({
             </div>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-2">
-            <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5 transition-colors duration-150 hover:border-[var(--border-default)]">
+          <div className="grid gap-7 lg:grid-cols-2">
+            <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-6 transition-colors duration-150 hover:border-[var(--border-default)]">
               <h3 className="dash-chart-head">Conversaciones recientes</h3>
               <RecentConversationsPreview siteId={siteId} brandColor={brandColor} />
               <Link
@@ -377,7 +377,7 @@ export default function SiteAnalyticsOverview({
               </Link>
             </div>
 
-            <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5 transition-colors duration-150 hover:border-[var(--border-default)]">
+            <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-6 transition-colors duration-150 hover:border-[var(--border-default)]">
               <h3 className="dash-chart-head">Top preguntas</h3>
               {!data.topQuestions?.length ? (
                 <div className="rounded-[var(--radius-lg)] border border-dashed border-[var(--border-default)] bg-[var(--bg-overlay)] px-4 py-8 text-center">
@@ -409,8 +409,8 @@ export default function SiteAnalyticsOverview({
             </div>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-2">
-            <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5 transition-colors duration-150 hover:border-[var(--border-default)]">
+          <div className="grid gap-7 lg:grid-cols-2">
+            <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-6 transition-colors duration-150 hover:border-[var(--border-default)]">
               <h3 className="dash-chart-head">Países</h3>
                 {!data.countries.length ? (
                   <p className="text-sm text-[var(--text-tertiary)] leading-relaxed">
@@ -432,7 +432,7 @@ export default function SiteAnalyticsOverview({
                   </ul>
                 )}
               </div>
-              <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5 transition-colors duration-150 hover:border-[var(--border-default)]">
+              <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-6 transition-colors duration-150 hover:border-[var(--border-default)]">
                 <h3 className="dash-chart-head">Fuentes</h3>
                 {!data.sources.length ? (
                   <p className="text-sm text-[var(--text-tertiary)] leading-relaxed">

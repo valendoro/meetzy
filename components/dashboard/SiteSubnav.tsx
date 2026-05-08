@@ -43,7 +43,7 @@ export default function SiteSubnav({
     description === null ? null : description ?? (current ? defaultDescriptions[current.key] : null);
 
   return (
-    <header className="mb-8 print:mb-6">
+    <header className="mb-10 print:mb-6">
       {/* Breadcrumb */}
       <nav
         className="mb-5 flex flex-wrap items-center gap-2 font-[family-name:var(--font-dm-sans)] text-[13px] font-light"
@@ -66,7 +66,7 @@ export default function SiteSubnav({
 
       {heading ? (
         <div>
-          <div className="mb-5 flex flex-col gap-1">
+          <div className="mb-6 flex flex-col gap-1.5">
             <h1 className="font-syne text-[24px] font-extrabold leading-tight tracking-[-1.5px] text-[var(--text-primary)] sm:text-[28px]">
               {heading}
             </h1>

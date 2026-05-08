@@ -1,5 +1,5 @@
 /** Local / CI design & QA: bypass Clerk in middleware & resolve DB user without OAuth. Never enable in production. */
-export const TESTING_MODE = process.env.TESTING_MODE === "true";
+export const TESTING_MODE = process.env.TESTING_MODE === "true" && process.env.NODE_ENV !== "production";
 
 export const TEST_USER_ID = "test-user-id";
 export const TEST_USER_EMAIL = "test@meetzy.ai";

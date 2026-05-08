@@ -50,10 +50,13 @@ export async function getDbUser(): Promise<User | null> {
         });
       }
     } else {
-      user = await prisma.user.update({
-        where: { id: userId },
-        data: { name: name ?? null, image: image ?? null },
-      });
+      // Only write if something actually changed — avoids a DB write on every page load
+      if (user.name !== name || user.image !== image) {
+        user = await prisma.user.update({
+          where: { id: userId },
+          data: { name: name ?? null, image: image ?? null },
+        });
+      }
     }
 
     return user;

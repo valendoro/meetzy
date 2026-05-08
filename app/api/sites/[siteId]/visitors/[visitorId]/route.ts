@@ -27,8 +27,9 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ sit
     const conversations = await prisma.conversation.findMany({
       where: { siteId: site.id, visitorId },
       orderBy: { createdAt: "desc" },
+      take: 30,
       include: {
-        messages: { orderBy: { createdAt: "asc" } },
+        messages: { orderBy: { createdAt: "asc" }, take: 200 },
       },
     });
 

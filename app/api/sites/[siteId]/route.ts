@@ -84,14 +84,7 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
     if (!site) return NextResponse.json({ error: "Site not found" }, { status: 404 });
 
     await prisma.$transaction(async (tx) => {
-      const conversations = await tx.conversation.findMany({
-        where: { siteId: site.id },
-        select: { id: true },
-      });
-      const convIds = conversations.map((c) => c.id);
-      if (convIds.length > 0) {
-        await tx.message.deleteMany({ where: { conversationId: { in: convIds } } });
-      }
+      // Messages are cascade-deleted by Conversation (onDelete: Cascade) — no manual step needed
       await tx.visitorProfile.deleteMany({ where: { siteId: site.id } });
       await tx.conversation.deleteMany({ where: { siteId: site.id } });
       await tx.site.delete({ where: { id: site.id } });

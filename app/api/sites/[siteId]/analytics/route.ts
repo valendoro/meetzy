@@ -131,10 +131,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ site
     const [curr, prev] = await Promise.all([
       prisma.conversation.findMany({
         where: { siteId: site.id, createdAt: { gte: from, lte: to } },
+        orderBy: { createdAt: "desc" },
+        take: 10000,
         select,
       }),
       prisma.conversation.findMany({
         where: { siteId: site.id, createdAt: { gte: prevFrom, lte: prevTo } },
+        orderBy: { createdAt: "desc" },
+        take: 10000,
         select,
       }),
     ]);

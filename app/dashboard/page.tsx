@@ -14,62 +14,78 @@ export default async function DashboardPage() {
   const since7d = new Date(Date.now() - 7 * 86400000);
   const since30d = new Date(Date.now() - 30 * 86400000);
 
-  const [userData, sites, convWeekTotal, convAllTotal] = await Promise.all([
+  // 1 query: get sites
+  const [userData, sites] = await Promise.all([
     prisma.user.findUnique({ where: { id: dbUser.id }, select: { plan: true } }),
     prisma.site.findMany({
       where: { userId: dbUser.id },
       orderBy: { createdAt: "desc" },
       include: { _count: { select: { conversations: true } } },
     }),
-    prisma.conversation.count({
-      where: {
-        site: { userId: dbUser.id },
-        createdAt: { gte: since7d },
-      },
-    }),
-    prisma.conversation.count({
-      where: { site: { userId: dbUser.id } },
-    }),
   ]);
 
-  const sitesWithMetrics: SiteCardModel[] = await Promise.all(
-    sites.map(async (site) => {
-      const [conversationsToday, conversationsWeek, conversationsMonth, intentGroups] = await Promise.all([
-        prisma.conversation.count({
-          where: { siteId: site.id, createdAt: { gte: since24h } },
-        }),
-        prisma.conversation.count({
-          where: { siteId: site.id, createdAt: { gte: since7d } },
-        }),
-        prisma.conversation.count({
-          where: { siteId: site.id, createdAt: { gte: since30d } },
-        }),
-        prisma.conversation.groupBy({
-          by: ["intentLabel"],
-          where: { siteId: site.id, createdAt: { gte: since7d } },
-          _count: { _all: true },
-        }),
-      ]);
+  const internalSiteIds = sites.map((s) => s.id);
 
-      return {
-        id: site.id,
-        siteId: site.siteId,
-        name: site.name,
-        url: site.url,
-        plan: site.plan,
-        isActive: site.isActive,
-        agentName: site.agentName,
-        brandColor: site.brandColor,
-        avatarType: site.avatarType,
-        avatarImageUrl: site.avatarImageUrl,
-        conversationsToday,
-        conversationsWeek,
-        conversationsMonth,
-        intentMix: intentGroups.map((g) => ({ intentLabel: g.intentLabel, count: g._count._all })),
-        _count: site._count,
-      };
-    }),
-  );
+  // 5 aggregate queries instead of 4N — constant cost regardless of site count
+  const [convWeekTotal, convAllTotal, todayCounts, weekCounts, monthCounts, intentGroups] =
+    internalSiteIds.length === 0
+      ? [0, 0, [], [], [], []]
+      : await Promise.all([
+          prisma.conversation.count({
+            where: { siteId: { in: internalSiteIds }, createdAt: { gte: since7d } },
+          }),
+          prisma.conversation.count({
+            where: { siteId: { in: internalSiteIds } },
+          }),
+          prisma.conversation.groupBy({
+            by: ["siteId"],
+            where: { siteId: { in: internalSiteIds }, createdAt: { gte: since24h } },
+            _count: { _all: true },
+          }),
+          prisma.conversation.groupBy({
+            by: ["siteId"],
+            where: { siteId: { in: internalSiteIds }, createdAt: { gte: since7d } },
+            _count: { _all: true },
+          }),
+          prisma.conversation.groupBy({
+            by: ["siteId"],
+            where: { siteId: { in: internalSiteIds }, createdAt: { gte: since30d } },
+            _count: { _all: true },
+          }),
+          prisma.conversation.groupBy({
+            by: ["siteId", "intentLabel"],
+            where: { siteId: { in: internalSiteIds }, createdAt: { gte: since7d } },
+            _count: { _all: true },
+          }),
+        ]);
+
+  // Build lookup maps for O(1) access
+  const todayMap = new Map((todayCounts as { siteId: string; _count: { _all: number } }[]).map((r) => [r.siteId, r._count._all]));
+  const weekMap = new Map((weekCounts as { siteId: string; _count: { _all: number } }[]).map((r) => [r.siteId, r._count._all]));
+  const monthMap = new Map((monthCounts as { siteId: string; _count: { _all: number } }[]).map((r) => [r.siteId, r._count._all]));
+  const intentMap = new Map<string, { intentLabel: string; count: number }[]>();
+  for (const row of intentGroups as { siteId: string; intentLabel: string; _count: { _all: number } }[]) {
+    if (!intentMap.has(row.siteId)) intentMap.set(row.siteId, []);
+    intentMap.get(row.siteId)!.push({ intentLabel: row.intentLabel, count: row._count._all });
+  }
+
+  const sitesWithMetrics: SiteCardModel[] = sites.map((site) => ({
+    id: site.id,
+    siteId: site.siteId,
+    name: site.name,
+    url: site.url,
+    plan: site.plan,
+    isActive: site.isActive,
+    agentName: site.agentName,
+    brandColor: site.brandColor,
+    avatarType: site.avatarType,
+    avatarImageUrl: site.avatarImageUrl,
+    conversationsToday: todayMap.get(site.id) ?? 0,
+    conversationsWeek: weekMap.get(site.id) ?? 0,
+    conversationsMonth: monthMap.get(site.id) ?? 0,
+    intentMix: intentMap.get(site.id) ?? [],
+    _count: site._count,
+  }));
 
   const planUpper = (userData?.plan ?? "starter").toString().toUpperCase();
   const activeCount = sitesWithMetrics.filter((s) => s.isActive).length;

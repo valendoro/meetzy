@@ -48,29 +48,6 @@ export async function upsertVisitorProfile(args: {
       ? args.intentLabel
       : (existing?.maxIntentLabel ?? "exploring");
 
-  if (!existing) {
-    await prisma.visitorProfile.create({
-      data: {
-        visitorId: args.visitorId,
-        siteId: args.internalSiteId,
-        email,
-        name,
-        company,
-        totalVisits: 1,
-        totalMessages: Math.max(0, args.messageCountDelta),
-        totalTime: Math.max(0, args.sessionDurationAdded),
-        maxIntentScore: args.intentScore,
-        maxIntentLabel: args.intentLabel,
-        demoBooked: args.demoBooked,
-        firstSeenAt: new Date(),
-        lastSeenAt: new Date(),
-        country: args.country,
-        topSource: args.source,
-      },
-    });
-    return;
-  }
-
   const updateData: Prisma.VisitorProfileUpdateInput = {
     email: email ?? undefined,
     name: name ?? undefined,
@@ -79,8 +56,8 @@ export async function upsertVisitorProfile(args: {
     maxIntentLabel: maxLabel,
     demoBooked: args.demoBooked ? true : undefined,
     lastSeenAt: new Date(),
-    country: args.country ?? existing.country ?? undefined,
-    topSource: args.source ?? existing.topSource ?? undefined,
+    country: args.country ?? existing?.country ?? undefined,
+    topSource: args.source ?? existing?.topSource ?? undefined,
   };
 
   if (args.messageCountDelta > 0) {
@@ -91,6 +68,35 @@ export async function upsertVisitorProfile(args: {
   }
   if (args.countAsNewVisit) {
     updateData.totalVisits = { increment: 1 };
+  }
+
+  if (!existing) {
+    // Race-condition safe: if two tabs create simultaneously, the second will hit
+    // the unique constraint — catch and fall through to update instead.
+    try {
+      await prisma.visitorProfile.create({
+        data: {
+          visitorId: args.visitorId,
+          siteId: args.internalSiteId,
+          email,
+          name,
+          company,
+          totalVisits: 1,
+          totalMessages: Math.max(0, args.messageCountDelta),
+          totalTime: Math.max(0, args.sessionDurationAdded),
+          maxIntentScore: args.intentScore,
+          maxIntentLabel: args.intentLabel,
+          demoBooked: args.demoBooked,
+          firstSeenAt: new Date(),
+          lastSeenAt: new Date(),
+          country: args.country,
+          topSource: args.source,
+        },
+      });
+      return;
+    } catch {
+      // Unique constraint violation → fall through to update below
+    }
   }
 
   await prisma.visitorProfile.update({

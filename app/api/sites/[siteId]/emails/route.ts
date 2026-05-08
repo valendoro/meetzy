@@ -22,6 +22,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ site
     const rows = await prisma.conversation.findMany({
       where: { siteId: site.id, visitorEmail: { not: null } },
       orderBy: { updatedAt: "desc" },
+      take: 5000,
       select: {
         visitorEmail: true,
         visitorName: true,

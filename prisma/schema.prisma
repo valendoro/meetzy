@@ -76,6 +76,11 @@ model Conversation {
   site   Site   @relation(fields: [siteId], references: [id], onDelete: Cascade)
   visitorId String
 
+  @@index([siteId])
+  @@index([siteId, createdAt])
+  @@index([siteId, visitorId])
+  @@index([siteId, intentLabel])
+
   visitorEmail   String?
   visitorName    String?
   visitorCompany String?
@@ -118,6 +123,10 @@ model VisitorProfile {
   siteId    String
   site      Site   @relation(fields: [siteId], references: [id], onDelete: Cascade)
 
+  @@index([siteId])
+  @@index([siteId, maxIntentLabel])
+  @@index([siteId, lastSeenAt])
+
   email   String?
   name    String?
   company String?
@@ -145,6 +154,8 @@ model Message {
   id             String       @id @default(cuid())
   conversationId String
   conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
   role           String
   content        String       @db.Text
   uiComponents   Json?

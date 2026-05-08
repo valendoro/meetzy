@@ -223,7 +223,3 @@ export default function VisitorsClient({
     </div>
   );
 }
-  </div>
-  );
-}
-}

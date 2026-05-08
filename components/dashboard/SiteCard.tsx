@@ -276,4 +276,3 @@ export default function SiteCard({ site }: { site: SiteCardModel }) {
     </article>
   );
 }
-}

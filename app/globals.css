@@ -1142,7 +1142,7 @@ button.onboard-primary-cta:focus-visible {
 }
 .dash-subnav-rail a {
   flex-shrink: 0;
-  padding: 0.55rem 1.05rem;
+  padding: 0.65rem 1.2rem;
   border-radius: var(--radius-md);
   font-size: 0.8125rem;
   font-weight: 600;
@@ -1226,7 +1226,7 @@ button.onboard-primary-cta:focus-visible {
   background: transparent;
   backdrop-filter: none;
   box-shadow: none;
-  margin-bottom: 1.75rem;
+  margin-bottom: 2rem;
   overflow-x: auto;
 }
 /* Selects inside the filter bar: fixed width, don't grow/shrink unexpectedly */

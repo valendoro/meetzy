@@ -206,7 +206,7 @@ export default function ConversationsClient({
               <button
                 type="button"
                 onClick={() => void openTranscript(c)}
-                className="flex w-full flex-col gap-2 p-5 text-left transition-colors hover:bg-[var(--bg-overlay)] sm:flex-row sm:items-center sm:justify-between"
+                className="flex w-full flex-col gap-2 p-6 text-left transition-colors hover:bg-[var(--bg-overlay)] sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="min-w-0 flex-1">
                   <p className="text-xs text-[var(--text-secondary)]">

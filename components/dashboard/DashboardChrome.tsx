@@ -302,7 +302,7 @@ export default function DashboardChrome({
       </aside>
 
       <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-auto pb-16 md:pb-0">
-        <main className="dash-page-enter mx-auto w-full max-w-[1280px] flex-1 px-5 py-8 sm:px-8 lg:px-12 lg:py-12">
+        <main className="dash-page-enter mx-auto w-full max-w-[1280px] flex-1 px-6 py-10 sm:px-10 lg:px-16 lg:py-14">
           {children}
         </main>
       </div>

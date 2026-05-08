@@ -181,10 +181,18 @@ export default async function DashboardPage() {
           </div>
 
           {/* Agents grid */}
-          <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+          <div className={`grid grid-cols-1 gap-5 ${sitesWithMetrics.length >= 2 ? "sm:grid-cols-2" : "max-w-[580px]"}`}>
             {sitesWithMetrics.map((site) => (
               <SiteCard key={site.id} site={site} />
             ))}
+            {/* Add agent CTA — only shown when there are agents */}
+            <CreateAgentLauncher
+              variant="ghost"
+              className="flex min-h-[180px] flex-col items-center justify-center gap-2 rounded-[var(--radius-lg)] border border-dashed border-[var(--border-default)] text-[var(--text-tertiary)] transition-all duration-150 hover:border-[var(--accent-border)] hover:bg-[var(--accent-subtle)] hover:text-[var(--accent)]"
+            >
+              <span className="text-2xl">＋</span>
+              <span className="text-xs font-medium">Nuevo agente</span>
+            </CreateAgentLauncher>
           </div>
         </div>
       )}

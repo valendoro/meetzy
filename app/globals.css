@@ -291,6 +291,8 @@
   background: var(--bg-elevated);
   padding: 1.1rem 1.25rem;
   transition: border-color 150ms ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .dash-home-stat:hover {
@@ -1220,6 +1222,12 @@ button.onboard-primary-cta:focus-visible {
   backdrop-filter: none;
   box-shadow: none;
   margin-bottom: 1.75rem;
+}
+/* Selects inside the filter bar should NOT be full-width — override .dash-input width: 100% */
+.dash-filter-bar > select {
+  width: auto;
+  min-width: 0;
+  flex-shrink: 0;
 }
 
 .dash-table-wrap {

@@ -1,6 +1,7 @@
 import { getDbUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
+import { Plus } from "lucide-react";
 import SiteCard, { type SiteCardModel } from "@/components/dashboard/SiteCard";
 import { CreateAgentLauncher } from "@/components/dashboard/CreateAgentLauncher";
 
@@ -178,21 +179,17 @@ export default async function DashboardPage() {
               <p className="dash-home-stat-value">{convAllTotal}</p>
               <p className="dash-home-stat-label">Total chats</p>
             </div>
-            <div className="dash-home-stat">
-              <p
-                className="dash-home-stat-value"
-                style={{
-                  fontFamily: "var(--font-mono)",
-                  fontSize: "14px",
-                  fontWeight: 600,
-                  letterSpacing: "0.08em",
-                  textTransform: "uppercase",
-                  color: "var(--accent)",
-                }}
-              >
+            <div className="dash-home-stat" style={{ borderColor: "rgba(99,102,241,0.25)", background: "rgba(99,102,241,0.06)" }}>
+              <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--accent)]">
                 {planUpper}
               </p>
               <p className="dash-home-stat-label">Plan actual</p>
+              <a
+                href="/pricing"
+                className="mt-auto pt-2 text-[10px] font-medium text-[var(--accent)] opacity-70 transition-opacity hover:opacity-100"
+              >
+                Cambiar →
+              </a>
             </div>
           </div>
 
@@ -201,12 +198,14 @@ export default async function DashboardPage() {
             {sitesWithMetrics.map((site) => (
               <SiteCard key={site.id} site={site} />
             ))}
-            {/* Add agent CTA — only shown when there are agents */}
+            {/* Add agent CTA */}
             <CreateAgentLauncher
               variant="ghost"
-              className="flex min-h-[180px] flex-col items-center justify-center gap-2 rounded-[var(--radius-lg)] border border-dashed border-[var(--border-default)] text-[var(--text-tertiary)] transition-all duration-150 hover:border-[var(--accent-border)] hover:bg-[var(--accent-subtle)] hover:text-[var(--accent)]"
+              className="flex min-h-[180px] flex-col items-center justify-center gap-2.5 rounded-[var(--radius-lg)] border border-dashed border-[var(--border-default)] text-[var(--text-tertiary)] transition-all duration-150 hover:border-[var(--accent-border)] hover:bg-[var(--accent-subtle)] hover:text-[var(--accent)]"
             >
-              <span className="text-2xl">＋</span>
+              <div className="flex size-9 items-center justify-center rounded-full border border-dashed border-current">
+                <Plus className="size-4" strokeWidth={2} />
+              </div>
               <span className="text-xs font-medium">Nuevo agente</span>
             </CreateAgentLauncher>
           </div>

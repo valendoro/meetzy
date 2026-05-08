@@ -24,21 +24,52 @@ export default async function AvatarPage({ params }: { params: Promise<{ siteId:
       <SiteSubnav siteId={siteId} siteName={site.name} active="avatar" pageTitle="Avatar" />
 
       {!isPro ? (
-        <div className="dash-panel mx-auto max-w-lg rounded-[var(--radius-xl)] border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-10 text-center shadow-[var(--shadow-sm)]">
-          <div className="mx-auto mb-5 flex size-14 items-center justify-center rounded-full border border-[var(--accent-border)] bg-[var(--accent-subtle)]">
-            <Lock className="size-7 text-[var(--accent)]" aria-hidden />
+        <div className="flex flex-col items-center justify-center py-6">
+          {/* Avatar previews */}
+          <div className="mb-8 flex items-end gap-4">
+            {[
+              { emoji: "🍊", label: "Naranja", color: "#f97316" },
+              { emoji: "🐶", label: "Perro", color: "#6366f1" },
+              { emoji: "👤", label: "Humano", color: "#0ea5e9" },
+            ].map((a) => (
+              <div
+                key={a.label}
+                className="flex flex-col items-center gap-2 rounded-[var(--radius-lg)] border border-[var(--border-default)] bg-[var(--bg-elevated)] px-5 py-4 shadow-[var(--shadow-md)]"
+              >
+                <div
+                  className="flex size-16 items-center justify-center rounded-xl text-3xl"
+                  style={{ background: `color-mix(in srgb, ${a.color} 15%, transparent)` }}
+                >
+                  {a.emoji}
+                </div>
+                <span className="text-[11px] font-medium text-[var(--text-tertiary)]">{a.label}</span>
+              </div>
+            ))}
           </div>
-          <h3 className="font-syne text-lg font-bold tracking-tight text-[var(--text-primary)]">Avatar de marca en Plan Pro</h3>
-          <p className="mt-3 text-sm leading-relaxed text-[var(--text-secondary)]">
-            Personajes 2D animados con tus colores y logo están incluidos en <strong className="text-[var(--text-primary)]">Pro</strong> y{" "}
-            <strong className="text-[var(--text-primary)]">Elite</strong>. En Starter el widget sigue funcionando con burbuja y texto.
-          </p>
-          <Button asChild className="mt-8 gap-2">
-            <Link href="/pricing">
-              <Sparkles className="size-4" />
-              Ver planes
-            </Link>
-          </Button>
+
+          {/* Lock card */}
+          <div className="w-full max-w-md rounded-[var(--radius-xl)] border border-[var(--accent-border)] bg-[var(--accent-subtle)] p-8 text-center">
+            <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-[var(--accent)] shadow-[0_0_24px_rgba(99,102,241,0.35)]">
+              <Lock className="size-5 text-white" aria-hidden />
+            </div>
+            <h3 className="font-syne text-xl font-bold tracking-tight text-[var(--text-primary)]">Avatar de marca en Plan Pro</h3>
+            <p className="mt-3 text-sm leading-relaxed text-[var(--text-secondary)]">
+              Personajes 2D animados con tus colores y logo. El widget en Starter sigue funcionando con burbuja y texto.
+            </p>
+            <div className="mt-6 flex flex-wrap justify-center gap-2">
+              {["Personajes únicos", "Tu color de marca", "Logo incluido"].map((f) => (
+                <span key={f} className="rounded-full border border-[var(--accent-border)] bg-[var(--bg-surface)] px-3 py-1 text-[11px] font-medium text-[var(--accent)]">
+                  ✓ {f}
+                </span>
+              ))}
+            </div>
+            <Button asChild className="mt-7 gap-2 px-6">
+              <Link href="/pricing">
+                <Sparkles className="size-4" />
+                Ver planes Pro y Elite
+              </Link>
+            </Button>
+          </div>
         </div>
       ) : (
         <AvatarConfigurator site={site} />

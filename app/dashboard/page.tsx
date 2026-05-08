@@ -194,7 +194,7 @@ export default async function DashboardPage() {
           </div>
 
           {/* Agents grid */}
-          <div className={`grid grid-cols-1 gap-5 ${sitesWithMetrics.length >= 2 ? "sm:grid-cols-2" : "max-w-[580px]"}`}>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             {sitesWithMetrics.map((site) => (
               <SiteCard key={site.id} site={site} />
             ))}

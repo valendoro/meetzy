@@ -30,10 +30,10 @@ const LS_KEY = "meetzy-create-agent-wizard-v1";
 const SWATCHES = ["#6366f1", "#ec4899", "#f97316", "#22c55e", "#0ea5e9", "#eab308", "#a855f7", "#14b8a6"];
 
 const AGENT_CARDS = [
-  { id: "vendedor" as const, emoji: "🛍️", title: "Vendedor", desc: "Detecta interés y empuja a la acción" },
-  { id: "guia" as const, emoji: "🗺️", title: "Guía", desc: "Acompaña al visitante mientras navega" },
-  { id: "soporte" as const, emoji: "🛠️", title: "Soporte", desc: "Resuelve dudas y problemas técnicos" },
-  { id: "recepcionista" as const, emoji: "📅", title: "Recepcionista", desc: "Agenda turnos y deriva consultas" },
+  { id: "vendedor" as const, emoji: "🛍️", title: "Vendedor", desc: "Detecta interés y empuja a la acción", accent: "rgba(249,115,22,0.12)", border: "rgba(249,115,22,0.4)", dot: "#f97316" },
+  { id: "guia" as const, emoji: "🗺️", title: "Guía", desc: "Acompaña al visitante mientras navega", accent: "rgba(59,130,246,0.12)", border: "rgba(59,130,246,0.4)", dot: "#3b82f6" },
+  { id: "soporte" as const, emoji: "🛠️", title: "Soporte", desc: "Resuelve dudas y problemas técnicos", accent: "rgba(20,184,166,0.12)", border: "rgba(20,184,166,0.4)", dot: "#14b8a6" },
+  { id: "recepcionista" as const, emoji: "📅", title: "Recepcionista", desc: "Agenda turnos y deriva consultas", accent: "rgba(168,85,247,0.12)", border: "rgba(168,85,247,0.4)", dot: "#a855f7" },
 ];
 
 const FUN_MESSAGES = [
@@ -611,9 +611,9 @@ export default function CreateAgentWizard({ variant, userPlan, isGuest, onReques
 
           <div className="relative flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-[var(--bg-surface)]">
             <div className="flex min-h-0 flex-1 flex-col overflow-hidden bg-[var(--bg-surface)] md:flex-row">
-              <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain bg-[var(--bg-surface)] px-6 py-7 md:px-8 md:py-8">
+              <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain bg-[var(--bg-surface)] px-6 py-6 md:px-8 md:py-7">
                 <div className={rightPanelClass}>
-                  <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-[var(--text-tertiary)]">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--text-tertiary)]">
                     Paso {macroStep} de 4
                   </p>
                   {macroStep === 1 ? (
@@ -682,7 +682,7 @@ export default function CreateAgentWizard({ variant, userPlan, isGuest, onReques
 
               {macroStep === 3 ? (
                 <div
-                  className={`hidden w-[38%] shrink-0 border-l border-[var(--border-subtle)] bg-[var(--bg-base)] p-5 md:block`}
+                  className={`hidden w-[220px] flex-none border-l border-[var(--border-subtle)] bg-[var(--bg-base)] p-5 md:block`}
                 >
                   <p className="text-[10px] font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Preview</p>
                   <div
@@ -799,7 +799,7 @@ export default function CreateAgentWizard({ variant, userPlan, isGuest, onReques
         }}
       >
         <div
-          className="dash-modal-panel pointer-events-auto absolute left-1/2 top-1/2 z-[1] flex h-[min(620px,90vh)] w-[min(780px,92vw)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-[var(--radius-xl)] border border-[var(--border-default)] bg-[var(--bg-surface)] shadow-[0_24px_80px_rgba(0,0,0,0.7)]"
+          className="dash-modal-panel pointer-events-auto absolute left-1/2 top-1/2 z-[1] flex h-[min(640px,92vh)] w-[min(880px,97vw)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-[var(--radius-xl)] border border-[var(--border-default)] bg-[var(--bg-surface)] shadow-[0_24px_80px_rgba(0,0,0,0.7)]"
           onClick={(e) => e.stopPropagation()}
           onPointerDown={(e) => e.stopPropagation()}
         >
@@ -859,33 +859,36 @@ function StepBusiness({
 }) {
   const analyzedOk = systemPrompt.trim().length > 0 && !analyzeError;
   return (
-    <div className="mt-6 space-y-8">
+    <div className="mt-5 space-y-5">
       <div>
-        <h3 className="font-syne text-[22px] font-bold tracking-[-0.02em] text-[var(--text-primary)]">¿Dónde vive tu negocio?</h3>
-        <p className="mt-2 text-sm text-[var(--text-secondary)]">Probá analizar la web para que el agente conozca tu oferta.</p>
+        <h3 className="font-syne text-[21px] font-bold tracking-[-0.02em] text-[var(--text-primary)]">¿Dónde vive tu negocio?</h3>
+        <p className="mt-1.5 text-sm text-[var(--text-secondary)]">Analizá tu web para que el agente conozca tu oferta desde el día uno.</p>
       </div>
+
+      {/* URL row */}
       <div>
-        <label className="text-xs font-medium text-[var(--text-secondary)]">URL de tu sitio web</label>
+        <label className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Sitio web</label>
         <div
-          className={`mt-2 flex gap-2 rounded-[10px] border bg-[var(--bg-elevated)] p-1 transition-[border-color,box-shadow] duration-200 ${
-            analyzeBusy ? "border-[var(--accent)] shadow-[0_0_0_1px_rgba(99,102,241,0.35)]" : "border-[var(--border-default)]"
+          className={`mt-1.5 flex gap-1.5 rounded-[10px] border bg-[var(--bg-elevated)] p-1 transition-[border-color,box-shadow] duration-200 ${
+            analyzeBusy ? "border-[var(--accent)] shadow-[0_0_0_1px_rgba(99,102,241,0.25)]" : "border-[var(--border-default)] focus-within:border-[var(--border-focus)]"
           }`}
         >
           <div className="flex flex-1 items-center gap-2 px-2">
-            <LinkIcon className="size-4 shrink-0 text-[var(--text-tertiary)]" />
+            <LinkIcon className="size-3.5 shrink-0 text-[var(--text-tertiary)]" />
             <Input
               value={url}
               onChange={(e) => {
                 setUrl(e.target.value);
                 setAnalyzeError(null);
               }}
+              onKeyDown={(e) => e.key === "Enter" && !analyzeBusy && url.trim() && onAnalyze()}
               placeholder="https://tusitio.com"
-              className="h-11 border-0 bg-transparent text-[var(--text-primary)] focus-visible:ring-0"
+              className="h-10 border-0 bg-transparent text-[var(--text-primary)] focus-visible:ring-0"
             />
           </div>
           <Button
             type="button"
-            className="h-11 shrink-0 rounded-lg bg-[var(--accent)] hover:bg-[var(--accent-hover)]"
+            className="h-10 shrink-0 rounded-lg bg-[var(--accent)] px-4 text-sm hover:bg-[var(--accent-hover)]"
             disabled={analyzeBusy || !url.trim()}
             onClick={onAnalyze}
           >
@@ -894,26 +897,28 @@ function StepBusiness({
         </div>
       </div>
 
+      {/* Feedback: analyzed ok */}
       {analyzedOk ? (
-        <div className="rounded-xl border border-[rgba(34,197,94,0.35)] bg-[rgba(34,197,94,0.06)] p-4">
-          <p className="text-sm font-medium text-[var(--success)]">✓ Sitio leído correctamente</p>
-          <p className="mt-2 text-sm leading-relaxed text-[var(--text-secondary)]">{sitePreview.slice(0, 240)}</p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {["Contexto detectado", "Páginas clave", "Listo para charlar"].map((t) => (
-              <span key={t} className="rounded-full border border-[rgba(34,197,94,0.3)] bg-[rgba(34,197,94,0.1)] px-2.5 py-0.5 text-[11px] text-[var(--success)]">
-                {t}
-              </span>
-            ))}
+        <div className="flex items-start gap-3 rounded-xl border border-[rgba(34,197,94,0.3)] bg-[rgba(34,197,94,0.06)] px-4 py-3">
+          <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-[rgba(34,197,94,0.2)] text-[var(--success)]">
+            <Check className="size-3" strokeWidth={3} />
+          </span>
+          <div className="min-w-0">
+            <p className="text-[13px] font-semibold text-[var(--success)]">Sitio analizado correctamente</p>
+            {sitePreview ? (
+              <p className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-[var(--text-secondary)]">{sitePreview.slice(0, 180)}</p>
+            ) : null}
           </div>
         </div>
       ) : null}
 
+      {/* Feedback: error */}
       {analyzeError ? (
-        <div className="rounded-xl border border-[rgba(239,68,68,0.35)] bg-[rgba(239,68,68,0.06)] p-4">
-          <p className="text-sm text-[var(--error)]">{analyzeError}</p>
+        <div className="rounded-xl border border-[rgba(239,68,68,0.3)] bg-[rgba(239,68,68,0.06)] px-4 py-3">
+          <p className="text-[13px] text-[var(--error)]">{analyzeError}</p>
           <button
             type="button"
-            className="mt-3 text-xs font-medium text-[var(--accent)] underline transition-colors hover:text-[var(--accent-hover)]"
+            className="mt-2 text-xs font-medium text-[var(--accent)] underline transition-colors hover:text-[var(--accent-hover)]"
             onClick={() => {
               setAnalyzeSkipped(true);
               setAnalyzeError(null);
@@ -929,48 +934,56 @@ function StepBusiness({
         </div>
       ) : null}
 
-      <div>
-        <label className="text-xs font-medium text-[var(--text-secondary)]">Nombre del negocio</label>
-        <Input
-          value={businessName}
-          onChange={(e) => setBusinessName(e.target.value)}
-          className="mt-2 h-11 border-[var(--border-default)] bg-[var(--bg-elevated)]"
-          placeholder="Ej. Café del Sol"
-        />
+      {/* 2-col: Negocio + Agente */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Nombre del negocio</label>
+          <Input
+            value={businessName}
+            onChange={(e) => setBusinessName(e.target.value)}
+            className="mt-1.5 h-10 border-[var(--border-default)] bg-[var(--bg-elevated)]"
+            placeholder="Ej. Café del Sol"
+          />
+        </div>
+        <div>
+          <label className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Nombre del agente</label>
+          <Input
+            value={agentName}
+            onChange={(e) => setAgentName(e.target.value)}
+            className="mt-1.5 h-10 border-[var(--border-default)] bg-[var(--bg-elevated)]"
+            placeholder="Luna, Max, Coco…"
+          />
+        </div>
       </div>
 
-      <div>
-        <label className="text-xs font-medium text-[var(--text-secondary)]">¿Cómo se va a llamar tu agente?</label>
-        <Input
-          value={agentName}
-          onChange={(e) => setAgentName(e.target.value)}
-          className="mt-2 h-11 border-[var(--border-default)] bg-[var(--bg-elevated)]"
-          placeholder="Luna, Max, Coco, Sofia…"
-        />
-        <div className="mt-2 flex flex-wrap gap-2">
+      {/* Name suggestions */}
+      {suggestions.length > 0 ? (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-[11px] text-[var(--text-tertiary)]">Sugerencias:</span>
           {suggestions.map((s) => (
             <button
               key={s}
               type="button"
-              className="rounded-full border border-[var(--border-default)] bg-[var(--bg-elevated)] px-3 py-1 text-xs text-[var(--text-secondary)] transition-all duration-150 hover:border-[var(--accent-border)] hover:bg-[var(--accent-subtle)] hover:text-[var(--text-primary)]"
+              className="rounded-full border border-[var(--border-default)] bg-[var(--bg-elevated)] px-2.5 py-0.5 text-[11px] text-[var(--text-secondary)] transition-all duration-150 hover:border-[var(--accent-border)] hover:bg-[var(--accent-subtle)] hover:text-[var(--text-primary)]"
               onClick={() => setAgentName(s)}
             >
               {s}
             </button>
           ))}
         </div>
-      </div>
+      ) : null}
 
+      {/* Language */}
       <div>
-        <label className="text-xs font-medium text-[var(--text-secondary)]">¿En qué idioma responde tu agente?</label>
+        <label className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Idioma del agente</label>
         <select
           value={detectedLanguage}
           onChange={(e) => setDetectedLanguage(e.target.value)}
-          className="dash-focus-ring mt-2 h-11 w-full rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-elevated)] px-3 text-sm text-[var(--text-primary)] transition-colors duration-150"
+          className="dash-focus-ring mt-1.5 h-10 w-full rounded-[10px] border border-[var(--border-default)] bg-[var(--bg-elevated)] px-3 text-sm text-[var(--text-primary)] transition-colors duration-150"
         >
-          <option value="es">Español</option>
-          <option value="en">English</option>
-          <option value="pt">Português</option>
+          <option value="es">🇦🇷 Español</option>
+          <option value="en">🇺🇸 English</option>
+          <option value="pt">🇧🇷 Português</option>
         </select>
       </div>
     </div>
@@ -994,21 +1007,23 @@ function StepAgent({
   setWelcomeMessage: (v: string) => void;
   agentName: string;
 }) {
-  const pills: { id: Personality; label: string }[] = [
-    { id: "amigable", label: "Amigable" },
-    { id: "profesional", label: "Profesional" },
-    { id: "divertida", label: "Divertida" },
-    { id: "seria", label: "Seria" },
+  const pills: { id: Personality; label: string; icon: string }[] = [
+    { id: "amigable", label: "Amigable", icon: "😊" },
+    { id: "profesional", label: "Profesional", icon: "💼" },
+    { id: "divertida", label: "Divertida", icon: "🎉" },
+    { id: "seria", label: "Seria", icon: "🎯" },
   ];
   return (
-    <div className="mt-6 space-y-8">
+    <div className="mt-5 space-y-6">
       <div>
-        <h3 className="font-syne text-[22px] font-bold tracking-[-0.02em] text-[var(--text-primary)]">¿Cómo se comporta?</h3>
-        <p className="mt-2 text-sm text-[var(--text-secondary)]">Elegí el rol que mejor representa cómo querés conversar con visitantes.</p>
+        <h3 className="font-syne text-[21px] font-bold tracking-[-0.02em] text-[var(--text-primary)]">¿Cómo se comporta?</h3>
+        <p className="mt-1.5 text-sm text-[var(--text-secondary)]">Elegí el rol que mejor encaja con lo que querés lograr.</p>
       </div>
+
+      {/* Agent type cards */}
       <div>
-        <p className="mb-3 text-xs font-medium text-[var(--text-tertiary)]">Tipo de agente</p>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Rol del agente</p>
+        <div className="grid grid-cols-2 gap-3">
           {AGENT_CARDS.map((c) => {
             const selected = agentType === c.id;
             return (
@@ -1016,28 +1031,36 @@ function StepAgent({
                 key={c.id}
                 type="button"
                 onClick={() => setAgentType(c.id)}
-                className={`relative flex flex-col items-center gap-2 rounded-xl border p-4 text-center transition-all duration-150 ${
+                className={`relative flex items-center gap-3 rounded-xl border p-3.5 text-left transition-all duration-150 dash-focus-ring ${
                   selected
-                    ? "border-[rgba(99,102,241,0.5)] bg-[rgba(99,102,241,0.08)]"
+                    ? "shadow-[0_0_0_1px_currentColor]"
                     : "border-[var(--border-default)] bg-[var(--bg-elevated)] hover:border-[var(--border-strong)]"
-                } dash-focus-ring`}
+                }`}
+                style={selected ? { borderColor: c.border, backgroundColor: c.accent, color: c.dot } : {}}
               >
                 {selected ? (
-                  <span className="absolute right-2 top-2 flex size-5 items-center justify-center rounded-full bg-[var(--accent)] text-white">
-                    <Check className="size-3" strokeWidth={3} />
+                  <span
+                    className="absolute right-2.5 top-2.5 flex size-4 items-center justify-center rounded-full text-white"
+                    style={{ backgroundColor: c.dot }}
+                  >
+                    <Check className="size-2.5" strokeWidth={3.5} />
                   </span>
                 ) : null}
-                <span className="text-[28px]">{c.emoji}</span>
-                <span className="font-syne text-sm font-semibold text-[var(--text-primary)]">{c.title}</span>
-                <span className="text-xs text-[var(--text-tertiary)]">{c.desc}</span>
+                <span className="text-[24px] leading-none">{c.emoji}</span>
+                <div className="min-w-0">
+                  <p className={`font-syne text-[13px] font-bold ${selected ? "" : "text-[var(--text-primary)]"}`}>{c.title}</p>
+                  <p className="mt-0.5 text-[11px] leading-tight text-[var(--text-tertiary)]">{c.desc}</p>
+                </div>
               </button>
             );
           })}
         </div>
       </div>
+
+      {/* Personality - segment control */}
       <div>
-        <label className="text-xs font-medium text-[var(--text-secondary)]">¿Cómo habla tu agente?</label>
-        <div className="mt-2 flex flex-wrap gap-2">
+        <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Tono de conversación</p>
+        <div className="grid grid-cols-4 gap-1 rounded-xl border border-[var(--border-default)] bg-[var(--bg-elevated)] p-1">
           {pills.map((p) => {
             const on = personality === p.id;
             return (
@@ -1045,21 +1068,24 @@ function StepAgent({
                 key={p.id}
                 type="button"
                 onClick={() => setPersonality(p.id)}
-                className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-all duration-150 ${
+                className={`flex flex-col items-center gap-1 rounded-lg py-2.5 text-center text-[11px] font-medium transition-all duration-150 dash-focus-ring ${
                   on
-                    ? "border-[rgba(99,102,241,0.4)] bg-[rgba(99,102,241,0.15)] text-[#818cf8]"
-                    : "border-[var(--border-default)] text-[var(--text-secondary)] hover:border-[var(--border-strong)]"
-                } dash-focus-ring`}
+                    ? "bg-[var(--bg-surface)] text-[var(--text-primary)] shadow-sm"
+                    : "text-[var(--text-tertiary)] hover:text-[var(--text-secondary)]"
+                }`}
               >
+                <span className="text-base leading-none">{p.icon}</span>
                 {p.label}
               </button>
             );
           })}
         </div>
       </div>
+
+      {/* Welcome message */}
       <div>
         <div className="mb-2 flex items-center justify-between gap-2">
-          <label className="text-xs font-medium text-[var(--text-secondary)]">Mensaje de bienvenida</label>
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Mensaje de bienvenida</p>
           <span className="text-[10px] text-[var(--text-tertiary)]">{welcomeMessage.length}/120</span>
         </div>
         <textarea
@@ -1104,16 +1130,16 @@ function StepAvatarPick({
   genMessage: string;
 }) {
   return (
-    <div className="mt-6 space-y-8 pb-8 md:pb-0">
+    <div className="mt-5 space-y-5 pb-6 md:pb-0">
       <div>
-        <h3 className="font-syne text-[22px] font-bold tracking-[-0.02em] text-[var(--text-primary)]">¿Cómo se ve tu agente?</h3>
-        <p className="mt-2 text-sm text-[var(--text-secondary)]">Personaje, color de marca y logo opcional.</p>
+        <h3 className="font-syne text-[21px] font-bold tracking-[-0.02em] text-[var(--text-primary)]">¿Cómo se ve tu agente?</h3>
+        <p className="mt-1.5 text-sm text-[var(--text-secondary)]">Personaje, color de marca y logo opcional.</p>
       </div>
 
       {!primary ? (
         <div>
-          <p className="mb-3 text-xs font-medium text-[var(--text-tertiary)]">Tipo de personaje</p>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Tipo de personaje</p>
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
             {(
               [
                 ["human", "👤", "Humano"],
@@ -1220,7 +1246,7 @@ function StepAvatarPick({
       (!needsSecondary(primary) || (needsSecondary(primary) && canProceedSecondary(primary, subtype))) ? (
         <>
           <div>
-            <p className="mb-3 text-xs font-medium text-[var(--text-tertiary)]">Color principal de tu marca</p>
+            <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Color principal de tu marca</p>
             <div className="flex flex-wrap gap-3">
               {SWATCHES.map((c) => (
                 <button
@@ -1262,8 +1288,8 @@ function StepAvatarPick({
           </div>
 
           <div>
-            <p className="mb-2 text-xs font-medium text-[var(--text-tertiary)]">Logo (opcional)</p>
-            <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-[var(--border-default)] bg-[var(--bg-elevated)] px-4 py-8 text-center transition-all duration-150 hover:border-[var(--accent-border)] hover:bg-[var(--accent-subtle)]">
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Logo (opcional)</p>
+            <label className="flex cursor-pointer flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-[var(--border-default)] bg-[var(--bg-elevated)] px-4 py-5 text-center transition-all duration-150 hover:border-[var(--accent-border)] hover:bg-[var(--accent-subtle)]">
               <span className="text-sm text-[var(--text-secondary)]">Subir logo · o arrastrá acá</span>
               <span className="text-[11px] text-[var(--text-tertiary)]">PNG o SVG · fondo transparente</span>
               <input

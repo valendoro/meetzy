@@ -429,6 +429,18 @@ export default function CreateAgentWizard({ variant, userPlan, isGuest, onReques
     }, 250);
   }
 
+  function resetWizard() {
+    try { localStorage.removeItem(LS_KEY); } catch { /* ignore */ }
+    setMacroStep(1);
+    setUrl(""); setBusinessName(""); setAgentName(""); setDetectedLanguage("es");
+    setSystemPrompt(""); setSitePreview(""); setAnalyzeBusy(false); setAnalyzeError(null); setAnalyzeSkipped(false);
+    setAgentType(null); setPersonality("amigable"); setWelcomeMessage("");
+    setPrimary(null); setSubtype(""); setBrandColor("#6366f1"); setBrandColor2("#8b5cf6");
+    setLogoUrl(null); setAvatarMicro("pick"); setAvatarUrl(null); setGenFallback(false);
+    setLocalRegen(0); setCreatedSiteId(null); setCelebrate(false);
+    setRightTransition("in");
+  }
+
   const canProceedForward = useMemo(() => {
     if (macroStep === 1) {
       if (!url.trim() || !businessName.trim() || !agentName.trim()) return false;
@@ -713,20 +725,25 @@ export default function CreateAgentWizard({ variant, userPlan, isGuest, onReques
               ) : null}
             </div>
 
-            {macroStep < 4 ? (
-              <footer
-                className={`flex shrink-0 items-center justify-between gap-3 border-t ${footerBorder} ${footerBg} px-4 py-3 md:px-8 md:py-4`}
-              >
-                <div>
-                  {macroStep > 1 ? (
-                    <Button type="button" variant="ghost" className="dash-focus-ring text-[var(--text-secondary)]" onClick={goBack}>
-                      <ChevronLeft className="mr-1 size-4" />
-                      Atrás
-                    </Button>
-                  ) : (
-                    <span />
-                  )}
-                </div>
+            <footer
+              className={`flex shrink-0 items-center justify-between gap-3 border-t ${footerBorder} ${footerBg} px-4 py-3 md:px-8 md:py-4`}
+            >
+              <div>
+                {macroStep === 4 ? (
+                  <Button type="button" variant="ghost" className="dash-focus-ring gap-1.5 text-[var(--text-secondary)]" onClick={resetWizard}>
+                    <RefreshCw className="size-3.5" />
+                    Crear otro agente
+                  </Button>
+                ) : macroStep > 1 ? (
+                  <Button type="button" variant="ghost" className="dash-focus-ring text-[var(--text-secondary)]" onClick={goBack}>
+                    <ChevronLeft className="mr-1 size-4" />
+                    Atrás
+                  </Button>
+                ) : (
+                  <span />
+                )}
+              </div>
+              {macroStep < 4 ? (
                 <Button
                   type="button"
                   disabled={
@@ -756,8 +773,8 @@ export default function CreateAgentWizard({ variant, userPlan, isGuest, onReques
                     </>
                   )}
                 </Button>
-              </footer>
-            ) : null}
+              ) : null}
+            </footer>
           </div>
         </div>
       </div>
@@ -1313,7 +1330,7 @@ function StepInstall({
   appUrl: string;
 }) {
   return (
-    <div className="mt-6 space-y-8">
+    <div className="mt-4 space-y-6">
       <div>
         <h3 className="font-syne text-[22px] font-bold tracking-[-0.02em] text-[var(--text-primary)]">Tu agente está listo</h3>
         <div className="mt-6 flex items-center gap-4">

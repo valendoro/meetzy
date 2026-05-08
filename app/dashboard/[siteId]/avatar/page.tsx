@@ -24,7 +24,7 @@ export default async function AvatarPage({ params }: { params: Promise<{ siteId:
       <SiteSubnav siteId={siteId} siteName={site.name} active="avatar" pageTitle="Avatar" />
 
       {!isPro ? (
-        <div className="flex flex-col items-center justify-center py-6">
+        <div className="flex min-h-[calc(100vh-260px)] flex-col items-center justify-center py-6">
           {/* Avatar previews */}
           <div className="mb-8 flex items-end gap-4">
             {[

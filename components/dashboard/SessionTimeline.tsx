@@ -22,7 +22,7 @@ export default function SessionTimeline({ conversations }: { conversations: Conv
   const [openId, setOpenId] = useState<string | null>(conversations[0]?.id ?? null);
 
   if (!conversations.length) {
-    return <p className="text-sm text-[color:var(--c-muted)]">Sin visitas registradas.</p>;
+    return <p className="text-sm text-[var(--text-secondary)]">Sin visitas registradas.</p>;
   }
 
   return (
@@ -32,35 +32,35 @@ export default function SessionTimeline({ conversations }: { conversations: Conv
         return (
           <div
             key={c.id}
-            className="rounded-xl border border-[color:var(--c-border)] bg-[color:var(--c-surface)]"
+            className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)]"
           >
             <button
               type="button"
               onClick={() => setOpenId(isOpen ? null : c.id)}
-              className="flex w-full flex-wrap items-center justify-between gap-3 p-4 text-left hover:bg-[color:var(--c-surface2)]/50"
+              className="flex w-full flex-wrap items-center justify-between gap-3 p-4 text-left transition-colors hover:bg-[var(--bg-overlay)]"
             >
               <div>
-                <p className="mt-1 text-xs text-[color:var(--c-muted)]">
+                <p className="mt-1 text-xs text-[var(--text-secondary)]">
                   {format(
                     c.createdAt instanceof Date ? c.createdAt : new Date(c.createdAt),
                     "d MMM yyyy · HH:mm",
                     { locale: es },
                   )}
                 </p>
-                <p className="mt-1 text-xs text-[color:var(--c-muted)]">
+                <p className="mt-1 text-xs text-[var(--text-secondary)]">
                   {formatDuration(c.sessionDuration)} · {c.messages.length} mensajes · intent {c.intentScore} (
                   {c.intentLabel.replace(/_/g, " ")})
                 </p>
                 {c.pagesVisited?.length ? (
-                  <p className="mt-1 text-xs text-[color:var(--c-muted2)]">
+                  <p className="mt-1 text-xs text-[var(--text-tertiary)]">
                     Páginas: {c.pagesVisited.join(" → ")}
                   </p>
                 ) : null}
               </div>
-              <span className="text-[color:var(--c-muted)]">{isOpen ? "▲" : "▼"}</span>
+              <span className="text-[var(--text-secondary)]">{isOpen ? "▲" : "▼"}</span>
             </button>
             {isOpen ? (
-              <div className="border-t border-[color:var(--c-border)] p-4">
+              <div className="border-t border-[var(--border-subtle)] p-4">
                 <ConversationTranscript
                   messages={c.messages.map((m) => ({
                     role: m.role,

@@ -62,7 +62,7 @@ export default function RecentConversationsPreview({
 
   if (rows.length === 0) {
     return (
-      <p className="text-sm leading-relaxed text-[color:var(--c-muted)]">
+      <p className="text-sm leading-relaxed text-[var(--text-secondary)]">
         Aún no hay conversaciones en este periodo. Instalá el widget para empezar a recibir chats.
       </p>
     );
@@ -84,13 +84,13 @@ export default function RecentConversationsPreview({
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="truncate text-sm font-medium text-[color:var(--c-text)]">
+                <span className="truncate text-sm font-medium text-[var(--text-primary)]">
                   {row.visitorEmail?.trim() || `Visitante ${row.visitorId.slice(-6)}`}
                 </span>
                 <IntentBadge label={row.intentLabel} />
               </div>
-              <p className="mt-0.5 truncate text-xs text-[color:var(--c-muted)]">{row.preview || "Sin preview"}</p>
-              <p className="mt-1 text-[10px] text-[color:var(--c-muted2)]">
+              <p className="mt-0.5 truncate text-xs text-[var(--text-secondary)]">{row.preview || "Sin preview"}</p>
+              <p className="mt-1 text-[10px] text-[var(--text-tertiary)]">
                 {formatDistanceToNow(new Date(row.createdAt), { addSuffix: true, locale: es })} · {row.messageCount}{" "}
                 mensajes
               </p>

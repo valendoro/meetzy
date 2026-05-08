@@ -17,7 +17,7 @@ export default function DashboardNav() {
         backgroundColor: "rgba(11, 10, 15, 0.92)",
         backdropFilter: "blur(18px)",
         WebkitBackdropFilter: "blur(18px)",
-        borderBottom: "1px solid var(--c-border)",
+        borderBottom: "1px solid var(--border-subtle)",
       }}
     >
       <div
@@ -48,7 +48,7 @@ export default function DashboardNav() {
                 transition: "color 0.15s",
               }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.color = "var(--c-text)";
+                (e.currentTarget as HTMLElement).style.color = "var(--text-primary)";
               }}
               onMouseLeave={(e) => {
                 (e.currentTarget as HTMLElement).style.color = "rgba(243, 241, 236, 0.58)";
@@ -67,7 +67,7 @@ export default function DashboardNav() {
           >
             + Nuevo
           </Link>
-          <span style={{ fontSize: "0.8rem", color: "var(--c-muted2)" }}>{displayName.split(" ")[0]}</span>
+          <span style={{ fontSize: "0.8rem", color: "var(--text-tertiary)" }}>{displayName.split(" ")[0]}</span>
           <UserButton />
         </div>
       </div>

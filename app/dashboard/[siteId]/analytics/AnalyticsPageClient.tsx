@@ -103,10 +103,10 @@ export default function AnalyticsPageClient({
 
       <div className="dash-hero flex flex-wrap items-center justify-between gap-4">
         <div>
-          <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-[color:var(--c-muted)]">
+          <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.08em] text-[var(--text-secondary)]">
             Periodo
           </p>
-          <p className="mt-1 font-syne text-lg font-bold text-[color:var(--c-text)]">Insights profundos</p>
+          <p className="mt-1 font-syne text-lg font-bold text-[var(--text-primary)]">Insights profundos</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <div className="dash-segmented" role="group" aria-label="Rango">
@@ -142,12 +142,12 @@ export default function AnalyticsPageClient({
         <>
           <div className={loading ? "pointer-events-none opacity-55 transition-opacity" : ""}>
             {isAnalyticsQuiet(data) ? (
-              <div className="dash-card border-dashed p-8 pl-9 text-center">
-                <p className="mb-2 font-syne text-base font-bold text-[color:var(--c-text)]">Sin actividad en este período</p>
-                <p className="mx-auto max-w-lg text-sm leading-relaxed text-[color:var(--c-muted)]">
+              <div className="rounded-[var(--radius-lg)] border border-dashed border-[var(--border-default)] bg-[var(--bg-elevated)] p-8 text-center">
+                <p className="mb-2 font-syne text-base font-bold text-[var(--text-primary)]">Sin actividad en este período</p>
+                <p className="mx-auto max-w-lg text-sm leading-relaxed text-[var(--text-secondary)]">
                   Cuando haya visitas con el widget instalado, vas a ver calor horario, embudo de intención y fuentes. Probá
                   otro rango o revisá la{" "}
-                  <Link href={`/dashboard/${sitePublicId}/install`} className="font-medium text-[color:var(--c-accent)] hover:underline">
+                  <Link href={`/dashboard/${sitePublicId}/install`} className="font-medium text-[var(--accent)] hover:underline">
                     instalación
                   </Link>
                   .
@@ -162,36 +162,36 @@ export default function AnalyticsPageClient({
               loading={qLoading}
             />
 
-          <div className="dash-card p-5 pl-6">
+          <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5">
             <h2 className="dash-chart-head">Mapa de calor</h2>
-            <p className="-mt-2 mb-4 text-xs text-[color:var(--c-muted2)]">Hora del día × día de la semana (sesiones).</p>
+            <p className="-mt-2 mb-4 text-xs text-[var(--text-tertiary)]">Hora del día × día de la semana (sesiones).</p>
             <HeatmapChart matrix={data.hourlyHeatmap} />
           </div>
 
-          <div className="dash-card p-5 pl-6">
+          <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5">
             <h2 className="dash-chart-head">Embudo de intención</h2>
-            <p className="-mt-2 mb-4 text-xs text-[color:var(--c-muted)]">
+            <p className="-mt-2 mb-4 text-xs text-[var(--text-tertiary)]">
               Basado en el máximo de intención por visitante (perfiles).
             </p>
             <FunnelChart funnel={data.funnel} />
           </div>
 
-          <div className="dash-card p-5 pl-6">
+          <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5">
             <h2 className="dash-chart-head">Fuentes de tráfico</h2>
-            <div className="overflow-x-auto rounded-[var(--radius-md)] border border-[color:var(--c-border2)]/80 bg-[color:var(--c-surface3)]/40">
+            <div className="overflow-x-auto rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-overlay)]">
               <table className="dash-inner-table w-full min-w-[520px] text-left text-sm">
                 <thead>
                   <tr>
-                    <th className="px-4 py-3 text-[0.6875rem] font-semibold uppercase tracking-wider text-[color:var(--c-muted2)]">
+                    <th className="px-4 py-3 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
                       Fuente
                     </th>
-                    <th className="px-4 py-3 text-[0.6875rem] font-semibold uppercase tracking-wider text-[color:var(--c-muted2)]">
+                    <th className="px-4 py-3 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
                       Sesiones
                     </th>
-                    <th className="px-4 py-3 text-[0.6875rem] font-semibold uppercase tracking-wider text-[color:var(--c-muted2)]">
+                    <th className="px-4 py-3 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
                       Intent promedio
                     </th>
-                    <th className="px-4 py-3 text-[0.6875rem] font-semibold uppercase tracking-wider text-[color:var(--c-muted2)]">
+                    <th className="px-4 py-3 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
                       Duración media (s)
                     </th>
                   </tr>
@@ -199,10 +199,10 @@ export default function AnalyticsPageClient({
                 <tbody>
                   {data.trafficSources.map((t) => (
                     <tr key={t.source}>
-                      <td className="px-4 py-3 capitalize text-[color:var(--c-text)]">{t.source}</td>
-                      <td className="px-4 py-3 tabular-nums text-[color:var(--c-muted)]">{t.sessions}</td>
-                      <td className="px-4 py-3 tabular-nums text-[color:var(--c-muted)]">{t.avgIntent}</td>
-                      <td className="px-4 py-3 tabular-nums text-[color:var(--c-muted)]">{t.avgDuration}</td>
+                      <td className="px-4 py-3 capitalize text-[var(--text-primary)]">{t.source}</td>
+                      <td className="px-4 py-3 tabular-nums text-[var(--text-secondary)]">{t.sessions}</td>
+                      <td className="px-4 py-3 tabular-nums text-[var(--text-secondary)]">{t.avgIntent}</td>
+                      <td className="px-4 py-3 tabular-nums text-[var(--text-secondary)]">{t.avgDuration}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -215,14 +215,14 @@ export default function AnalyticsPageClient({
         <div className="dash-skeleton h-48 w-full" />
       )}
 
-      <div className="dash-card p-5 pl-6">
+      <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5">
         <h2 className="dash-chart-head">Emails capturados</h2>
         {!emails.length ? (
-          <div className="rounded-[var(--radius-lg)] border border-dashed border-[color:var(--c-border)] bg-[color:var(--c-surface2)]/25 px-4 py-8 text-center">
-            <p className="mx-auto max-w-lg text-sm leading-relaxed text-[color:var(--c-muted)]">
+          <div className="rounded-[var(--radius-lg)] border border-dashed border-[var(--border-default)] bg-[var(--bg-overlay)] px-4 py-8 text-center">
+            <p className="mx-auto max-w-lg text-sm leading-relaxed text-[var(--text-secondary)]">
               Cuando un visitante deje su correo en el chat (captura en el flujo del agente), vas a verlo listado acá con
               intención y score. Revisá la{" "}
-              <Link href={`/dashboard/${sitePublicId}/settings`} className="font-medium text-[color:var(--c-accent)] hover:underline">
+              <Link href={`/dashboard/${sitePublicId}/settings`} className="font-medium text-[var(--accent)] hover:underline">
                 configuración del agente
               </Link>{" "}
               para el tono y reglas.
@@ -233,10 +233,10 @@ export default function AnalyticsPageClient({
             {emails.map((e, i) => (
               <li
                 key={i}
-                className="flex flex-wrap justify-between gap-2 rounded-[var(--radius-md)] border border-[color:var(--c-border)]/50 bg-[color:var(--c-surface2)]/30 px-3 py-2.5 text-sm"
+                className="flex flex-wrap justify-between gap-2 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-overlay)] px-3 py-2.5 text-sm"
               >
-                <span className="font-medium text-[color:var(--c-text)]">{e.email}</span>
-                <span className="text-[color:var(--c-muted)]">
+                <span className="font-medium text-[var(--text-primary)]">{e.email}</span>
+                <span className="text-[var(--text-secondary)]">
                   {e.name ?? "—"} · {e.intentScore} · {e.intentLabel}
                 </span>
               </li>

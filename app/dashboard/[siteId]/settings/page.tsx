@@ -18,12 +18,12 @@ export default async function SiteSettingsPage({ params }: { params: Promise<{ s
     <div className="w-full">
       <SiteSubnav siteId={siteId} siteName={site.name} active="settings" pageTitle="Configuración" />
 
-      <header className="mb-10 max-w-3xl">
-        <h1 className="font-syne font-bold text-3xl sm:text-[1.85rem] tracking-tight text-[color:var(--c-text)]">
+      <header className="mb-8 max-w-3xl">
+        <h1 className="font-syne text-[22px] font-bold tracking-[-0.03em] text-[var(--text-primary)]">
           Configuración del agente
         </h1>
-        <p className="mt-2 text-base leading-relaxed text-[color:var(--c-muted)]">
-          Identidad, instrucciones, colores de marca e integraciones. Todo en un solo panel.
+        <p className="mt-1.5 font-[family-name:var(--font-dm-sans)] text-[13px] font-light leading-relaxed text-[var(--text-secondary)]">
+          Identidad, instrucciones, colores de marca e integraciones.
         </p>
       </header>
 

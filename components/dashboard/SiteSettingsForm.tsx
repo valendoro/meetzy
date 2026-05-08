@@ -132,7 +132,7 @@ export default function SiteSettingsForm({ site }: { site: SiteData }) {
         {/* System prompt */}
         <div>
           <h2 className="dash-section-title mb-1">System prompt</h2>
-          <p className="text-sm leading-relaxed text-[color:var(--c-muted)] mb-5 max-w-3xl">
+          <p className="text-sm leading-relaxed text-[var(--text-secondary)] mb-5 max-w-3xl">
             Instrucciones base del agente. Editá para personalizar tono y conocimiento.
           </p>
           <textarea
@@ -158,7 +158,7 @@ export default function SiteSettingsForm({ site }: { site: SiteData }) {
                   name="brandColor"
                   value={form.brandColor}
                   onChange={handleChange}
-                  className="h-11 w-11 shrink-0 cursor-pointer rounded-lg border border-[color:var(--c-border)] bg-transparent"
+                  className="h-11 w-11 shrink-0 cursor-pointer rounded-lg border border-[var(--border-subtle)] bg-transparent"
                 />
                 <input name="brandColor" value={form.brandColor} onChange={handleChange} className="dash-input flex-1 font-mono text-sm" />
               </div>
@@ -171,7 +171,7 @@ export default function SiteSettingsForm({ site }: { site: SiteData }) {
                   name="brandColor2"
                   value={form.brandColor2}
                   onChange={handleChange}
-                  className="h-11 w-11 shrink-0 cursor-pointer rounded-lg border border-[color:var(--c-border)] bg-transparent"
+                  className="h-11 w-11 shrink-0 cursor-pointer rounded-lg border border-[var(--border-subtle)] bg-transparent"
                 />
                 <input name="brandColor2" value={form.brandColor2} onChange={handleChange} className="dash-input flex-1 font-mono text-sm" />
               </div>
@@ -217,16 +217,16 @@ export default function SiteSettingsForm({ site }: { site: SiteData }) {
             </select>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-[var(--radius-lg)] border border-[color:var(--c-border)] bg-[color:var(--c-surface3)] px-4 py-3.5">
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-overlay)] px-4 py-3.5">
             <div>
-              <p className="text-sm font-medium text-[color:var(--c-text)]">Mensajes proactivos</p>
-              <p className="text-xs mt-0.5 text-[color:var(--c-muted)]">El agente inicia conversación según el comportamiento</p>
+              <p className="text-sm font-medium text-[var(--text-primary)]">Mensajes proactivos</p>
+              <p className="text-xs mt-0.5 text-[var(--text-secondary)]">El agente inicia conversación según el comportamiento</p>
             </div>
             <button
               type="button"
               onClick={() => setForm((p) => ({ ...p, proactiveEnabled: !p.proactiveEnabled }))}
               className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
-                form.proactiveEnabled ? "bg-[color:var(--c-accent)]" : "bg-[color:var(--c-surface2)]"
+                form.proactiveEnabled ? "bg-[var(--accent)]" : "bg-[var(--bg-elevated)]"
               }`}
             >
               <span
@@ -253,16 +253,16 @@ export default function SiteSettingsForm({ site }: { site: SiteData }) {
             </div>
           )}
 
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-[var(--radius-lg)] border border-[color:var(--c-border)] bg-[color:var(--c-surface3)] px-4 py-3.5">
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-overlay)] px-4 py-3.5">
             <div>
-              <p className="text-sm font-medium text-[color:var(--c-text)]">Exit intent</p>
-              <p className="text-xs mt-0.5 text-[color:var(--c-muted)]">Mensaje cuando el visitante está por irse</p>
+              <p className="text-sm font-medium text-[var(--text-primary)]">Exit intent</p>
+              <p className="text-xs mt-0.5 text-[var(--text-secondary)]">Mensaje cuando el visitante está por irse</p>
             </div>
             <button
               type="button"
               onClick={() => setForm((p) => ({ ...p, exitIntentEnabled: !p.exitIntentEnabled }))}
               className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
-                form.exitIntentEnabled ? "bg-[color:var(--c-accent)]" : "bg-[color:var(--c-surface2)]"
+                form.exitIntentEnabled ? "bg-[var(--accent)]" : "bg-[var(--bg-elevated)]"
               }`}
             >
               <span
@@ -286,8 +286,8 @@ export default function SiteSettingsForm({ site }: { site: SiteData }) {
                   onClick={() => setForm((p) => ({ ...p, widgetPosition: opt.value }))}
                   className={`cursor-pointer rounded-[var(--radius-md)] border py-3 text-sm transition-all ${
                     form.widgetPosition === opt.value
-                      ? "border-[color:var(--c-accent)] bg-[color:var(--c-accent-dim)] text-[color:var(--c-text)]"
-                      : "border-[color:var(--c-border)] text-[color:var(--c-muted)] hover:border-[color:var(--c-border2)] hover:text-[color:var(--c-text)]"
+                      ? "border-[var(--accent)] bg-[var(--accent-subtle)] text-[var(--text-primary)]"
+                      : "border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--border-default)] hover:text-[var(--text-primary)]"
                   }`}
                 >
                   {opt.label}
@@ -314,7 +314,7 @@ export default function SiteSettingsForm({ site }: { site: SiteData }) {
       style={{ borderColor: "rgba(239, 68, 68, 0.22)", boxShadow: "0 0 0 1px rgba(239, 68, 68, 0.06) inset" }}
     >
       <h2 className="font-syne font-bold text-base text-red-400 mb-1">Zona peligrosa</h2>
-      <p className="text-sm text-[color:var(--c-muted)] mb-4 max-w-xl leading-relaxed">
+      <p className="text-sm text-[var(--text-secondary)] mb-4 max-w-xl leading-relaxed">
         Al eliminar el sitio, el widget deja de responder, se borran todas las conversaciones y esta acción no se puede
         deshacer.
       </p>

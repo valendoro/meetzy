@@ -104,16 +104,16 @@ export default function ConversationsClient({
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 z-[100] bg-[rgba(6,6,8,0.85)] backdrop-blur-[12px]" />
           <Dialog.Content
-            className="dash-modal-panel fixed z-[101] flex max-h-[min(88dvh,720px)] w-full max-w-[min(calc(100vw-24px),640px)] flex-col border border-[color:var(--c-border2)] bg-[color:var(--c-surface2)] shadow-[0_24px_80px_rgba(0,0,0,0.45)] max-md:inset-x-0 max-md:bottom-0 max-md:top-auto max-md:max-h-[min(88dvh,720px)] max-md:translate-x-0 max-md:translate-y-0 max-md:rounded-b-none max-md:rounded-t-[var(--radius-xl)] md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-[var(--radius-lg)]"
+            className="dash-modal-panel fixed z-[101] flex max-h-[min(88dvh,720px)] w-full max-w-[min(calc(100vw-24px),640px)] flex-col border border-[var(--border-default)] bg-[var(--bg-elevated)] shadow-[0_24px_80px_rgba(0,0,0,0.45)] max-md:inset-x-0 max-md:bottom-0 max-md:top-auto max-md:max-h-[min(88dvh,720px)] max-md:translate-x-0 max-md:translate-y-0 max-md:rounded-b-none max-md:rounded-t-[var(--radius-xl)] md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-[var(--radius-lg)]"
             onOpenAutoFocus={(e) => e.preventDefault()}
           >
-            <div className="flex items-start justify-between gap-3 border-b border-[color:var(--c-border2)] px-5 py-4">
+            <div className="flex items-start justify-between gap-3 border-b border-[var(--border-subtle)] px-5 py-4">
               <div className="min-w-0">
-                <Dialog.Title className="font-syne text-base font-bold text-[color:var(--c-text)]">
+                <Dialog.Title className="font-syne text-base font-bold text-[var(--text-primary)]">
                   Transcripción
                 </Dialog.Title>
                 {activeRow ? (
-                  <Dialog.Description className="mt-1 text-xs text-[color:var(--c-muted)]">
+                  <Dialog.Description className="mt-1 text-xs text-[var(--text-secondary)]">
                     {format(new Date(activeRow.createdAt), "d MMM yyyy, HH:mm", { locale: es })} ·{" "}
                     {formatDurationSec(activeRow.sessionDuration)} · {activeRow.messageCount} mensajes
                   </Dialog.Description>
@@ -123,13 +123,13 @@ export default function ConversationsClient({
               </div>
               <Dialog.Close
                 type="button"
-                className="rounded-[var(--radius-md)] p-2 text-[color:var(--c-muted)] transition-colors hover:bg-[color:var(--c-surface2)] hover:text-[color:var(--c-text)]"
+                className="rounded-[var(--radius-md)] p-2 text-[var(--text-tertiary)] transition-colors hover:bg-[var(--bg-overlay)] hover:text-[var(--text-primary)]"
                 aria-label="Cerrar"
               >
                 <X className="size-5" />
               </Dialog.Close>
             </div>
-            <div className="min-h-0 flex-1 overflow-y-auto p-5 [scrollbar-color:rgba(124,108,255,0.35)_transparent]">
+            <div className="min-h-0 flex-1 overflow-y-auto p-5 [scrollbar-color:rgba(99,102,241,0.35)_transparent]">
               {transcriptLoading ? (
                 <div className="space-y-3">
                   <div className="dash-skeleton h-20" />
@@ -139,14 +139,14 @@ export default function ConversationsClient({
               ) : transcript && transcript.length > 0 ? (
                 <ConversationTranscript messages={transcript} />
               ) : transcript && transcript.length === 0 ? (
-                <p className="text-sm text-[color:var(--c-muted)]">No hay mensajes en esta conversación.</p>
+                <p className="text-sm text-[var(--text-secondary)]">No hay mensajes en esta conversación.</p>
               ) : null}
             </div>
             {activeRow ? (
-              <div className="flex flex-wrap items-center justify-end gap-2 border-t border-[color:var(--c-border2)] px-5 py-3">
+              <div className="flex flex-wrap items-center justify-end gap-2 border-t border-[var(--border-subtle)] px-5 py-3">
                 <Link
                   href={`/dashboard/${sitePublicId}/visitors/${activeRow.visitorId}`}
-                  className="text-xs font-semibold text-[color:var(--c-accent)] hover:underline"
+                  className="text-xs font-semibold text-[var(--accent)] hover:underline"
                 >
                   Ver perfil del visitante
                 </Link>
@@ -191,8 +191,8 @@ export default function ConversationsClient({
           <p className="mb-4 text-3xl" aria-hidden>
             💬
           </p>
-          <h3 className="mb-2 font-syne text-lg font-bold text-[color:var(--c-text)]">Sin conversaciones aún</h3>
-          <p className="mx-auto max-w-md text-sm leading-relaxed text-[color:var(--c-muted)]">
+          <h3 className="mb-2 font-syne text-lg font-bold text-[var(--text-primary)]">Sin conversaciones aún</h3>
+          <p className="mx-auto max-w-md text-sm leading-relaxed text-[var(--text-secondary)]">
             Cuando el widget esté en tu sitio, cada chat va a aparecer acá con intención, duración y preview.
           </p>
           <Button asChild className="mt-8 min-h-11 px-5">
@@ -202,20 +202,20 @@ export default function ConversationsClient({
       ) : (
         <div className="space-y-4">
           {items.map((c) => (
-            <div key={c.id} className="dash-card dash-card--quiet overflow-hidden p-0 [&::before]:opacity-60">
+            <div key={c.id} className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] transition-colors duration-150 hover:border-[var(--border-default)]">
               <button
                 type="button"
                 onClick={() => void openTranscript(c)}
-                className="flex w-full flex-col gap-2 p-4 text-left transition-colors hover:bg-[color:var(--c-surface2)]/35 sm:flex-row sm:items-center sm:justify-between"
+                className="flex w-full flex-col gap-2 p-4 text-left transition-colors hover:bg-[var(--bg-overlay)] sm:flex-row sm:items-center sm:justify-between"
               >
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs text-[color:var(--c-muted)]">
+                  <p className="text-xs text-[var(--text-secondary)]">
                     {format(new Date(c.createdAt), "d MMM yyyy, HH:mm", { locale: es })} ·{" "}
                     {formatDurationSec(c.sessionDuration)} · {c.messageCount} mensajes
                     {c.country ? ` · ${c.country}` : ""}
                     {c.device ? ` · ${c.device}` : ""}
                   </p>
-                  <p className="mt-1 truncate text-sm text-[color:var(--c-text)]">{c.preview || "—"}</p>
+                  <p className="mt-1 truncate text-sm text-[var(--text-primary)]">{c.preview || "—"}</p>
                 </div>
                 <div className="flex shrink-0 flex-wrap items-center gap-2">
                   {c.visitorEmail ? (
@@ -224,10 +224,10 @@ export default function ConversationsClient({
                     </span>
                   ) : null}
                   <IntentBadge label={c.intentLabel} />
-                  <span className="text-xs text-[color:var(--c-muted)]">{c.intentScore} pts</span>
+                  <span className="text-xs text-[var(--text-secondary)]">{c.intentScore} pts</span>
                   <Link
                     href={`/dashboard/${sitePublicId}/visitors/${c.visitorId}`}
-                    className="text-xs text-[color:var(--c-accent)]"
+                    className="text-xs text-[var(--accent)]"
                     onClick={(e) => e.stopPropagation()}
                   >
                     Perfil
@@ -249,7 +249,7 @@ export default function ConversationsClient({
           >
             Anterior
           </button>
-          <span className="px-3 py-2 text-sm tabular-nums text-[color:var(--c-muted)]">
+          <span className="px-3 py-2 text-sm tabular-nums text-[var(--text-secondary)]">
             {page} / {totalPages}
           </span>
           <button

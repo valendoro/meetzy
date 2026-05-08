@@ -31,11 +31,11 @@ export default function FunnelChart({
           <Tooltip
             contentStyle={{
               background: "rgba(18, 18, 26, 0.98)",
-              border: "1px solid rgba(124, 108, 255, 0.22)",
+              border: "1px solid rgba(99, 102, 241, 0.2)",
               borderRadius: 12,
             }}
           />
-          <Bar dataKey="count" fill="#7c6cff" radius={[6, 6, 0, 0]} maxBarSize={44} />
+          <Bar dataKey="count" fill="#6366f1" radius={[6, 6, 0, 0]} maxBarSize={44} />
         </BarChart>
       </ResponsiveContainer>
     </div>

@@ -34,7 +34,7 @@ interface AnalyticsPayload {
   topQuestions: { question: string; count: number }[];
 }
 
-const ACCENT = "#7c6cff";
+const ACCENT = "#6366f1";
 
 const INTENT_COLORS: Record<string, string> = {
   exploring: "#94A3B8",
@@ -53,13 +53,13 @@ const RANGE_OPTIONS: { value: Range; label: string }[] = [
 
 const tooltipProps = {
   contentStyle: {
-    background: "rgba(18, 18, 26, 0.98)",
-    border: "1px solid rgba(124, 108, 255, 0.22)",
-    borderRadius: 12,
-    boxShadow: "0 16px 48px rgba(0, 0, 0, 0.45)",
+    background: "var(--bg-elevated)",
+    border: "1px solid var(--border-default)",
+    borderRadius: 8,
+    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.6)",
   },
-  labelStyle: { color: "var(--text-primary)", fontWeight: 600 } satisfies CSSProperties,
-  itemStyle: { color: "var(--text-secondary)" } satisfies CSSProperties,
+  labelStyle: { color: "var(--text-primary)", fontWeight: 500, fontFamily: "DM Sans, sans-serif", fontSize: 12 } satisfies CSSProperties,
+  itemStyle: { color: "var(--text-secondary)", fontFamily: "var(--font-jetbrains, monospace)", fontSize: 12 } satisfies CSSProperties,
 };
 
 export default function SiteAnalyticsOverview({
@@ -162,7 +162,7 @@ export default function SiteAnalyticsOverview({
       <div className="dash-hero flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0 space-y-2">
           <div className="flex flex-wrap items-center gap-3">
-            <h2 className="font-syne text-xl font-bold tracking-tight text-[color:var(--text-primary)] sm:text-2xl">
+            <h2 className="font-syne text-xl font-bold tracking-tight text-[var(--text-primary)] sm:text-2xl">
               {siteName}
             </h2>
             <span className={isActive ? "dash-status-live" : "dash-status-live dash-status-live--off"}>
@@ -174,7 +174,7 @@ export default function SiteAnalyticsOverview({
             href={siteUrl.startsWith("http") ? siteUrl : `https://${siteUrl}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-sm text-[color:var(--text-secondary)] transition-colors hover:text-[color:var(--accent)]"
+            className="inline-flex items-center gap-1.5 text-sm text-[var(--text-secondary)] transition-colors hover:text-[var(--accent)]"
           >
             <span className="truncate">{displayUrl}</span>
             <span className="shrink-0 text-[0.7rem] opacity-60" aria-hidden>
@@ -280,7 +280,7 @@ export default function SiteAnalyticsOverview({
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
-            <div className="dash-card p-5 pl-6">
+            <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5 transition-colors duration-150 hover:border-[var(--border-default)]">
               <h3 className="dash-chart-head">Sesiones por día</h3>
               <div className="h-64 w-full min-w-0">
                 <ResponsiveContainer width="100%" height="100%">
@@ -323,18 +323,18 @@ export default function SiteAnalyticsOverview({
               </div>
             </div>
 
-            <div className="dash-card p-5 pl-6">
+            <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5 transition-colors duration-150 hover:border-[var(--border-default)]">
               <h3 className="dash-chart-head">Distribución de intención</h3>
               {donutData.length === 0 ? (
                 <div className="dash-empty py-14">
                   <div className="flex justify-center mb-4">
-                    <div style={{ width: 44, height: 44, borderRadius: 12, background: "var(--c-accent-dim)", border: "1px solid rgba(124,108,255,0.22)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--c-accent)" }}>
+                    <div style={{ width: 44, height: 44, borderRadius: 12, background: "var(--accent-subtle)", border: "1px solid rgba(99,102,241,0.22)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--accent)" }}>
                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
                         <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
                       </svg>
                     </div>
                   </div>
-                  <p className="text-sm text-[color:var(--c-muted)] max-w-xs mx-auto">
+                  <p className="text-sm text-[var(--text-secondary)] max-w-xs mx-auto">
                     Cuando el widget reciba tráfico, vas a ver cómo se distribuyen tus visitantes por nivel de
                     intención.
                   </p>
@@ -366,24 +366,24 @@ export default function SiteAnalyticsOverview({
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
-            <div className="dash-card p-5 pl-6">
+            <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5 transition-colors duration-150 hover:border-[var(--border-default)]">
               <h3 className="dash-chart-head">Conversaciones recientes</h3>
               <RecentConversationsPreview siteId={siteId} brandColor={brandColor} />
               <Link
                 href={`/dashboard/${siteId}/conversations`}
-                className="mt-4 inline-flex min-h-10 items-center text-xs font-semibold text-[color:var(--c-accent)] hover:underline"
+                className="mt-4 inline-flex min-h-10 items-center text-xs font-semibold text-[var(--accent)] hover:underline"
               >
                 Ver todas →
               </Link>
             </div>
 
-            <div className="dash-card p-5 pl-6">
+            <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5 transition-colors duration-150 hover:border-[var(--border-default)]">
               <h3 className="dash-chart-head">Top preguntas</h3>
               {!data.topQuestions?.length ? (
-                <div className="rounded-[var(--radius-lg)] border border-dashed border-[color:var(--c-border)] bg-[color:var(--c-surface2)]/40 px-4 py-8 text-center">
-                  <p className="text-sm text-[color:var(--c-muted)] leading-relaxed">
+                <div className="rounded-[var(--radius-lg)] border border-dashed border-[var(--border-default)] bg-[var(--bg-overlay)] px-4 py-8 text-center">
+                  <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                     Estamos agrupando las preguntas con IA (caché ~1h). Si acabás de instalar, pasá unos minutos o
-                    abrí <strong className="text-[color:var(--c-text)]">Analytics</strong>.
+                    abrí <strong className="text-[var(--text-primary)]">Analytics</strong>.
                   </p>
                 </div>
               ) : (
@@ -391,14 +391,14 @@ export default function SiteAnalyticsOverview({
                   {data.topQuestions.slice(0, 5).map((q, i) => (
                     <li
                       key={i}
-                      className="flex gap-3 rounded-[var(--radius-md)] border border-[color:var(--c-border)] bg-[color:var(--c-surface2)]/35 px-3 py-2.5 text-sm transition-colors hover:border-[rgba(124,108,255,0.25)]"
+                      className="flex gap-3 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--bg-overlay)] px-3 py-2.5 text-sm transition-colors hover:border-[rgba(99,102,241,0.35)]"
                     >
-                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[color:var(--c-accent-dim)] text-xs font-bold text-[color:var(--c-text)] ring-1 ring-[rgba(124,108,255,0.2)]">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--accent-subtle)] text-xs font-bold text-[var(--text-primary)] ring-1 ring-[rgba(99,102,241,0.22)]">
                         {i + 1}
                       </span>
-                      <span className="text-[color:var(--c-muted)] leading-snug">
+                      <span className="text-[var(--text-secondary)] leading-snug">
                         {q.question}
-                        <span className="ml-2 whitespace-nowrap font-semibold text-[color:var(--c-muted2)] tabular-nums">
+                        <span className="ml-2 whitespace-nowrap font-semibold text-[var(--text-tertiary)] tabular-nums">
                           ×{q.count}
                         </span>
                       </span>
@@ -410,10 +410,10 @@ export default function SiteAnalyticsOverview({
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
-            <div className="dash-card p-5 pl-6">
+            <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5 transition-colors duration-150 hover:border-[var(--border-default)]">
               <h3 className="dash-chart-head">Países</h3>
                 {!data.countries.length ? (
-                  <p className="text-sm text-[color:var(--c-muted2)] leading-relaxed">
+                  <p className="text-sm text-[var(--text-tertiary)] leading-relaxed">
                     Aparecen cuando tengamos país por IP o por el widget.
                   </p>
                 ) : (
@@ -421,21 +421,21 @@ export default function SiteAnalyticsOverview({
                     {data.countries.map((c) => (
                       <li
                         key={c.country}
-                        className="flex justify-between gap-3 rounded-[var(--radius-md)] py-2 text-sm border-b border-[color:var(--c-border)]/60 last:border-0"
+                        className="flex justify-between gap-3 rounded-[var(--radius-md)] py-2 text-sm border-b border-[var(--border-subtle)] last:border-0"
                       >
-                        <span className="text-[color:var(--c-text)]">
+                        <span className="text-[var(--text-primary)]">
                           {(c.flag ?? countryFlagEmoji(c.country)) + " " + c.country}
                         </span>
-                        <span className="font-semibold tabular-nums text-[color:var(--c-muted)]">{c.count}</span>
+                        <span className="font-semibold tabular-nums text-[var(--text-secondary)]">{c.count}</span>
                       </li>
                     ))}
                   </ul>
                 )}
               </div>
-              <div className="dash-card p-5 pl-6">
+              <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5 transition-colors duration-150 hover:border-[var(--border-default)]">
                 <h3 className="dash-chart-head">Fuentes</h3>
                 {!data.sources.length ? (
-                  <p className="text-sm text-[color:var(--c-muted2)] leading-relaxed">
+                  <p className="text-sm text-[var(--text-tertiary)] leading-relaxed">
                     UTM y referrer se van a ir llenando con el tráfico real.
                   </p>
                 ) : (
@@ -443,10 +443,10 @@ export default function SiteAnalyticsOverview({
                     {data.sources.map((s) => (
                       <li
                         key={s.source}
-                        className="flex justify-between gap-3 rounded-[var(--radius-md)] py-2 text-sm border-b border-[color:var(--c-border)]/60 capitalize last:border-0"
+                        className="flex justify-between gap-3 rounded-[var(--radius-md)] py-2 text-sm border-b border-[var(--border-subtle)] capitalize last:border-0"
                       >
-                        <span className="text-[color:var(--c-text)]">{s.source}</span>
-                        <span className="font-semibold tabular-nums text-[color:var(--c-muted)]">{s.count}</span>
+                        <span className="text-[var(--text-primary)]">{s.source}</span>
+                        <span className="font-semibold tabular-nums text-[var(--text-secondary)]">{s.count}</span>
                       </li>
                     ))}
                   </ul>
@@ -463,8 +463,8 @@ export default function SiteAnalyticsOverview({
               </svg>
             </div>
           </div>
-          <p className="text-[color:var(--c-text)] font-medium mb-1">No se pudieron cargar las métricas</p>
-          <p className="text-sm text-[color:var(--c-muted)]">Revisá tu conexión o volvé a intentar en unos segundos.</p>
+          <p className="text-[var(--text-primary)] font-medium mb-1">No se pudieron cargar las métricas</p>
+          <p className="text-sm text-[var(--text-secondary)]">Revisá tu conexión o volvé a intentar en unos segundos.</p>
           <button
             type="button"
             onClick={() => void load()}

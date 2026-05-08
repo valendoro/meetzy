@@ -246,10 +246,10 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
             <div
               className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full font-syne text-xs font-bold transition-all ${
                 i < step
-                  ? "bg-[color:var(--c-accent)] text-white shadow-[0_0_0_1px_rgba(255,255,255,0.1)_inset,0_4px_22px_var(--c-accent-glow)]"
+                  ? "bg-[var(--accent)] text-white shadow-[0_0_0_1px_rgba(255,255,255,0.1)_inset,0_4px_22px_var(--accent-glow)]"
                   : i === step
-                    ? "bg-[color:var(--c-accent-dim)] text-[color:var(--c-accent)] ring-2 ring-[rgba(124,108,255,0.55)] ring-offset-2 ring-offset-[color:var(--c-bg)]"
-                    : "border border-[rgba(255,255,255,0.14)] bg-[rgba(37,36,51,0.5)] text-[rgba(243,241,236,0.48)]"
+                    ? "bg-[var(--accent-subtle)] text-[var(--accent)] ring-2 ring-[rgba(99,102,241,0.55)] ring-offset-2 ring-offset-[var(--bg-base)]"
+                    : "border border-[var(--border-strong)] bg-[var(--bg-overlay)] text-[rgba(243,241,236,0.48)]"
               }`}
             >
               {i < step ? (
@@ -269,7 +269,7 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
             <span
               className={`hidden min-w-0 truncate text-sm md:block ${
                 i === step
-                  ? "font-semibold text-[color:var(--c-text)]"
+                  ? "font-semibold text-[var(--text-primary)]"
                   : i < step
                     ? "text-[rgba(243,241,236,0.55)]"
                     : "text-[rgba(243,241,236,0.42)]"
@@ -279,7 +279,7 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
             </span>
             {i < STEPS.length - 1 ? (
               <div
-                className={`mx-1 hidden h-px min-w-[12px] flex-1 sm:block ${i < step ? "bg-[color:var(--c-accent)]/60" : "bg-[rgba(255,255,255,0.14)]"}`}
+                className={`mx-1 hidden h-px min-w-[12px] flex-1 sm:block ${i < step ? "bg-[var(--accent)]/60" : "bg-[var(--border-strong)]"}`}
               />
             ) : null}
           </div>
@@ -289,7 +289,7 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
       {step === 0 && (
         <div className="onboard-card flex flex-col gap-10">
           <header className="space-y-2">
-            <h2 className="font-syne text-xl font-bold tracking-tight text-[color:var(--c-text)] md:text-2xl">
+            <h2 className="font-syne text-xl font-bold tracking-tight text-[var(--text-primary)] md:text-2xl">
               ¿Cuál es la URL de tu sitio?
             </h2>
             <p className="onboard-subtle max-w-xl">
@@ -321,10 +321,10 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
                     key={mode.value}
                     type="button"
                     onClick={() => setField("embedMode", mode.value as "widget" | "fullpage")}
-                    className={`relative flex h-full min-h-[148px] flex-col rounded-[var(--radius-lg)] border border-solid p-5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(124,108,255,0.55)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--c-bg)] ${
+                    className={`relative flex h-full min-h-[148px] flex-col rounded-[var(--radius-lg)] border border-solid p-5 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(99,102,241,0.55)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)] ${
                       active
-                        ? "border-[rgba(124,108,255,0.65)] bg-[color:var(--c-accent-dim)] shadow-[inset_0_0_0_1px_rgba(124,108,255,0.28),0_0_24px_rgba(124,108,255,0.12)]"
-                        : "border-[rgba(255,255,255,0.12)] bg-[rgba(37,36,51,0.45)] hover:border-[rgba(124,108,255,0.35)] hover:bg-[rgba(37,36,51,0.6)]"
+                        ? "border-[rgba(99,102,241,0.65)] bg-[var(--accent-subtle)] shadow-[inset_0_0_0_1px_rgba(99,102,241,0.28),0_0_24px_rgba(99,102,241,0.12)]"
+                        : "border-[var(--border-strong)] bg-[var(--bg-overlay)] hover:border-[rgba(99,102,241,0.35)] hover:bg-[var(--bg-surface)]"
                     }`}
                   >
                     {mode.badge ? (
@@ -333,7 +333,7 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
                     <span className="mb-3 text-2xl" aria-hidden>
                       {mode.icon}
                     </span>
-                    <p className={`font-syne text-sm font-semibold ${active ? "text-[color:var(--c-text)]" : "text-[rgba(243,241,236,0.72)]"}`}>
+                    <p className={`font-syne text-sm font-semibold ${active ? "text-[var(--text-primary)]" : "text-[rgba(243,241,236,0.72)]"}`}>
                       {mode.label}
                     </p>
                     <p className={`mt-2 flex-1 text-xs leading-snug ${active ? "text-[rgba(243,241,236,0.58)]" : "text-[rgba(243,241,236,0.48)]"}`}>
@@ -345,7 +345,7 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
             </div>
           </section>
 
-          <section className="flex flex-col gap-2 border-t border-[rgba(255,255,255,0.08)] pt-10">
+          <section className="flex flex-col gap-2 border-t border-[var(--border-default)] pt-10">
             <label className="onboard-field-label">URL del sitio</label>
             <input
               type="url"
@@ -380,13 +380,13 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
       {step === 1 && (
         <div className="onboard-card space-y-6">
           <header className="space-y-3">
-            <h2 className="font-syne text-xl font-bold tracking-tight text-[color:var(--c-text)] md:text-2xl">Configurá tu agente</h2>
+            <h2 className="font-syne text-xl font-bold tracking-tight text-[var(--text-primary)] md:text-2xl">Configurá tu agente</h2>
             {insightTags.length ? (
               <div className="flex flex-wrap gap-2">
                 {insightTags.map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-full border border-[rgba(124,108,255,0.35)] bg-[color:var(--c-accent-dim)] px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[color:var(--c-accent)]"
+                    className="rounded-full border border-[rgba(99,102,241,0.35)] bg-[var(--accent-subtle)] px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[var(--accent)]"
                   >
                     {tag}
                   </span>
@@ -394,7 +394,7 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
               </div>
             ) : null}
             {form.preview ? (
-              <p className="onboard-subtle rounded-[var(--radius-md)] border border-[rgba(255,255,255,0.1)] bg-[rgba(37,36,51,0.35)] p-4">
+              <p className="onboard-subtle rounded-[var(--radius-md)] border border-[var(--border-default)] bg-[var(--bg-elevated)] p-4">
                 {form.preview}
               </p>
             ) : null}
@@ -402,7 +402,7 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
               type="button"
               onClick={() => void runScrape(false)}
               disabled={loading || !form.url}
-              className="btn-ghost btn-ghost--sm self-start !px-0 !py-0 text-[color:var(--c-accent)] hover:underline"
+              className="btn-ghost btn-ghost--sm self-start !px-0 !py-0 text-[var(--accent)] hover:underline"
             >
               {loading ? "Releyendo sitio…" : "↻ Regenerar desde la web"}
             </button>
@@ -418,16 +418,16 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
                     key={c.type}
                     type="button"
                     onClick={() => pickAgentType(c.type)}
-                    className={`flex flex-col gap-2 rounded-[var(--radius-lg)] border border-solid p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(124,108,255,0.55)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--c-bg)] ${
+                    className={`flex flex-col gap-2 rounded-[var(--radius-lg)] border border-solid p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(99,102,241,0.55)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)] ${
                       active
-                        ? "border-[rgba(124,108,255,0.65)] bg-[color:var(--c-accent-dim)] shadow-[inset_0_0_0_1px_rgba(124,108,255,0.25)]"
-                        : "border-[rgba(255,255,255,0.12)] bg-[rgba(37,36,51,0.45)] hover:border-[rgba(124,108,255,0.35)]"
+                        ? "border-[rgba(99,102,241,0.65)] bg-[var(--accent-subtle)] shadow-[inset_0_0_0_1px_rgba(99,102,241,0.25)]"
+                        : "border-[var(--border-strong)] bg-[var(--bg-overlay)] hover:border-[rgba(99,102,241,0.35)]"
                     }`}
                   >
                     <span className="text-xl" aria-hidden>
                       {c.emoji}
                     </span>
-                    <span className={`font-syne text-sm font-semibold ${active ? "text-[color:var(--c-text)]" : "text-[rgba(243,241,236,0.72)]"}`}>
+                    <span className={`font-syne text-sm font-semibold ${active ? "text-[var(--text-primary)]" : "text-[rgba(243,241,236,0.72)]"}`}>
                       {c.label}
                     </span>
                     <span className="text-xs leading-snug text-[rgba(243,241,236,0.5)]">{c.desc}</span>
@@ -436,7 +436,7 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
               })}
             </div>
             <p className="onboard-hint mt-2">
-              Rol sugerido: <span className="text-[color:var(--c-text)]">{form.agentRole}</span>
+              Rol sugerido: <span className="text-[var(--text-primary)]">{form.agentRole}</span>
             </p>
           </div>
 
@@ -457,10 +457,10 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
               {PERSONALITIES.map((p) => (
                 <label
                   key={p.value}
-                  className={`flex cursor-pointer items-start gap-3 rounded-[var(--radius-lg)] border border-solid p-3 transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[rgba(124,108,255,0.55)] ${
+                  className={`flex cursor-pointer items-start gap-3 rounded-[var(--radius-lg)] border border-solid p-3 transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[rgba(99,102,241,0.55)] ${
                     form.agentPersonality === p.value
-                      ? "border-[rgba(124,108,255,0.55)] bg-[color:var(--c-accent-dim)]"
-                      : "border-[rgba(255,255,255,0.12)] bg-[rgba(37,36,51,0.35)] hover:border-[rgba(124,108,255,0.3)]"
+                      ? "border-[rgba(99,102,241,0.55)] bg-[var(--accent-subtle)]"
+                      : "border-[var(--border-strong)] bg-[var(--bg-elevated)] hover:border-[rgba(99,102,241,0.3)]"
                   }`}
                 >
                   <input
@@ -469,9 +469,9 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
                     value={p.value}
                     checked={form.agentPersonality === p.value}
                     onChange={() => setField("agentPersonality", p.value)}
-                    className="mt-1 accent-[color:var(--c-accent)]"
+                    className="mt-1 accent-[var(--accent)]"
                   />
-                  <span className="text-sm text-[color:var(--c-text)]">{p.label}</span>
+                  <span className="text-sm text-[var(--text-primary)]">{p.label}</span>
                 </label>
               ))}
             </div>
@@ -526,19 +526,19 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
       {step === 2 && !isPro && (
         <div className="onboard-card space-y-6">
           <div className="flex flex-col items-center text-center sm:items-start sm:text-left">
-            <div className="mb-4 flex size-14 items-center justify-center rounded-full border border-[rgba(124,108,255,0.35)] bg-[color:var(--c-accent-dim)]">
-              <Lock className="size-7 text-[color:var(--c-accent)]" aria-hidden />
+            <div className="mb-4 flex size-14 items-center justify-center rounded-full border border-[rgba(99,102,241,0.35)] bg-[var(--accent-subtle)]">
+              <Lock className="size-7 text-[var(--accent)]" aria-hidden />
             </div>
-            <h2 className="font-syne text-xl font-bold text-[color:var(--c-text)] md:text-2xl">Avatar avanzado</h2>
+            <h2 className="font-syne text-xl font-bold text-[var(--text-primary)] md:text-2xl">Avatar avanzado</h2>
             <p className="onboard-subtle mt-2 max-w-md">
-              Los avatares con estilo de marca están en planes <strong className="text-[color:var(--c-text)]">Pro</strong> o superiores.
+              Los avatares con estilo de marca están en planes <strong className="text-[var(--text-primary)]">Pro</strong> o superiores.
               Podés crear el agente ya y sumar el avatar después.
             </p>
           </div>
           <div className="flex flex-col gap-3 sm:flex-row">
             <Link
               href="/pricing"
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-[var(--radius-lg)] border border-[rgba(124,108,255,0.4)] bg-[color:var(--c-accent-dim)] px-4 py-3 text-sm font-semibold text-[color:var(--c-accent)] transition-colors hover:bg-[rgba(124,108,255,0.18)]"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-[var(--radius-lg)] border border-[rgba(99,102,241,0.4)] bg-[var(--accent-subtle)] px-4 py-3 text-sm font-semibold text-[var(--accent)] transition-colors hover:bg-[rgba(99,102,241,0.18)]"
             >
               <Sparkles className="size-4" aria-hidden />
               Ver planes
@@ -557,7 +557,7 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
       {step === 2 && isPro && (
         <div className="onboard-card space-y-8">
           <header className="space-y-2">
-            <h2 className="font-syne text-xl font-bold tracking-tight text-[color:var(--c-text)] md:text-2xl">Elegí el avatar</h2>
+            <h2 className="font-syne text-xl font-bold tracking-tight text-[var(--text-primary)] md:text-2xl">Elegí el avatar</h2>
             <p className="onboard-subtle">El avatar puede reflejar los colores y logo de tu marca.</p>
           </header>
 
@@ -572,11 +572,11 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
                     setField("avatarType", t.type);
                     setField("avatarSubtype", t.id === "human_male" ? "male" : t.id === "human_female" ? "female" : "");
                   }}
-                  className={`flex items-center gap-3 rounded-[var(--radius-lg)] border border-solid p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(124,108,255,0.55)] focus-visible:ring-offset-2 focus-visible:ring-offset-[color:var(--c-bg)] ${
+                  className={`flex items-center gap-3 rounded-[var(--radius-lg)] border border-solid p-4 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(99,102,241,0.55)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg-base)] ${
                     form.avatarType === t.type &&
                     (t.type !== "human" || form.avatarSubtype === (t.id === "human_male" ? "male" : "female"))
-                      ? "border-[rgba(124,108,255,0.65)] bg-[color:var(--c-accent-dim)] text-[color:var(--c-text)] shadow-[inset_0_0_0_1px_rgba(124,108,255,0.25)]"
-                      : "border-[rgba(255,255,255,0.12)] bg-[rgba(37,36,51,0.45)] text-[rgba(243,241,236,0.65)] hover:border-[rgba(124,108,255,0.35)]"
+                      ? "border-[rgba(99,102,241,0.65)] bg-[var(--accent-subtle)] text-[var(--text-primary)] shadow-[inset_0_0_0_1px_rgba(99,102,241,0.25)]"
+                      : "border-[var(--border-strong)] bg-[var(--bg-overlay)] text-[rgba(243,241,236,0.65)] hover:border-[rgba(99,102,241,0.35)]"
                   }`}
                 >
                   <span className="text-2xl">{t.emoji}</span>
@@ -597,8 +597,8 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
                     onClick={() => setField("avatarSubtype", a)}
                     className={`rounded-[var(--radius-md)] border border-solid px-4 py-2 text-sm capitalize transition-colors ${
                       form.avatarSubtype === a
-                        ? "border-[rgba(124,108,255,0.6)] bg-[color:var(--c-accent-dim)] text-[color:var(--c-text)]"
-                        : "border-[rgba(255,255,255,0.12)] text-[rgba(243,241,236,0.58)] hover:border-[rgba(124,108,255,0.35)]"
+                        ? "border-[rgba(99,102,241,0.6)] bg-[var(--accent-subtle)] text-[var(--text-primary)]"
+                        : "border-[var(--border-strong)] text-[rgba(243,241,236,0.58)] hover:border-[rgba(99,102,241,0.35)]"
                     }`}
                   >
                     {a}
@@ -619,8 +619,8 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
                     onClick={() => setField("avatarSubtype", o)}
                     className={`rounded-[var(--radius-md)] border border-solid px-4 py-2 text-sm capitalize transition-colors ${
                       form.avatarSubtype === o
-                        ? "border-[rgba(124,108,255,0.6)] bg-[color:var(--c-accent-dim)] text-[color:var(--c-text)]"
-                        : "border-[rgba(255,255,255,0.12)] text-[rgba(243,241,236,0.58)] hover:border-[rgba(124,108,255,0.35)]"
+                        ? "border-[rgba(99,102,241,0.6)] bg-[var(--accent-subtle)] text-[var(--text-primary)]"
+                        : "border-[var(--border-strong)] text-[rgba(243,241,236,0.58)] hover:border-[rgba(99,102,241,0.35)]"
                     }`}
                   >
                     {o}
@@ -638,7 +638,7 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
                   type="color"
                   value={form.brandColor}
                   onChange={(e) => setField("brandColor", e.target.value)}
-                  className="h-10 w-10 cursor-pointer rounded-[var(--radius-md)] border border-[rgba(255,255,255,0.14)] bg-transparent"
+                  className="h-10 w-10 cursor-pointer rounded-[var(--radius-md)] border border-[var(--border-strong)] bg-transparent"
                 />
                 <input value={form.brandColor} onChange={(e) => setField("brandColor", e.target.value)} className={`${inputClass} flex-1`} />
               </div>
@@ -650,7 +650,7 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
                   type="color"
                   value={form.brandColor2}
                   onChange={(e) => setField("brandColor2", e.target.value)}
-                  className="h-10 w-10 cursor-pointer rounded-[var(--radius-md)] border border-[rgba(255,255,255,0.14)] bg-transparent"
+                  className="h-10 w-10 cursor-pointer rounded-[var(--radius-md)] border border-[var(--border-strong)] bg-transparent"
                 />
                 <input value={form.brandColor2} onChange={(e) => setField("brandColor2", e.target.value)} className={`${inputClass} flex-1`} />
               </div>
@@ -690,13 +690,13 @@ export default function OnboardingWizard({ userPlan }: OnboardingWizardProps) {
       {step === 3 && createdSiteId && (
         <div className="onboard-card space-y-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[color:var(--c-green)]/12 ring-1 ring-[rgba(61,214,143,0.35)]">
-              <svg className="h-7 w-7 text-[color:var(--c-green)]" viewBox="0 0 24 24" fill="none" aria-hidden>
+            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[var(--success)]/12 ring-1 ring-[rgba(61,214,143,0.35)]">
+              <svg className="h-7 w-7 text-[var(--success)]" viewBox="0 0 24 24" fill="none" aria-hidden>
                 <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </div>
             <div>
-              <h2 className="font-syne text-xl font-bold text-[color:var(--c-text)] md:text-2xl">¡Agente creado!</h2>
+              <h2 className="font-syne text-xl font-bold text-[var(--text-primary)] md:text-2xl">¡Agente creado!</h2>
               <p className="onboard-subtle mt-1">Instalalo en tu sitio. Te avisamos cuando detectemos el snippet publicado.</p>
             </div>
           </div>

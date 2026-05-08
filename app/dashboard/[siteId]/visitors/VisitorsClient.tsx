@@ -130,8 +130,8 @@ export default function VisitorsClient({
           <p className="mb-4 text-3xl" aria-hidden>
             👤
           </p>
-          <p className="font-syne text-lg font-bold text-[color:var(--c-text)]">Todavía no hay visitantes</p>
-          <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-[color:var(--c-muted)]">
+          <p className="font-syne text-lg font-bold text-[var(--text-primary)]">Todavía no hay visitantes</p>
+          <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-[var(--text-secondary)]">
             Cuando el widget esté instalado y los usuarios chateen, vas a ver acá perfiles con intent, tiempo en sitio y
             fuente de tráfico.
           </p>
@@ -144,48 +144,48 @@ export default function VisitorsClient({
           <table className="w-full min-w-[720px] text-left text-sm">
             <thead>
               <tr>
-                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[color:var(--c-muted2)]">#</th>
-                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[color:var(--c-muted2)]">Visitante</th>
-                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[color:var(--c-muted2)]">Intent</th>
-                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[color:var(--c-muted2)]">Empresa</th>
-                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[color:var(--c-muted2)]">Sesiones</th>
-                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[color:var(--c-muted2)]">Tiempo</th>
-                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[color:var(--c-muted2)]">Fuente</th>
-                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[color:var(--c-muted2)]">Última visita</th>
+                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">#</th>
+                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Visitante</th>
+                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Intent</th>
+                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Empresa</th>
+                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Sesiones</th>
+                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Tiempo</th>
+                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Fuente</th>
+                <th className="px-4 py-3.5 text-[0.6875rem] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">Última visita</th>
                 <th className="px-4 py-3.5" />
               </tr>
             </thead>
             <tbody>
               {items.map((v, idx) => (
                 <tr key={v.id}>
-                  <td className="px-4 py-3 text-[color:var(--c-muted2)]">{(page - 1) * PAGE + idx + 1}</td>
+                  <td className="px-4 py-3 text-[var(--text-tertiary)]">{(page - 1) * PAGE + idx + 1}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[color:var(--c-accent-dim)] text-xs font-bold text-[color:var(--c-text)]">
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--accent-subtle)] text-xs font-bold text-[var(--text-primary)]">
                         {initials(v.name, v.email, v.visitorId)}
                       </div>
                       <div>
-                        <p className="font-medium text-[color:var(--c-text)]">
+                        <p className="font-medium text-[var(--text-primary)]">
                           {v.name?.trim() || "Visitante anónimo"}
                         </p>
-                        {v.email ? <p className="text-xs text-[color:var(--c-muted)]">{v.email}</p> : null}
+                        {v.email ? <p className="text-xs text-[var(--text-secondary)]">{v.email}</p> : null}
                       </div>
                     </div>
                   </td>
                   <td className="px-4 py-3">
                     <IntentBadge label={v.maxIntentLabel} />
                   </td>
-                  <td className="px-4 py-3 text-[color:var(--c-muted)]">{v.company ?? "—"}</td>
-                  <td className="px-4 py-3 text-[color:var(--c-text)]">{v.totalVisits}</td>
-                  <td className="px-4 py-3 text-[color:var(--c-muted)]">{formatDurationSec(v.totalTime)}</td>
-                  <td className="px-4 py-3 capitalize text-[color:var(--c-muted)]">{v.topSource ?? "—"}</td>
-                  <td className="px-4 py-3 text-[color:var(--c-muted2)]">
+                  <td className="px-4 py-3 text-[var(--text-secondary)]">{v.company ?? "—"}</td>
+                  <td className="px-4 py-3 text-[var(--text-primary)]">{v.totalVisits}</td>
+                  <td className="px-4 py-3 text-[var(--text-secondary)]">{formatDurationSec(v.totalTime)}</td>
+                  <td className="px-4 py-3 capitalize text-[var(--text-secondary)]">{v.topSource ?? "—"}</td>
+                  <td className="px-4 py-3 text-[var(--text-tertiary)]">
                     {formatDistanceToNow(v.lastSeenAt, { addSuffix: true, locale: es })}
                   </td>
                   <td className="px-4 py-3.5 text-right">
                     <Link
                       href={`/dashboard/${sitePublicId}/visitors/${v.visitorId}`}
-                      className="inline-flex min-h-10 items-center font-medium text-[color:var(--c-accent)] hover:underline"
+                      className="inline-flex min-h-10 items-center font-medium text-[var(--accent)] hover:underline"
                     >
                       Ver perfil
                     </Link>
@@ -207,7 +207,7 @@ export default function VisitorsClient({
           >
             Anterior
           </button>
-          <span className="flex items-center px-2 text-sm tabular-nums text-[color:var(--c-muted)]">
+          <span className="flex items-center px-2 text-sm tabular-nums text-[var(--text-secondary)]">
             {page} / {totalPages}
           </span>
           <button

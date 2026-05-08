@@ -506,15 +506,15 @@ export default function CreateAgentWizard({ variant, userPlan, isGuest, onReques
 
   const isModal = variant === "modal";
   const stepAsideClass = isModal
-    ? "border-[rgba(255,255,255,0.06)] bg-[#060608]"
+    ? "border-[var(--border-subtle)] bg-[var(--bg-base)]"
     : "border-[var(--border-subtle)] bg-[var(--bg-base)]";
   const stepHeaderPad = isModal ? "px-5 py-7" : "p-7";
   const stepNavPad = isModal ? "gap-2 px-5 pb-5" : "gap-3 px-6 pb-6";
   const stepHelpClass = isModal
-    ? "mt-auto border-t border-[rgba(255,255,255,0.06)] px-5 py-5"
+    ? "mt-auto border-t border-[var(--border-subtle)] px-5 py-5"
     : "mt-auto border-t border-[var(--border-subtle)] p-6";
-  const footerBorder = isModal ? "border-[rgba(255,255,255,0.06)]" : "border-[var(--border-subtle)]";
-  const footerBg = isModal ? "bg-[#0C0C10]" : "bg-[var(--bg-surface)]";
+  const footerBorder = isModal ? "border-[var(--border-subtle)]" : "border-[var(--border-subtle)]";
+  const footerBg = isModal ? "bg-[var(--bg-surface)]" : "bg-[var(--bg-surface)]";
 
   const shell = (
     <>
@@ -670,19 +670,11 @@ export default function CreateAgentWizard({ variant, userPlan, isGuest, onReques
 
               {macroStep === 3 ? (
                 <div
-                  className={`hidden w-[38%] shrink-0 border-l p-5 md:block ${
-                    isModal
-                      ? "border-[rgba(255,255,255,0.06)] bg-[#0C0C10]"
-                      : "border-[var(--border-subtle)] bg-[var(--bg-base)]"
-                  }`}
+                  className={`hidden w-[38%] shrink-0 border-l border-[var(--border-subtle)] bg-[var(--bg-base)] p-5 md:block`}
                 >
                   <p className="text-[10px] font-medium uppercase tracking-wider text-[var(--text-tertiary)]">Preview</p>
                   <div
-                    className={`mt-4 rounded-xl border p-4 ${
-                      isModal
-                        ? "border-[rgba(255,255,255,0.08)] bg-[#060608]"
-                        : "border-[var(--border-default)] bg-[var(--bg-base)]"
-                    }`}
+                    className="mt-4 rounded-xl border border-[var(--border-default)] bg-[var(--bg-base)] p-4"
                   >
                     <AvatarSvgPreview
                       stage={previewStage}
@@ -790,7 +782,7 @@ export default function CreateAgentWizard({ variant, userPlan, isGuest, onReques
         }}
       >
         <div
-          className="dash-modal-panel pointer-events-auto absolute left-1/2 top-1/2 z-[1] flex h-[min(620px,90vh)] w-[min(780px,92vw)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-[24px] border border-[rgba(255,255,255,0.1)] bg-[#0C0C10] shadow-[0_24px_80px_rgba(0,0,0,0.7)]"
+          className="dash-modal-panel pointer-events-auto absolute left-1/2 top-1/2 z-[1] flex h-[min(620px,90vh)] w-[min(780px,92vw)] -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-[var(--radius-xl)] border border-[var(--border-default)] bg-[var(--bg-surface)] shadow-[0_24px_80px_rgba(0,0,0,0.7)]"
           onClick={(e) => e.stopPropagation()}
           onPointerDown={(e) => e.stopPropagation()}
         >

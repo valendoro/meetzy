@@ -35,11 +35,13 @@ export default async function SiteDetailPage({ params }: { params: Promise<{ sit
         />
       </div>
 
-      <div className="dash-card p-6 pl-7">
-        <h2 className="dash-chart-head mb-4 text-[1.05rem]">Instalación</h2>
+      <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5">
+        <h2 className="mb-3 font-[family-name:var(--font-dm-sans)] text-[13px] font-medium text-[var(--text-primary)]">
+          Instalación
+        </h2>
         <InstallSnippet siteId={site.siteId} appUrl={appUrl} />
-        <p className="mt-4 text-xs leading-relaxed text-[color:var(--c-muted2)]">
-          <a href={`/dashboard/${siteId}/install`} className="font-medium text-[color:var(--c-accent)] hover:underline">
+        <p className="mt-4 text-[12px] leading-relaxed text-[var(--text-tertiary)]">
+          <a href={`/dashboard/${siteId}/install`} className="font-medium text-[var(--accent)] hover:underline">
             Ver guía completa y verificación en vivo →
           </a>
         </p>

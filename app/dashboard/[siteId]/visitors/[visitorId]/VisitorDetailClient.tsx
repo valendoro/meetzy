@@ -108,8 +108,8 @@ export default function VisitorDetailClient({
           <p className="text-3xl mb-4" aria-hidden>
             ◌
           </p>
-          <h3 className="font-syne text-lg font-bold text-[color:var(--c-text)] mb-2">Visitante no encontrado</h3>
-          <p className="text-sm text-[color:var(--c-muted)] max-w-md mx-auto leading-relaxed">
+          <h3 className="font-syne text-lg font-bold text-[var(--text-primary)] mb-2">Visitante no encontrado</h3>
+          <p className="text-sm text-[var(--text-secondary)] max-w-md mx-auto leading-relaxed">
             El ID no coincide con ningún perfil en este sitio.
           </p>
           <Link href={`/dashboard/${sitePublicId}/visitors`} className="btn-primary mt-6 inline-block" style={{ padding: "0.6rem 1.1rem", fontSize: "0.8rem" }}>
@@ -130,11 +130,11 @@ export default function VisitorDetailClient({
   const emailTo = profile.email ?? latest?.visitorEmail;
 
   const tooltipStyle = {
-    background: "rgba(18, 18, 26, 0.98)",
-    border: "1px solid rgba(124, 108, 255, 0.22)",
-    borderRadius: "12px",
+    background: "var(--bg-elevated)",
+    border: "1px solid var(--border-default)",
+    borderRadius: "8px",
     fontSize: "12px",
-    color: "var(--c-text)",
+    color: "var(--text-primary)",
     boxShadow: "0 12px 40px rgba(0,0,0,0.45)",
   };
 
@@ -143,23 +143,23 @@ export default function VisitorDetailClient({
       <SiteSubnav siteId={sitePublicId} siteName={siteName} active="visitors" pageTitle="Perfil" description="Historial de sesiones, secciones e intención detectada para este visitante." />
 
       <div className="dash-hero flex flex-col gap-5 sm:flex-row sm:items-start">
-        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[var(--radius-lg)] bg-[color:var(--c-accent-dim)] font-syne text-2xl font-bold text-[color:var(--c-text)] ring-1 ring-[rgba(124,108,255,0.28)]">
+        <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-[var(--radius-lg)] bg-[var(--accent-subtle)] font-syne text-2xl font-bold text-[var(--text-primary)] ring-1 ring-[var(--accent-border)]">
           {bigInitials(profile.name, profile.email, profile.visitorId)}
         </div>
         <div className="min-w-0 flex-1 space-y-2">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="font-syne text-2xl font-bold tracking-tight text-[color:var(--c-text)]">
+            <h1 className="font-syne text-2xl font-bold tracking-tight text-[var(--text-primary)]">
               {profile.name?.trim() || "Visitante anónimo"}
             </h1>
             <IntentBadge label={profile.maxIntentLabel} />
           </div>
-          {profile.email ? <p className="text-sm text-[color:var(--c-muted)]">{profile.email}</p> : null}
-          {profile.company ? <p className="text-sm text-[color:var(--c-muted)]">{profile.company}</p> : null}
-          <p className="text-sm text-[color:var(--c-muted2)]">
+          {profile.email ? <p className="text-sm text-[var(--text-secondary)]">{profile.email}</p> : null}
+          {profile.company ? <p className="text-sm text-[var(--text-secondary)]">{profile.company}</p> : null}
+          <p className="text-sm text-[var(--text-tertiary)]">
             {profile.totalVisits} visitas · {profile.totalMessages} mensajes ·{" "}
             {formatDurationSec(profile.totalTime)} en total
           </p>
-          <p className="text-xs text-[color:var(--c-muted2)]">
+          <p className="text-xs text-[var(--text-tertiary)]">
             {(profile.country ? countryFlagEmoji(profile.country) + " " + profile.country : "País desconocido") +
               (latest?.device ? ` · ${latest.device}` : "")}
           </p>
@@ -184,15 +184,15 @@ export default function VisitorDetailClient({
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="dash-card p-5 pl-6">
+        <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5">
           <h2 className="dash-chart-head">Timeline de actividad</h2>
           <SessionTimeline conversations={conversations} />
         </div>
         <div className="space-y-6">
-          <div className="dash-card p-5 pl-6">
+          <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5">
             <h2 className="dash-chart-head">Secciones (última sesión)</h2>
             {barData.length === 0 ? (
-              <p className="text-sm leading-relaxed text-[color:var(--c-muted)]">Todavía no hay tiempo por sección.</p>
+              <p className="text-sm leading-relaxed text-[var(--text-secondary)]">Todavía no hay tiempo por sección.</p>
             ) : (
               <div className="h-52 w-full min-w-0">
                 <ResponsiveContainer width="100%" height="100%">
@@ -208,20 +208,20 @@ export default function VisitorDetailClient({
                       contentStyle={tooltipStyle}
                       formatter={(value) => [`${String(value ?? 0)}s`, "Tiempo"]}
                     />
-                    <Bar dataKey="sec" fill="#7c6cff" radius={[0, 6, 6, 0]} />
+                    <Bar dataKey="sec" fill="#6366f1" radius={[0, 6, 6, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
             )}
           </div>
-          <div className="dash-card p-5 pl-6">
+          <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5">
             <h2 className="dash-chart-head">Journey map</h2>
             <JourneyMap journey={journey} />
           </div>
         </div>
       </div>
 
-      <div className="dash-card p-5 pl-6">
+      <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-5">
         <h2 className="dash-chart-head">Señales de intent (última sesión)</h2>
         <IntentSignalsList signals={latestSignals} totalScore={latest?.intentScore ?? profile.maxIntentScore} />
       </div>

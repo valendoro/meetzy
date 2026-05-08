@@ -1,13 +1,13 @@
 import Link from "next/link";
 
 const TABS = [
-  { key: "overview", label: "Resumen", path: "" },
-  { key: "install", label: "Instalación", path: "/install" },
+  { key: "overview", label: "Overview", path: "" },
   { key: "visitors", label: "Visitantes", path: "/visitors" },
   { key: "conversations", label: "Conversaciones", path: "/conversations" },
   { key: "analytics", label: "Analytics", path: "/analytics" },
   { key: "avatar", label: "Avatar", path: "/avatar" },
   { key: "settings", label: "Configuración", path: "/settings" },
+  { key: "install", label: "Instalación", path: "/install" },
 ] as const;
 
 export type SiteSubnavTab = (typeof TABS)[number]["key"];
@@ -23,7 +23,6 @@ export default function SiteSubnav({
   siteName: string;
   active: SiteSubnavTab;
   pageTitle?: string;
-  /** Si se pasa, reemplaza el texto de apoyo bajo el título. `null` = sin párrafo. */
   description?: string | null;
 }) {
   const base = `/dashboard/${siteId}`;
@@ -44,32 +43,52 @@ export default function SiteSubnav({
     description === null ? null : description ?? (current ? defaultDescriptions[current.key] : null);
 
   return (
-    <header className="mb-10 print:mb-6">
-      <nav className="product-breadcrumb mb-5 font-[family-name:var(--font-dm-sans)] text-[13px] font-light" aria-label="Migas de pan">
-        <Link href="/dashboard" className="dash-focus-ring rounded-md">
+    <header className="mb-8 print:mb-6">
+      {/* Breadcrumb */}
+      <nav
+        className="mb-5 flex flex-wrap items-center gap-2 font-[family-name:var(--font-dm-sans)] text-[13px] font-light"
+        aria-label="Migas de pan"
+      >
+        <Link
+          href="/dashboard"
+          className="text-[var(--text-tertiary)] transition-colors duration-150 hover:text-[var(--text-primary)] dash-focus-ring rounded-[4px]"
+        >
           Mis agentes
         </Link>
-        <span className="text-[var(--text-tertiary)]">/</span>
-        <Link href={base} className="max-w-[220px] truncate sm:max-w-none dash-focus-ring rounded-md">
+        <span className="text-[var(--text-tertiary)] opacity-40">/</span>
+        <Link
+          href={base}
+          className="max-w-[220px] truncate text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--text-primary)] sm:max-w-none dash-focus-ring rounded-[4px]"
+        >
           {siteName}
         </Link>
       </nav>
+
       {heading ? (
-        <div className="space-y-5">
-          <div className="flex flex-col gap-1 border-b border-[var(--border-subtle)] pb-5 sm:pb-6">
-            <h1 className="font-syne text-[1.75rem] font-extrabold leading-[1.08] tracking-[-0.045em] text-[var(--text-primary)] sm:text-[2rem]">
+        <div>
+          <div className="mb-5 flex flex-col gap-1">
+            <h1 className="font-syne text-[24px] font-extrabold leading-tight tracking-[-1.5px] text-[var(--text-primary)] sm:text-[28px]">
               {heading}
             </h1>
             {blurb ? (
-              <p className="max-w-2xl text-[15px] font-normal leading-relaxed text-[var(--text-secondary)]">{blurb}</p>
+              <p className="max-w-2xl font-[family-name:var(--font-dm-sans)] text-[13px] font-light leading-relaxed text-[var(--text-secondary)]">
+                {blurb}
+              </p>
             ) : null}
           </div>
-          <div className="product-tabs-rail -mt-1 overflow-x-auto max-sm:-mx-1 [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[var(--border-default)]">
+
+          {/* Linear-style tabs */}
+          <div className="product-tabs-rail -mt-1 overflow-x-auto [&::-webkit-scrollbar]:h-0">
             {TABS.map((tab) => {
               const href = tab.path ? `${base}${tab.path}` : base;
               const isActive = active === tab.key;
               return (
-                <Link key={tab.key} href={href} data-active={isActive ? "true" : "false"} className="shrink-0">
+                <Link
+                  key={tab.key}
+                  href={href}
+                  data-active={isActive ? "true" : "false"}
+                  className="shrink-0"
+                >
                   {tab.label}
                 </Link>
               );

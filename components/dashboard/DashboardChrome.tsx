@@ -6,12 +6,11 @@ import { useCallback, useEffect, useState } from "react";
 import {
   BarChart3,
   Bot,
+  ChevronLeft,
   ChevronRight,
   Download,
   LayoutGrid,
   MessageSquare,
-  PanelLeft,
-  PanelRight,
   Settings,
   Sparkles,
   Users,
@@ -84,7 +83,7 @@ export default function DashboardChrome({
 
   const siteNav = siteId
     ? ([
-        ["", "Resumen", LayoutGrid],
+        ["", "Overview", LayoutGrid],
         ["/visitors", "Visitantes", Users],
         ["/conversations", "Conversaciones", MessageSquare],
         ["/analytics", "Analytics", BarChart3],
@@ -121,173 +120,226 @@ export default function DashboardChrome({
     router.push(`${DASH}/${nextSiteId}`);
   };
 
-  const dashSb = collapsed ? "64px" : "240px";
+  const dashSb = collapsed ? "56px" : "220px";
 
   return (
     <div
       className="meetzy-dash-root flex min-h-screen flex-col md:grid"
       style={{ ["--dash-sb" as string]: dashSb }}
     >
-        <aside
-          className={`dash-sidebar product-sidebar-shell sticky top-0 z-40 hidden h-screen shrink-0 flex-col md:flex ${
-            collapsed ? "dash-sidebar--collapsed" : ""
-          }`}
-          style={{ paddingTop: 10 }}
-        >
-          <div className="flex flex-1 flex-col px-2 pb-3">
-            <div className={`mb-5 flex items-center gap-1 px-2 ${collapsed ? "flex-col" : "justify-between"}`}>
+      <aside
+        className={`dash-sidebar product-sidebar-shell sticky top-0 z-40 hidden h-screen shrink-0 flex-col md:flex ${
+          collapsed ? "dash-sidebar--collapsed" : ""
+        }`}
+      >
+        <div className="flex flex-1 flex-col overflow-hidden pb-3">
+          {/* Logo + toggle */}
+          <div
+            className={`flex items-center border-b border-[var(--border-subtle)] px-3 ${
+              collapsed ? "h-[52px] justify-center" : "h-[52px] justify-between"
+            }`}
+          >
+            {!collapsed && (
               <Link
                 href={DASH}
-                title={collapsed ? "Meetzy · Inicio" : undefined}
-                className="dash-logo-text inline-flex items-center justify-center gap-0 whitespace-nowrap font-syne text-lg font-extrabold tracking-[-0.04em] text-[var(--accent)] transition-opacity duration-150 hover:opacity-90"
+                className="font-syne text-[18px] font-extrabold tracking-[-0.04em] text-[var(--accent)] transition-opacity duration-150 hover:opacity-80"
               >
-                {collapsed ? "M" : "MEETZY"}
+                MEETZY
               </Link>
+            )}
+            {collapsed && (
+              <Link
+                href={DASH}
+                className="font-syne text-[18px] font-extrabold tracking-[-0.04em] text-[var(--accent)] transition-opacity duration-150 hover:opacity-80"
+                title="Meetzy · Inicio"
+              >
+                M
+              </Link>
+            )}
+            {!collapsed && (
               <button
                 type="button"
                 onClick={toggleCollapsed}
-                className="dash-focus-ring rounded-lg p-1.5 text-[var(--text-tertiary)] transition-colors duration-150 hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]"
-                aria-label={collapsed ? "Expandir barra lateral" : "Colapsar barra lateral"}
+                className="dash-focus-ring flex h-7 w-7 items-center justify-center rounded-[var(--radius-sm)] text-[var(--text-tertiary)] transition-all duration-150 hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]"
+                aria-label="Colapsar barra lateral"
               >
-                {collapsed ? <PanelRight className="size-4" /> : <PanelLeft className="size-4" />}
+                <ChevronLeft className="size-3.5" strokeWidth={2} />
+              </button>
+            )}
+          </div>
+
+          {collapsed && (
+            <div className="flex justify-center border-b border-[var(--border-subtle)] py-2">
+              <button
+                type="button"
+                onClick={toggleCollapsed}
+                className="dash-focus-ring flex h-7 w-7 items-center justify-center rounded-[var(--radius-sm)] text-[var(--text-tertiary)] transition-all duration-150 hover:bg-[var(--bg-elevated)] hover:text-[var(--text-primary)]"
+                aria-label="Expandir barra lateral"
+              >
+                <ChevronRight className="size-3.5" strokeWidth={2} />
               </button>
             </div>
+          )}
 
-            {sites.length > 0 && siteId ? (
-              <div className="dash-workspace-block mb-4 px-2">
-                <label className="mb-1 block text-[10px] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
-                  Agente
-                </label>
-                <select
-                  value={siteId}
-                  onChange={(e) => onWorkspaceChange(e.target.value)}
-                  className="dash-workspace-trigger h-9 w-full rounded-lg border border-[var(--border-default)] bg-[var(--bg-elevated)] px-2 text-[13px] text-[var(--text-primary)] transition-colors duration-150"
-                >
-                  {sites.map((s) => (
-                    <option key={s.siteId} value={s.siteId}>
-                      {s.agentName || s.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+          {/* Workspace selector */}
+          {sites.length > 0 && siteId && !collapsed ? (
+            <div className="px-3 pt-3">
+              <p className="dash-section-label mt-0">Agente activo</p>
+              <select
+                value={siteId}
+                onChange={(e) => onWorkspaceChange(e.target.value)}
+                className="mt-1 h-8 w-full rounded-[var(--radius-sm)] border border-[var(--border-default)] bg-[var(--bg-elevated)] px-2 text-[12px] text-[var(--text-primary)] transition-colors duration-150 focus:border-[var(--border-focus)] focus:outline-none"
+              >
+                {sites.map((s) => (
+                  <option key={s.siteId} value={s.siteId}>
+                    {s.agentName || s.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : null}
+
+          {/* Nav */}
+          <nav className="flex flex-1 flex-col px-2 pt-3 gap-0.5" aria-label="Principal">
+            {!collapsed && (
+              <p className="dash-section-label mt-0">General</p>
+            )}
+            <Link
+              href={DASH}
+              data-active={pathname === DASH || pathname === `${DASH}/` ? "true" : "false"}
+              className="product-sidebar-link"
+              title={collapsed ? "Mis agentes" : undefined}
+            >
+              <LayoutGrid className="size-4 shrink-0" strokeWidth={1.75} />
+              <span className="dash-sidebar-label">Mis agentes</span>
+            </Link>
+            <CreateAgentLauncher
+              variant="ghost"
+              className="product-sidebar-link h-auto w-full justify-start px-[10px] font-normal"
+              title={collapsed ? "Crear agente" : undefined}
+            >
+              <Bot className="size-4 shrink-0 opacity-90" strokeWidth={1.75} />
+              <span className="dash-sidebar-label">Crear agente</span>
+            </CreateAgentLauncher>
+            <Link
+              href="/pricing"
+              className="product-sidebar-link"
+              data-active="false"
+              title={collapsed ? "Planes" : undefined}
+            >
+              <ChevronRight className="size-4 shrink-0 opacity-90" strokeWidth={1.75} />
+              <span className="dash-sidebar-label">Planes</span>
+            </Link>
+
+            {siteNav ? (
+              <>
+                <div className="my-2 h-px bg-[var(--border-subtle)]" />
+                {!collapsed && (
+                  <p className="dash-section-label mt-0">Por agente</p>
+                )}
+                {siteNav.map(([suffix, label, Icon]) => {
+                  const href = `${DASH}/${siteId}${suffix}`;
+                  const active = isSiteNavActive(suffix);
+                  return (
+                    <Link
+                      key={suffix || "root"}
+                      href={href}
+                      data-active={active ? "true" : "false"}
+                      className="product-sidebar-link"
+                      title={collapsed ? label : undefined}
+                    >
+                      <Icon className="size-4 shrink-0 opacity-90" strokeWidth={1.75} />
+                      <span className="dash-sidebar-label">{label}</span>
+                    </Link>
+                  );
+                })}
+              </>
             ) : null}
+          </nav>
 
-            <nav className="flex flex-1 flex-col gap-0.5 text-[14px]" aria-label="Principal" style={{ fontWeight: 400 }}>
-              <p className="dash-nav-section-label px-2 pb-1 pt-1 text-[10px] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
-                General
-              </p>
-              <Link
-                href={DASH}
-                data-active={pathname === DASH || pathname === `${DASH}/` ? "true" : "false"}
-                className="product-sidebar-link"
-                title={collapsed ? "Mis agentes" : undefined}
-              >
-                <LayoutGrid className="size-4 shrink-0" strokeWidth={1.75} />
-                <span className="dash-sidebar-label">Mis agentes</span>
-              </Link>
-              <CreateAgentLauncher
-                variant="ghost"
-                className="product-sidebar-link h-auto w-full justify-start px-[10px] font-normal"
-                title={collapsed ? "Crear agente" : undefined}
-              >
-                <Bot className="size-4 shrink-0 opacity-90" strokeWidth={1.75} />
-                <span className="dash-sidebar-label">Crear agente</span>
-              </CreateAgentLauncher>
-              <Link href="/pricing" className="product-sidebar-link" data-active="false" title={collapsed ? "Planes" : undefined}>
-                <ChevronRight className="size-4 shrink-0 opacity-90" strokeWidth={1.75} />
-                <span className="dash-sidebar-label">Planes</span>
-              </Link>
-
-              {siteNav ? (
-                <>
-                  <div className="dash-nav-section-label my-3 h-px bg-[var(--border-subtle)]" />
-                  <p className="dash-nav-section-label px-2 pb-1 text-[10px] font-semibold uppercase tracking-wider text-[var(--text-tertiary)]">
-                    Por agente
-                  </p>
-                  {siteNav.map(([suffix, label, Icon]) => {
-                    const href = `${DASH}/${siteId}${suffix}`;
-                    const active = isSiteNavActive(suffix);
-                    return (
-                      <Link
-                        key={suffix || "root"}
-                        href={href}
-                        data-active={active ? "true" : "false"}
-                        className="product-sidebar-link"
-                        title={collapsed ? label : undefined}
-                      >
-                        <Icon className="size-4 shrink-0 opacity-90" strokeWidth={1.75} />
-                        <span className="dash-sidebar-label">{label}</span>
-                      </Link>
-                    );
-                  })}
-                </>
-              ) : null}
-            </nav>
-
-            <div className="mt-auto space-y-2 pt-4">
-              <div className="product-user-panel dash-user-meta flex items-center gap-3 px-3 py-3">
+          {/* Bottom user panel */}
+          <div className="mt-auto px-2 pb-1">
+            {!collapsed ? (
+              <>
+                <div className="product-user-panel flex items-center gap-2.5 px-3 py-2.5">
+                  <UserButton
+                    appearance={{
+                      elements: { userButtonAvatarBox: "size-7 rounded-full" },
+                    }}
+                  />
+                  <div className="min-w-0 flex-1 dash-sidebar-label">
+                    <p className="truncate text-[12px] font-medium text-[var(--text-primary)]">
+                      {displayName || email}
+                    </p>
+                    <p className="truncate text-[10px] text-[var(--text-tertiary)]">{email}</p>
+                  </div>
+                </div>
+                <div className="mt-2 flex items-center justify-between px-1">
+                  <span
+                    className="rounded-[var(--radius-sm)] border border-[var(--border-default)] bg-[var(--bg-overlay)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-[var(--text-tertiary)]"
+                  >
+                    {plan}
+                  </span>
+                  <Link
+                    href="/pricing"
+                    className="text-[11px] font-medium text-[var(--accent)] transition-colors duration-150 hover:text-[var(--accent-hover)]"
+                  >
+                    Billing →
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <div className="flex justify-center py-2">
                 <UserButton
                   appearance={{
-                    elements: { userButtonAvatarBox: "size-8 rounded-full ring-2 ring-[var(--accent-muted)]" },
+                    elements: { userButtonAvatarBox: "size-7 rounded-full" },
                   }}
                 />
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-xs font-medium text-[var(--text-primary)]">{displayName || email}</p>
-                  <p className="truncate text-[10px] text-[var(--text-tertiary)]">{email}</p>
-                </div>
               </div>
-              <div className="flex items-center justify-between px-2">
-                <span className="product-plan-pill border-[var(--border-subtle)] bg-[var(--bg-overlay)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.1em] text-[var(--text-secondary)]">
-                  {plan}
-                </span>
-                <Link
-                  href="/pricing"
-                  className="text-[11px] font-medium text-[var(--accent)] transition-colors duration-150 hover:text-[var(--accent-hover)]"
-                >
-                  Billing
-                </Link>
-              </div>
-            </div>
+            )}
           </div>
-        </aside>
-
-        <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-auto pb-16 md:pb-0">
-          <main className="dash-page-enter mx-auto w-full max-w-[1280px] flex-1 px-4 py-9 sm:px-6 sm:py-10 lg:px-10 lg:py-11">{children}</main>
         </div>
+      </aside>
 
-        <nav className="product-bottom-nav md:hidden" aria-label="Móvil">
-          {bottomMobile.map((item) => {
-            const active =
-              item.action === "create"
-                ? false
-                : siteId && item.key !== "pricing"
-                  ? item.key === ""
-                    ? pathname === `${DASH}/${siteId}` || pathname === `${DASH}/${siteId}/`
-                    : pathname.includes(`/${siteId}/${item.key}`)
-                  : item.key === ""
-                    ? pathname === DASH
-                    : pathname.includes(item.key) && item.key !== "pricing";
-            if (item.action === "create") {
-              return (
-                <button
-                  key={item.key}
-                  type="button"
-                  onClick={openCreateAgent}
-                  className="min-w-[56px] flex flex-col items-center gap-0.5 border-0 bg-transparent text-[10px] font-medium text-[var(--text-tertiary)]"
-                >
-                  <item.Icon className="mx-auto size-5" strokeWidth={1.75} />
-                  {item.label}
-                </button>
-              );
-            }
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-auto pb-16 md:pb-0">
+        <main className="dash-page-enter mx-auto w-full max-w-[1280px] flex-1 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+          {children}
+        </main>
+      </div>
+
+      <nav className="product-bottom-nav md:hidden" aria-label="Móvil">
+        {bottomMobile.map((item) => {
+          const active =
+            item.action === "create"
+              ? false
+              : siteId && item.key !== "pricing"
+                ? item.key === ""
+                  ? pathname === `${DASH}/${siteId}` || pathname === `${DASH}/${siteId}/`
+                  : pathname.includes(`/${siteId}/${item.key}`)
+                : item.key === ""
+                  ? pathname === DASH
+                  : pathname.includes(item.key) && item.key !== "pricing";
+          if (item.action === "create") {
             return (
-              <Link key={item.href} href={item.href} data-active={active ? "true" : "false"} className="min-w-[56px]">
+              <button
+                key={item.key}
+                type="button"
+                onClick={openCreateAgent}
+                className="min-w-[56px] flex flex-col items-center gap-0.5 border-0 bg-transparent text-[10px] font-medium text-[var(--text-tertiary)]"
+              >
                 <item.Icon className="mx-auto size-5" strokeWidth={1.75} />
                 {item.label}
-              </Link>
+              </button>
             );
-          })}
-        </nav>
-      </div>
+          }
+          return (
+            <Link key={item.href} href={item.href} data-active={active ? "true" : "false"} className="min-w-[56px]">
+              <item.Icon className="mx-auto size-5" strokeWidth={1.75} />
+              {item.label}
+            </Link>
+          );
+        })}
+      </nav>
+    </div>
   );
 }

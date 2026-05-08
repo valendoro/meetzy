@@ -23,10 +23,12 @@ export default async function SiteInstallPage({ params }: { params: Promise<{ si
     <div>
       <SiteSubnav siteId={siteId} siteName={site.name} active="install" pageTitle="Instalación" />
 
-      <div className="dash-card p-6 pl-7">
-        <h2 className="dash-chart-head mb-2 text-[1.05rem]">Instalación del widget</h2>
-        <p className="mb-6 text-sm leading-relaxed text-[color:var(--c-muted)]">
-          Copiá el snippet en tu web. Verificamos automáticamente si el script está publicado (no es instantáneo en CDN).
+      <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-6">
+        <h2 className="mb-1 font-[family-name:var(--font-dm-sans)] text-[14px] font-medium text-[var(--text-primary)]">
+          Instalación del widget
+        </h2>
+        <p className="mb-6 font-[family-name:var(--font-dm-sans)] text-[13px] font-light leading-relaxed text-[var(--text-secondary)]">
+          Copiá el snippet en tu web. Verificamos automáticamente si el script está publicado.
         </p>
         <InstallSnippet siteId={site.siteId} appUrl={appUrl} verify />
       </div>

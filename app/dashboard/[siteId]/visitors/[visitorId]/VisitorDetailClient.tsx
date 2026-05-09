@@ -104,7 +104,7 @@ export default function VisitorDetailClient({
     return (
       <div className="space-y-6">
         <SiteSubnav siteId={sitePublicId} siteName={siteName} active="visitors" pageTitle="Perfil" description="Historial de sesiones, secciones e intención detectada para este visitante." />
-        <div className="dash-empty">
+        <div className="dash-empty dash-empty--page">
           <p className="text-3xl mb-4" aria-hidden>
             ◌
           </p>

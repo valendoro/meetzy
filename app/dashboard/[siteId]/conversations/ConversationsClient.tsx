@@ -187,7 +187,7 @@ export default function ConversationsClient({
           ))}
         </div>
       ) : items.length === 0 ? (
-        <div className="dash-empty">
+        <div className="dash-empty dash-empty--page">
           <p className="mb-4 text-3xl" aria-hidden>
             💬
           </p>

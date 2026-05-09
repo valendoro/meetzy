@@ -1183,11 +1183,13 @@ button.onboard-primary-cta:focus-visible {
   align-items: center;
   justify-content: center;
   text-align: center;
-  min-height: calc(100vh - 280px);
   padding: 3rem 1.5rem;
   border-radius: var(--radius-xl);
   border: 1px dashed rgba(99, 102, 241, 0.22);
   background: radial-gradient(ellipse 72% 85% at 50% 0%, rgba(99, 102, 241, 0.1), transparent 58%);
+}
+.dash-empty--page {
+  min-height: calc(100vh - 280px);
 }
 
 .dash-hero {

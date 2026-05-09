@@ -25,7 +25,13 @@ export default async function SiteDetailPage({ params }: { params: Promise<{ sit
 
   return (
     <div>
-      <SiteSubnav siteId={siteId} siteName={site.name} active="overview" />
+      <SiteSubnav
+        siteId={siteId}
+        siteName={site.name}
+        active="overview"
+        pageTitle="Resumen"
+        description={agentCfg.description}
+      />
 
       {/* Agent type banner */}
       <div className="mb-8 flex flex-wrap items-center justify-between gap-4 rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] px-6 py-4">

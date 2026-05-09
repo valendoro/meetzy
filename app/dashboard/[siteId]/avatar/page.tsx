@@ -26,6 +26,9 @@ export default async function AvatarPage({ params }: { params: Promise<{ siteId:
       {!isPro ? (
         <div className="flex min-h-[calc(100vh-260px)] flex-col items-center justify-center py-6">
           {/* Avatar previews */}
+          <p className="mb-5 text-[12px] font-medium uppercase tracking-[0.12em] text-[var(--text-tertiary)]">
+            Estilos disponibles en Pro
+          </p>
           <div className="mb-8 flex items-end gap-4">
             {[
               { emoji: "🍊", label: "Naranja", color: "#f97316" },

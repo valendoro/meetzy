@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 const TABS = [
-  { key: "overview", label: "Overview", path: "" },
+  { key: "overview", label: "Resumen", path: "" },
   { key: "visitors", label: "Visitantes", path: "/visitors" },
   { key: "conversations", label: "Conversaciones", path: "/conversations" },
   { key: "analytics", label: "Analytics", path: "/analytics" },

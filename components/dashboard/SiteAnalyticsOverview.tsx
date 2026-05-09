@@ -459,7 +459,7 @@ export default function SiteAnalyticsOverview({
             </div>
         </>
       ) : !loading ? (
-        <div className="dash-empty">
+        <div className="dash-empty dash-empty--page">
           <div className="flex justify-center mb-4">
             <div style={{ width: 44, height: 44, borderRadius: 12, background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", display: "flex", alignItems: "center", justifyContent: "center", color: "#f87171" }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">

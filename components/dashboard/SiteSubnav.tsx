@@ -5,6 +5,8 @@ const TABS = [
   { key: "visitors", label: "Visitantes", path: "/visitors" },
   { key: "conversations", label: "Conversaciones", path: "/conversations" },
   { key: "analytics", label: "Analytics", path: "/analytics" },
+  { key: "knowledge", label: "Conocimiento", path: "/knowledge" },
+  { key: "test", label: "Probar", path: "/test" },
   { key: "avatar", label: "Avatar", path: "/avatar" },
   { key: "settings", label: "Configuración", path: "/settings" },
   { key: "install", label: "Instalación", path: "/install" },
@@ -35,6 +37,8 @@ export default function SiteSubnav({
     visitors: "Perfiles, historial y señales de compra de quienes interactuaron con el widget.",
     conversations: "Cada chat con preview, intención y acceso al transcript.",
     analytics: "Embudo, calor horario y preguntas frecuentes agregadas.",
+    knowledge: "Lo que el agente sabe sobre tu negocio: precios, FAQs, servicios y más.",
+    test: "Chateá con tu agente en tiempo real para validar respuestas.",
     avatar: "Tipo de avatar, colores de marca y logo para el agente.",
     settings: "Tono, reglas y datos que usa el agente en el sitio.",
   };

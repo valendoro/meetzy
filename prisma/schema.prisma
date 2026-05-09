@@ -68,6 +68,7 @@ model Site {
   updatedAt            DateTime         @updatedAt
   conversations        Conversation[]
   visitorProfiles      VisitorProfile[]
+  knowledgeEntries     KnowledgeEntry[]
 }
 
 model Conversation {
@@ -200,6 +201,20 @@ model Session {
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model KnowledgeEntry {
+  id        String   @id @default(cuid())
+  siteId    String
+  site      Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  title     String
+  content   String   @db.Text
+  type      String   @default("text") // "text" | "url" | "faq"
+  sourceUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([siteId])
 }
 
 model VerificationToken {

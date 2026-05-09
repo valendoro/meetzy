@@ -173,7 +173,8 @@ function buildSystemPrompt(
   site: { systemPrompt: string; agentName: string; agentRole: string; agentPersonality: string; language: string },
   currentSection?: string,
   visitorContext?: VisitorContextPayload,
-  legacyPrompt?: string
+  legacyPrompt?: string,
+  knowledgeEntries?: { title: string; content: string }[]
 ): string {
   let base = site.systemPrompt;
 
@@ -206,6 +207,14 @@ Sé conciso y útil. Máximo 3 líneas por respuesta.`;
     } else if (visitorContext) {
       base += `\n\nCONTEXTO DEL VISITANTE: ${JSON.stringify(visitorContext)}`;
     }
+  }
+
+  // Inject knowledge base entries
+  if (knowledgeEntries && knowledgeEntries.length > 0) {
+    const kb = knowledgeEntries
+      .map((e) => `### ${e.title}\n${e.content}`)
+      .join("\n\n---\n\n");
+    base += `\n\n== BASE DE CONOCIMIENTO ==\nUsá esta información para responder con precisión. Si el usuario pregunta algo cubierto acá, priorizá esta info.\n\n${kb}\n== FIN BASE DE CONOCIMIENTO ==`;
   }
 
   return base;
@@ -309,10 +318,16 @@ export async function POST(req: NextRequest) {
       take: 20,
     });
 
+    const knowledgeEntries = await prisma.knowledgeEntry.findMany({
+      where: { siteId: site.id },
+      select: { title: true, content: true },
+      take: 20,
+    });
+
     const messages: OpenAI.Chat.ChatCompletionMessageParam[] = [
       {
         role: "system",
-        content: buildSystemPrompt(site, currentSection, visitorContext, visitorContextPrompt),
+        content: buildSystemPrompt(site, currentSection, visitorContext, visitorContextPrompt, knowledgeEntries),
       },
       ...previousMessages.map((m) => ({
         role: m.role as "user" | "assistant",

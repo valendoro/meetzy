@@ -152,20 +152,19 @@ async function compositeLogoOnAvatarBuffer(avatarPngBuffer: Buffer, logoUrl: str
 }
 
 function fallbackPrompt(config: AvatarConfig): string {
+  const gender = config.characterType.includes("female") ? "young friendly woman" : "young friendly man";
+  const shirtColor = config.brandColor;
   return [
-    `Commercial mascot avatar for ${config.businessType}.`,
-    `Character: ${config.characterType}.`,
-    `Primary brand color ${config.brandColor}${config.brandColor2 ? `, accent ${config.brandColor2}` : ""} on the character only — not as a backdrop.`,
-    `Agent energy for "${config.agentName}".`,
+    `${gender}, brand mascot for ${config.businessType}.`,
+    `Wearing a plain t-shirt in ${shirtColor} color with a clean chest area (for logo placement).`,
+    `Friendly smile, confident pose, waist-up portrait.`,
     config.freeDescription || "",
+    config.style === "cartoon"
+      ? "3D cartoon style, Pixar/Duolingo inspired, big expressive eyes, smooth glossy textures, vibrant."
+      : "Photorealistic, soft neutral lighting, professional headshot quality.",
     TRANSPARENT_RULES,
     NEVER_BACKGROUND,
-    config.style === "realistic"
-      ? "Photorealistic human or animal, soft neutral lighting on the subject only, friendly expression, single isolated subject, no text, no watermarks."
-      : config.style === "object"
-        ? "High quality 3D cartoon: anthropomorphic product or object with expressive face; vibrant colors on the mascot only."
-        : "3D cartoon mascot inspired by Pixar/Duolingo, expressive eyes, vibrant character colors, strong personality.",
-    "centered composition, commercial mascot quality, no text, no watermarks, single character.",
+    "centered composition, no text, no watermarks, single character.",
   ]
     .filter(Boolean)
     .join(" ");
@@ -192,43 +191,19 @@ Always include: ${TRANSPARENT_RULES}`,
       },
       {
         role: "user",
-        content: `Generate a prompt for a brand mascot avatar:
+        content: `Generate a FLUX image prompt for a brand mascot avatar. Reply with ONLY the prompt.
 
-Business type: ${config.businessType}
-Character type: ${config.characterType}
-Style: ${config.style}
-Brand color: ${config.brandColor} (use on clothing/accessories/mascot only, never as backdrop)
-Agent name: ${config.agentName}
-Extra description: ${config.freeDescription || "none"}
+Character: ${config.characterType.includes("female") ? "young woman" : "young man"}, ${config.businessType} brand representative.
+Style: ${config.style === "cartoon" ? "3D cartoon, Pixar/Duolingo inspired, big expressive eyes, smooth textures" : "photorealistic, professional headshot quality, soft studio lighting"}.
+Outfit: plain t-shirt in ${config.brandColor} color, with a clearly visible EMPTY CHEST AREA (no print, no graphics, clean fabric — space reserved for a logo to be placed later).
+Pose: waist-up, slightly angled, friendly confident smile, looking at camera.
+${config.freeDescription ? `Extra details: ${config.freeDescription}` : ""}
 
-STYLE RULES:
-
-If style is "realistic":
-- Photorealistic human or photorealistic animal
-- Professional lighting on the subject only (no environment)
-- Clothing incorporating ${config.brandColor}
-- ${TRANSPARENT_RULES}
-
-If style is "cartoon":
-- 3D cartoon, Pixar/Duolingo inspired
-- Large expressive eyes, cartoon proportions
-- Vibrant colors with ${config.brandColor} on the character
-- Centered character
-- ${TRANSPARENT_RULES}
-
-If style is "object":
-- Representative object or element as mascot
-- Expressive face integrated naturally
-- High quality 3D cartoon
-- ${config.brandColor} as main accent on the object/character
-- ${TRANSPARENT_RULES}
-
-ALWAYS include exactly these concepts (paraphrase ok):
-- transparent background, isolated on transparent, cut-out / alpha / PNG
-- commercial mascot quality
-- no text, no watermarks
-- single character
-${NEVER_BACKGROUND}`,
+MANDATORY:
+- The t-shirt chest must be clean and unprinted (no logos, no text on the shirt itself)
+- Character must be on a fully transparent background — ${TRANSPARENT_RULES}
+- ${NEVER_BACKGROUND}
+- No text, no watermarks, single character, centered composition.`,
       },
     ],
     max_tokens: 200,

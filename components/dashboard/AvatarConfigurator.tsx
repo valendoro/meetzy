@@ -32,13 +32,8 @@ interface SiteData {
 /* ── Data ─────────────────────────────────────────────────── */
 
 const CHARACTERS = [
-  { type: "human",  subtype: "male",     emoji: "👨",  label: "Hombre"   },
-  { type: "human",  subtype: "female",   emoji: "👩",  label: "Mujer"    },
-  { type: "animal", subtype: "perro",    emoji: "🐶",  label: "Perro"    },
-  { type: "animal", subtype: "gato",     emoji: "🐱",  label: "Gato"     },
-  { type: "object", subtype: "naranja",  emoji: "🍊",  label: "Naranja"  },
-  { type: "object", subtype: "taza",     emoji: "☕",  label: "Taza"     },
-  { type: "object", subtype: "estrella", emoji: "⭐",  label: "Estrella" },
+  { type: "human", subtype: "male",   emoji: "👨", label: "Hombre" },
+  { type: "human", subtype: "female", emoji: "👩", label: "Mujer"  },
 ] as const;
 
 const STYLES: { value: AvatarConfig["style"]; label: string; desc: string; icon: string }[] = [
@@ -201,7 +196,10 @@ export default function AvatarConfigurator({ site }: { site: SiteData }) {
         {/* Step 1: personaje */}
         <Section>
           <StepLabel n={1} label="Elegí el personaje" />
-          <div className="grid grid-cols-4 gap-2 sm:grid-cols-7">
+          <p className="mb-3 text-[12px] text-[var(--text-secondary)]">
+            La IA genera una persona con remera del color de tu marca y el logo en el pecho.
+          </p>
+          <div className="grid grid-cols-2 gap-3 max-w-[280px]">
             {CHARACTERS.map((c) => {
               const sel = avatarType === c.type && avatarSubtype === c.subtype;
               return (
@@ -215,11 +213,11 @@ export default function AvatarConfigurator({ site }: { site: SiteData }) {
                       : "border-[var(--border-subtle)] hover:border-[var(--border-default)] hover:bg-[var(--bg-overlay)]"
                   }`}
                 >
-                  <span className="text-2xl leading-none">{c.emoji}</span>
-                  <span className={`text-[10px] font-medium ${sel ? "text-[var(--accent)]" : "text-[var(--text-tertiary)]"}`}>
+                  <span className="text-4xl leading-none">{c.emoji}</span>
+                  <span className={`text-[13px] font-semibold ${sel ? "text-[var(--accent)]" : "text-[var(--text-secondary)]"}`}>
                     {c.label}
                   </span>
-                  {sel && <Check className="size-3 text-[var(--accent)]" />}
+                  {sel && <Check className="size-3.5 text-[var(--accent)]" />}
                 </button>
               );
             })}

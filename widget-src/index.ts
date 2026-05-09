@@ -642,6 +642,10 @@ class MeetzyWidget {
           plan: this.config.plan,
           currentSection: ctx.currentSection,
           visitorContext: ctx,
+          referrer: ctx.referrer || document.referrer || null,
+          utmSource: this.tracker.utm.utm_source,
+          utmMedium: this.tracker.utm.utm_medium,
+          utmCampaign: this.tracker.utm.utm_campaign,
         }),
       });
 
@@ -1023,7 +1027,8 @@ function initFullPage(siteId: string, config: SiteConfig) {
     bbl.innerHTML = `<span class="typing"><span></span><span></span><span></span></span>`;
     wr.appendChild(bbl); msgsEl.appendChild(wr); msgsEl.scrollTop = 9999;
     try {
-      const r = await fetch(`${APP_URL}/api/chat`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ siteId, message: text, conversationId: cid, visitorId: vid, plan: config.plan }) });
+      const fpSp = new URLSearchParams(location.search);
+      const r = await fetch(`${APP_URL}/api/chat`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ siteId, message: text, conversationId: cid, visitorId: vid, plan: config.plan, referrer: document.referrer || null, utmSource: fpSp.get("utm_source"), utmMedium: fpSp.get("utm_medium"), utmCampaign: fpSp.get("utm_campaign") }) });
       if (!r.ok || !r.body) { bbl.textContent = "Error."; return; }
       const nc = r.headers.get("X-Conversation-Id");
       if (nc) {

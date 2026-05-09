@@ -1,6 +1,12 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy init — avoids build-time crash when env var is absent
+let _resend: Resend | null = null;
+function getResend() {
+  if (!process.env.RESEND_API_KEY) return null;
+  _resend ??= new Resend(process.env.RESEND_API_KEY);
+  return _resend;
+}
 
 const FROM = "Meetzy <notificaciones@meetzy.ai>";
 
@@ -51,7 +57,8 @@ function sourceLabel(src?: string | null) {
 }
 
 export async function sendHotLeadAlert(payload: HotLeadPayload) {
-  if (!process.env.RESEND_API_KEY) return;
+  const resend = getResend();
+  if (!resend) return;
 
   const { label, color, bg } = badge(payload.intentScore);
   const dashUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? "https://app.meetzy.ai"}/dashboard/${payload.siteId}/conversations/${payload.conversationId}`;

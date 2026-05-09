@@ -8,7 +8,6 @@ import { computeFullIntent, scoreFromChatMessage, type VisitorContextLike } from
 import { enrichFromMessage, type ExtractedVisitorHints } from "@/lib/visitor-enrichment";
 import { inferTrafficSource, upsertVisitorProfile } from "@/lib/visitor-profile-sync";
 import { clientIpFromRequest, lookupGeo } from "@/lib/geoip";
-import { sendHotLeadAlert } from "@/lib/resend";
 
 interface VisitorContextPayload {
   timeOnSite?: number;
@@ -161,31 +160,6 @@ async function syncConversationAfterUserMessage(args: {
     country: updated.country,
     source,
   });
-
-  // Fire hot-lead email on first transition to hot_lead
-  if (intentLabel === "hot_lead" && prevIntentLabel !== "hot_lead") {
-    const ownerEmail = conv.site.user.email;
-    if (ownerEmail) {
-      const msgCount = await prisma.message.count({ where: { conversationId: conv.id } });
-      void sendHotLeadAlert({
-        ownerEmail,
-        ownerName: conv.site.user.name,
-        agentName: conv.site.agentName,
-        siteName: conv.site.name,
-        siteId: conv.site.siteId,
-        conversationId: conv.id,
-        visitorName: updated.visitorName,
-        visitorEmail: updated.visitorEmail,
-        visitorCompany: updated.visitorCompany,
-        intentScore,
-        source: updated.source,
-        country: updated.country,
-        messageCount: msgCount,
-        sessionDuration: updated.sessionDuration,
-        topMessages: texts.slice(-3),
-      }).catch((err) => console.error("[resend] hot-lead alert failed:", err));
-    }
-  }
 
   return { intentScore, intentLabel };
 }

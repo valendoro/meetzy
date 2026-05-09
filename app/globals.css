@@ -788,6 +788,66 @@
   color: var(--text-tertiary);
 }
 
+/* ── Toggle switch ────────────────────────────────────────── */
+.dash-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: 20px;
+  width: 36px;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background-color 160ms ease;
+  background: rgba(255, 255, 255, 0.10);
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+}
+
+.dash-toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dash-toggle[data-active="true"] {
+  background: var(--accent);
+  border-color: transparent;
+}
+
+.dash-toggle__knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  height: 12px;
+  width: 12px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  transition: transform 160ms ease-out, background-color 160ms ease;
+  transform: translateX(0);
+}
+
+.dash-toggle[data-active="true"] .dash-toggle__knob {
+  transform: translateX(16px);
+  background: white;
+}
+
+/* Larger variant for settings rows */
+.dash-toggle--lg {
+  height: 24px;
+  width: 44px;
+}
+
+.dash-toggle--lg .dash-toggle__knob {
+  height: 16px;
+  width: 16px;
+  top: 2px;
+  left: 2px;
+}
+
+.dash-toggle--lg[data-active="true"] .dash-toggle__knob {
+  transform: translateX(20px);
+}
+
 html {
   scroll-behavior: smooth;
   font-size: 16px;

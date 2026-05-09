@@ -225,15 +225,10 @@ export default function SiteSettingsForm({ site }: { site: SiteData }) {
             <button
               type="button"
               onClick={() => setForm((p) => ({ ...p, proactiveEnabled: !p.proactiveEnabled }))}
-              className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
-                form.proactiveEnabled ? "bg-[var(--accent)]" : "bg-[var(--bg-elevated)]"
-              }`}
+              data-active={form.proactiveEnabled ? "true" : "false"}
+              className="dash-toggle dash-toggle--lg"
             >
-              <span
-                className={`absolute top-1 left-1 h-4 w-4 rounded-full bg-white shadow transition-transform ${
-                  form.proactiveEnabled ? "translate-x-5" : "translate-x-0"
-                }`}
-              />
+              <span className="dash-toggle__knob" />
             </button>
           </div>
 
@@ -261,15 +256,10 @@ export default function SiteSettingsForm({ site }: { site: SiteData }) {
             <button
               type="button"
               onClick={() => setForm((p) => ({ ...p, exitIntentEnabled: !p.exitIntentEnabled }))}
-              className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
-                form.exitIntentEnabled ? "bg-[var(--accent)]" : "bg-[var(--bg-elevated)]"
-              }`}
+              data-active={form.exitIntentEnabled ? "true" : "false"}
+              className="dash-toggle dash-toggle--lg"
             >
-              <span
-                className={`absolute top-1 left-1 h-4 w-4 rounded-full bg-white shadow transition-transform ${
-                  form.exitIntentEnabled ? "translate-x-5" : "translate-x-0"
-                }`}
-              />
+              <span className="dash-toggle__knob" />
             </button>
           </div>
 

@@ -167,16 +167,11 @@ export default function SiteCard({ site }: { site: SiteCardModel }) {
             type="button"
             onClick={() => void toggleActive()}
             disabled={toggling}
-            className={`relative h-5 w-9 shrink-0 rounded-full transition-colors duration-150 ${
-              active ? "bg-[var(--accent)]" : "bg-[var(--bg-overlay)]"
-            } ${toggling ? "opacity-50" : ""} border border-[var(--border-default)] dash-focus-ring`}
+            data-active={active ? "true" : "false"}
+            className="dash-toggle dash-focus-ring"
             title={active ? "Pausar" : "Activar"}
           >
-            <span
-              className={`absolute top-0.5 size-3.5 rounded-full bg-white shadow-sm transition-transform duration-150 ease-out ${
-                active ? "translate-x-[18px]" : "translate-x-0.5"
-              }`}
-            />
+            <span className="dash-toggle__knob" />
           </button>
         </div>
       </header>

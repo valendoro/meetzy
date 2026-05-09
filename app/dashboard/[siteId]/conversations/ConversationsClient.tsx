@@ -102,56 +102,84 @@ export default function ConversationsClient({
 
       <Dialog.Root open={dialogOpen} onOpenChange={onDialogOpenChange}>
         <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 z-[100] bg-[rgba(6,6,8,0.85)] backdrop-blur-[12px]" />
+          <Dialog.Overlay className="fixed inset-0 z-[100] bg-[rgba(4,4,8,0.80)] backdrop-blur-[8px]" />
           <Dialog.Content
-            className="dash-modal-panel fixed z-[101] flex max-h-[min(88dvh,720px)] w-full max-w-[min(calc(100vw-24px),640px)] flex-col border border-[var(--border-default)] bg-[var(--bg-elevated)] shadow-[0_24px_80px_rgba(0,0,0,0.45)] max-md:inset-x-0 max-md:bottom-0 max-md:top-auto max-md:max-h-[min(88dvh,720px)] max-md:translate-x-0 max-md:translate-y-0 max-md:rounded-b-none max-md:rounded-t-[var(--radius-xl)] md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-[var(--radius-lg)]"
+            className="fixed z-[101] flex max-h-[min(90dvh,740px)] w-full max-w-[min(calc(100vw-24px),600px)] flex-col overflow-hidden rounded-[var(--radius-xl)] border border-[var(--border-default)] bg-[var(--bg-elevated)] shadow-[0_32px_96px_rgba(0,0,0,0.55)] max-md:inset-x-0 max-md:bottom-0 max-md:top-auto max-md:max-h-[min(90dvh,740px)] max-md:rounded-b-none max-md:rounded-t-[var(--radius-xl)] md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2"
             onOpenAutoFocus={(e) => e.preventDefault()}
           >
-            <div className="flex items-start justify-between gap-3 border-b border-[var(--border-subtle)] px-5 py-4">
-              <div className="min-w-0">
-                <Dialog.Title className="font-syne text-base font-bold text-[var(--text-primary)]">
-                  Transcripción
+            {/* Header */}
+            <div className="flex items-start justify-between gap-4 px-5 pt-5 pb-4 border-b border-[var(--border-subtle)]">
+              <div className="min-w-0 flex-1">
+                <Dialog.Title className="font-syne text-[15px] font-extrabold tracking-tight text-[var(--text-primary)]">
+                  Conversación
                 </Dialog.Title>
                 {activeRow ? (
-                  <Dialog.Description className="mt-1 text-xs text-[var(--text-secondary)]">
-                    {format(new Date(activeRow.createdAt), "d MMM yyyy, HH:mm", { locale: es })} ·{" "}
-                    {formatDurationSec(activeRow.sessionDuration)} · {activeRow.messageCount} mensajes
+                  <Dialog.Description asChild>
+                    <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+                      <span className="text-[11px] text-[var(--text-tertiary)]">
+                        {format(new Date(activeRow.createdAt), "d MMM yyyy, HH:mm", { locale: es })}
+                      </span>
+                      <span className="text-[var(--text-tertiary)] opacity-30">·</span>
+                      <span className="text-[11px] text-[var(--text-tertiary)]">
+                        {formatDurationSec(activeRow.sessionDuration)}
+                      </span>
+                      <span className="text-[var(--text-tertiary)] opacity-30">·</span>
+                      <span className="text-[11px] text-[var(--text-tertiary)]">
+                        {activeRow.messageCount} mensajes
+                      </span>
+                      <IntentBadge label={activeRow.intentLabel} />
+                    </div>
                   </Dialog.Description>
                 ) : (
-                  <Dialog.Description className="sr-only">Mensajes de la conversación seleccionada</Dialog.Description>
+                  <Dialog.Description className="sr-only">Mensajes de la conversación</Dialog.Description>
                 )}
               </div>
               <Dialog.Close
                 type="button"
-                className="rounded-[var(--radius-md)] p-2 text-[var(--text-tertiary)] transition-colors hover:bg-[var(--bg-overlay)] hover:text-[var(--text-primary)]"
+                className="shrink-0 mt-0.5 rounded-[var(--radius-md)] p-1.5 text-[var(--text-tertiary)] transition-colors hover:bg-[var(--bg-overlay)] hover:text-[var(--text-primary)]"
                 aria-label="Cerrar"
               >
-                <X className="size-5" />
+                <X className="size-4" />
               </Dialog.Close>
             </div>
-            <div className="min-h-0 flex-1 overflow-y-auto p-5 [scrollbar-color:rgba(99,102,241,0.35)_transparent]">
+
+            {/* Body */}
+            <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4 [scrollbar-color:rgba(99,102,241,0.25)_transparent]">
               {transcriptLoading ? (
-                <div className="space-y-3">
-                  <div className="dash-skeleton h-20" />
-                  <div className="dash-skeleton h-20" />
-                  <div className="dash-skeleton h-20" />
+                <div className="space-y-4">
+                  {[80, 56, 100, 44].map((h, i) => (
+                    <div key={i} className={`flex ${i % 2 === 0 ? "justify-start" : "justify-end"}`}>
+                      <div className="dash-skeleton rounded-2xl" style={{ height: h, width: "60%" }} />
+                    </div>
+                  ))}
                 </div>
               ) : transcript && transcript.length > 0 ? (
                 <ConversationTranscript messages={transcript} />
-              ) : transcript && transcript.length === 0 ? (
-                <p className="text-sm text-[var(--text-secondary)]">No hay mensajes en esta conversación.</p>
-              ) : null}
+              ) : (
+                <p className="py-8 text-center text-[13px] text-[var(--text-tertiary)]">
+                  Sin mensajes registrados.
+                </p>
+              )}
             </div>
-            {activeRow ? (
-              <div className="flex flex-wrap items-center justify-end gap-2 border-t border-[var(--border-subtle)] px-5 py-3">
+
+            {/* Footer */}
+            {activeRow && (
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border-subtle)] bg-[var(--bg-surface)] px-5 py-3">
+                <div className="flex flex-wrap gap-2 text-[11px] text-[var(--text-tertiary)]">
+                  {activeRow.country && <span>🌍 {activeRow.country}</span>}
+                  {activeRow.device && <span>📱 {activeRow.device}</span>}
+                  {activeRow.visitorEmail && (
+                    <span className="text-emerald-400">✉ {activeRow.visitorEmail}</span>
+                  )}
+                </div>
                 <Link
                   href={`/dashboard/${sitePublicId}/visitors/${activeRow.visitorId}`}
-                  className="text-xs font-semibold text-[var(--accent)] hover:underline"
+                  className="text-[11px] font-semibold text-[var(--accent)] hover:underline"
                 >
-                  Ver perfil del visitante
+                  Ver perfil del visitante →
                 </Link>
               </div>
-            ) : null}
+            )}
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
@@ -200,37 +228,51 @@ export default function ConversationsClient({
           </Button>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {items.map((c) => (
-            <div key={c.id} className="overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] transition-colors duration-150 hover:border-[var(--border-default)]">
+            <div
+              key={c.id}
+              className="group overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] transition-all duration-150 hover:border-[var(--border-default)] hover:bg-[var(--bg-overlay)]"
+            >
               <button
                 type="button"
                 onClick={() => void openTranscript(c)}
-                className="flex w-full flex-col gap-2 p-6 text-left transition-colors hover:bg-[var(--bg-overlay)] sm:flex-row sm:items-center sm:justify-between"
+                className="flex w-full items-start gap-4 p-4 text-left sm:items-center"
               >
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs text-[var(--text-secondary)]">
-                    {format(new Date(c.createdAt), "d MMM yyyy, HH:mm", { locale: es })} ·{" "}
-                    {formatDurationSec(c.sessionDuration)} · {c.messageCount} mensajes
-                    {c.country ? ` · ${c.country}` : ""}
-                    {c.device ? ` · ${c.device}` : ""}
-                  </p>
-                  <p className="mt-1 truncate text-sm text-[var(--text-primary)]">{c.preview || "—"}</p>
-                </div>
-                <div className="flex shrink-0 flex-wrap items-center gap-2">
-                  {c.visitorEmail ? (
-                    <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] text-emerald-400">
-                      Email
-                    </span>
-                  ) : null}
+                {/* Left: intent dot */}
+                <div className="mt-1 shrink-0 sm:mt-0">
                   <IntentBadge label={c.intentLabel} />
-                  <span className="text-xs text-[var(--text-secondary)]">{c.intentScore} pts</span>
+                </div>
+
+                {/* Center: preview + meta */}
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[13px] font-medium text-[var(--text-primary)]">
+                    {c.preview || <span className="text-[var(--text-tertiary)] italic">Sin preview</span>}
+                  </p>
+                  <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-[var(--text-tertiary)]">
+                    <span>{format(new Date(c.createdAt), "d MMM, HH:mm", { locale: es })}</span>
+                    <span className="opacity-40">·</span>
+                    <span>{formatDurationSec(c.sessionDuration)}</span>
+                    <span className="opacity-40">·</span>
+                    <span>{c.messageCount} mensajes</span>
+                    {c.country && <><span className="opacity-40">·</span><span>{c.country}</span></>}
+                    {c.visitorEmail && (
+                      <span className="text-emerald-400">✉ {c.visitorEmail}</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Right: score + link */}
+                <div className="flex shrink-0 items-center gap-3">
+                  <span className="hidden text-[11px] tabular-nums text-[var(--text-tertiary)] sm:block">
+                    {c.intentScore} pts
+                  </span>
                   <Link
                     href={`/dashboard/${sitePublicId}/visitors/${c.visitorId}`}
-                    className="text-xs text-[var(--accent)]"
+                    className="hidden text-[11px] font-medium text-[var(--accent)] opacity-0 transition-opacity group-hover:opacity-100 hover:underline sm:block"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    Perfil
+                    Perfil →
                   </Link>
                 </div>
               </button>

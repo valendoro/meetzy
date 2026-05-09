@@ -178,7 +178,7 @@ export default async function DashboardPage() {
             </div>
             <div className="dash-home-stat">
               <p className="dash-home-stat-value">{convAllTotal}</p>
-              <p className="dash-home-stat-label">Total chats</p>
+              <p className="dash-home-stat-label">Chats totales</p>
             </div>
             <div className="dash-home-stat" style={{ borderColor: "rgba(99,102,241,0.25)", background: "rgba(99,102,241,0.06)" }}>
               <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-[var(--accent)]">

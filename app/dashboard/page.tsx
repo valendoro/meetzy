@@ -78,6 +78,7 @@ export default async function DashboardPage() {
     plan: site.plan,
     isActive: site.isActive,
     agentName: site.agentName,
+    agentType: site.agentType,
     brandColor: site.brandColor,
     avatarType: site.avatarType,
     avatarImageUrl: site.avatarImageUrl,

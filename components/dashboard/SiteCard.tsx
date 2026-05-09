@@ -7,6 +7,7 @@ import DeleteSiteButton from "@/components/dashboard/DeleteSiteButton";
 import { useProductToast } from "@/components/providers/product-toast";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { getAgentConfig } from "@/lib/agent-type-config";
 
 const INTENT_SEGMENTS: { key: string; color: string }[] = [
   { key: "exploring", color: "var(--intent-exploring)" },
@@ -32,6 +33,7 @@ export interface SiteCardModel {
   plan: string;
   isActive: boolean;
   agentName: string;
+  agentType: string;
   brandColor: string;
   avatarType: string | null;
   avatarImageUrl: string | null;
@@ -96,12 +98,17 @@ export default function SiteCard({ site }: { site: SiteCardModel }) {
   }
 
   const plan = site.plan.toLowerCase();
+  const agentCfg = getAgentConfig(site.agentType);
   const intentTotal = site.intentMix.reduce((a, b) => a + b.count, 0) || 1;
   const topIntent = site.intentMix.reduce<{ intentLabel: string; count: number } | null>(
     (best, cur) => (!best || cur.count > best.count ? cur : best),
     null,
   );
   const intentBadge = topIntent ? (INTENT_BADGE[topIntent.intentLabel] ?? INTENT_BADGE.exploring) : INTENT_BADGE.exploring;
+  // Use per-type intent label if available
+  const topIntentLabel = topIntent
+    ? (agentCfg.intentLabels[topIntent.intentLabel] ?? intentBadge.label)
+    : intentBadge.label;
   const cleanUrl = site.url.replace(/^https?:\/\//, "").replace(/\/$/, "");
 
   return (
@@ -132,9 +139,12 @@ export default function SiteCard({ site }: { site: SiteCardModel }) {
 
         {/* Name + URL */}
         <div className="min-w-0 flex-1">
-          <h3 className="truncate font-syne text-[14px] font-semibold leading-tight tracking-tight text-[var(--text-primary)]">
-            {site.agentName}
-          </h3>
+          <div className="flex items-center gap-1.5">
+            <h3 className="truncate font-syne text-[14px] font-semibold leading-tight tracking-tight text-[var(--text-primary)]">
+              {site.agentName}
+            </h3>
+            <span className="shrink-0 text-[11px]" title={agentCfg.label}>{agentCfg.icon}</span>
+          </div>
           <p className="truncate font-mono text-[11px] text-[var(--text-tertiary)]">{cleanUrl}</p>
         </div>
 
@@ -183,7 +193,9 @@ export default function SiteCard({ site }: { site: SiteCardModel }) {
           <p className="font-mono text-[22px] font-medium tabular-nums leading-tight text-[var(--text-primary)]">
             {site.conversationsWeek}
           </p>
-          <p className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-tertiary)]">7 días</p>
+          <p className="mt-0.5 text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-tertiary)]">
+            {agentCfg.kpis.secondary.label}
+          </p>
         </div>
         <div className="flex flex-col items-center justify-center px-5 py-5">
           <span
@@ -192,9 +204,11 @@ export default function SiteCard({ site }: { site: SiteCardModel }) {
             {topIntent?.intentLabel === "hot_lead" && (
               <span className="mr-1 inline-block size-1.5 animate-pulse rounded-full bg-[#F87171] align-middle" />
             )}
-            {intentBadge.label}
+            {topIntentLabel}
           </span>
-          <p className="mt-1 text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-tertiary)]">Intent</p>
+          <p className="mt-1 text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--text-tertiary)]">
+            {agentCfg.visitorsLabel}
+          </p>
         </div>
       </div>
 

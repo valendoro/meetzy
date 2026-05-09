@@ -18,6 +18,7 @@ import MetricCard from "./MetricCard";
 import RecentConversationsPreview from "./RecentConversationsPreview";
 import { formatDurationSec } from "@/lib/format-duration";
 import { countryFlagEmoji } from "@/lib/country-flag";
+import { getAgentConfig } from "@/lib/agent-type-config";
 import { useProductToast } from "@/components/providers/product-toast";
 
 type Range = "today" | "7d" | "30d" | "all";
@@ -69,6 +70,7 @@ export default function SiteAnalyticsOverview({
   appUrl,
   initialIsActive,
   brandColor,
+  agentType,
 }: {
   siteId: string;
   siteName: string;
@@ -76,8 +78,10 @@ export default function SiteAnalyticsOverview({
   appUrl: string;
   initialIsActive: boolean;
   brandColor: string;
+  agentType?: string | null;
 }) {
   const { push } = useProductToast();
+  const agentCfg = getAgentConfig(agentType);
   const [range, setRange] = useState<Range>("7d");
   const [data, setData] = useState<AnalyticsPayload | null>(null);
   const [loading, setLoading] = useState(true);
@@ -227,7 +231,7 @@ export default function SiteAnalyticsOverview({
         <>
           <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
             <MetricCard
-              title="Sesiones"
+              title={agentCfg.kpis.primary.label}
               value={data.sessions.total}
               change={data.sessions.change}
               sub="Conversaciones iniciadas en este periodo."
@@ -266,10 +270,10 @@ export default function SiteAnalyticsOverview({
               }
             />
             <MetricCard
-              title="Hot leads"
+              title={agentCfg.conversionLabel}
               value={data.hotLeads.total}
               change={data.hotLeads.change}
-              sub="Visitantes con intención alta de compra."
+              sub={`${agentCfg.visitorsLabel} con alta intención en este periodo.`}
               highlight="hot"
               icon={
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
@@ -281,7 +285,7 @@ export default function SiteAnalyticsOverview({
 
           <div className="grid gap-7 lg:grid-cols-2">
             <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-6 transition-colors duration-150 hover:border-[var(--border-default)]">
-              <h3 className="dash-chart-head">Sesiones por día</h3>
+              <h3 className="dash-chart-head">{agentCfg.kpis.primary.label} por día</h3>
               <div className="h-72 w-full min-w-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={data.sessions.byDay} margin={{ top: 6, right: 6, left: -18, bottom: 4 }}>
@@ -367,7 +371,7 @@ export default function SiteAnalyticsOverview({
 
           <div className="grid gap-7 lg:grid-cols-2">
             <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-6 transition-colors duration-150 hover:border-[var(--border-default)]">
-              <h3 className="dash-chart-head">Conversaciones recientes</h3>
+              <h3 className="dash-chart-head">{agentCfg.conversationsLabel} recientes</h3>
               <RecentConversationsPreview siteId={siteId} brandColor={brandColor} />
               <Link
                 href={`/dashboard/${siteId}/conversations`}
@@ -378,7 +382,7 @@ export default function SiteAnalyticsOverview({
             </div>
 
             <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-6 transition-colors duration-150 hover:border-[var(--border-default)]">
-              <h3 className="dash-chart-head">Top preguntas</h3>
+              <h3 className="dash-chart-head">{agentCfg.topInsightLabel}</h3>
               {!data.topQuestions?.length ? (
                 <div className="rounded-[var(--radius-lg)] border border-dashed border-[var(--border-default)] bg-[var(--bg-overlay)] px-4 py-8 text-center">
                   <p className="text-sm text-[var(--text-secondary)] leading-relaxed">

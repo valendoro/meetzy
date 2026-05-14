@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Search, Download } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
@@ -117,6 +117,15 @@ export default function VisitorsClient({
         <Button type="button" size="sm" variant="secondary" onClick={() => void load()} className="shrink-0">
           Aplicar
         </Button>
+        <a
+          href={`/api/sites/${sitePublicId}/emails?format=csv`}
+          download
+          className="btn-ghost btn-ghost--sm flex items-center gap-1.5 shrink-0"
+          title="Descargar emails con intent como CSV"
+        >
+          <Download className="size-3.5" />
+          CSV
+        </a>
       </div>
 
       {loading ? (

@@ -187,7 +187,14 @@ export default function DashboardNav() {
           >
             + Nuevo
           </Link>
-          <span style={{ fontSize: "0.8rem", color: "var(--text-tertiary)" }}>{displayName.split(" ")[0]}</span>
+          <Link
+            href="/dashboard/account"
+            style={{ fontSize: "0.8rem", color: "var(--text-tertiary)", textDecoration: "none", transition: "color 0.15s" }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--text-primary)"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "var(--text-tertiary)"; }}
+          >
+            {displayName.split(" ")[0]}
+          </Link>
           <UserButton />
         </div>
       </div>

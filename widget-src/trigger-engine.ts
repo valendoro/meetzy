@@ -177,6 +177,14 @@ export const SECTION_CHIPS: Record<string, string[]> = {
   demo:       ["¿Esto es el producto real?", "¿Cómo lo instalo yo?", "Empezar gratis"],
 };
 
+/** Chips de bienvenida según el tipo de agente configurado en el sitio */
+export const AGENT_TYPE_CHIPS: Record<string, string[]> = {
+  vendedor:       ["¿Cuánto cuesta?", "Quiero una demo", "¿Qué incluye el plan?"],
+  guia:           ["¿Cómo funciona?", "¿Para quién es?", "Ver características"],
+  soporte:        ["Tengo un problema", "¿Cómo lo resuelvo?", "Hablar con alguien"],
+  recepcionista:  ["Quiero un turno", "Ver disponibilidad", "¿Cómo reservo?"],
+};
+
 export class TriggerEngine {
   private firedIds = new Set<string>();
   private lastTriggerAt = 0;

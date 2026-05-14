@@ -448,17 +448,34 @@ export async function POST(req: NextRequest) {
               });
               controller.enqueue(encoder.encode(`data: ${doneData}\n\n`));
 
-              if (site.webhookUrl && fullContent) {
+              // Fire webhook only on high-intent events (hot_lead or ready_to_buy)
+              if (
+                site.webhookUrl &&
+                (finalIntent.intentLabel === "hot_lead" || finalIntent.intentLabel === "ready_to_buy")
+              ) {
+                const conv = await prisma.conversation.findUnique({
+                  where: { id: conversation!.id },
+                  select: { visitorName: true, visitorEmail: true, visitorCompany: true, country: true, source: true },
+                });
                 fetch(site.webhookUrl, {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify({
-                    event: "message",
+                    event: finalIntent.intentLabel,
                     siteId,
+                    siteName: site.agentName,
                     conversationId: conversation!.id,
                     visitorId,
-                    message,
-                    response: fullContent,
+                    visitorName: conv?.visitorName ?? null,
+                    visitorEmail: conv?.visitorEmail ?? null,
+                    visitorCompany: conv?.visitorCompany ?? null,
+                    country: conv?.country ?? null,
+                    source: conv?.source ?? null,
+                    intentScore: finalIntent.intentScore,
+                    intentLabel: finalIntent.intentLabel,
+                    lastMessage: message,
+                    agentResponse: fullContent,
+                    dashboardUrl: `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/dashboard/${siteId}/visitors`,
                   }),
                 }).catch(() => {});
               }

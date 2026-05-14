@@ -1,6 +1,6 @@
 import { AvatarRenderer } from "./avatar-renderer";
 import { renderUIComponent, type UIComponent } from "./ui-generator";
-import { TriggerEngine, type VisitorContext, SECTION_CHIPS } from "./trigger-engine";
+import { TriggerEngine, type VisitorContext, SECTION_CHIPS, AGENT_TYPE_CHIPS } from "./trigger-engine";
 
 declare global {
   interface Window { MEETZYCONFIG?: { siteId: string } }
@@ -512,11 +512,10 @@ class MeetzyWidget {
     this.shadow.appendChild(panel);
   }
 
-  private updateChips(section: string) {
+  private showChips(items: string[]) {
     const chips = this.shadow.getElementById("mz-chips");
     if (!chips) return;
     chips.innerHTML = "";
-    const items = SECTION_CHIPS[section] ?? SECTION_CHIPS["hero"]!;
     items.forEach((chip) => {
       const btn = document.createElement("button");
       btn.className = "chip";
@@ -528,6 +527,10 @@ class MeetzyWidget {
       chips.appendChild(btn);
     });
     chips.style.display = "flex";
+  }
+
+  private updateChips(section: string) {
+    this.showChips(SECTION_CHIPS[section] ?? SECTION_CHIPS["hero"]!);
   }
 
   /* ── OPEN / CLOSE ────────────────────── */
@@ -544,7 +547,13 @@ class MeetzyWidget {
     if (this.msgsEl.children.length === 0) {
       const opener = contextMessage ?? this.buildContextOpener(ctx);
       this.typeMessage(opener);
-      this.updateChips(ctx.currentSection);
+      // Show agentType-specific chips on first open, fall back to section chips
+      const agentChips = AGENT_TYPE_CHIPS[this.config.agentType];
+      if (agentChips) {
+        this.showChips(agentChips);
+      } else {
+        this.updateChips(ctx.currentSection);
+      }
     }
 
     setTimeout(() => {

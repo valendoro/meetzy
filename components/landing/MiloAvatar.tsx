@@ -397,7 +397,17 @@ export default function MiloAvatar({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const stateRef = useRef<MiloState>(createMiloState());
   const lastScrollY = useRef(0);
+  // Refs so the RAF loop reads live values without restarting
+  const isSpeakingRef = useRef(isSpeaking);
+  const mousePositionRef = useRef(mousePosition);
+  const containerRefRef = useRef(containerRef);
 
+  // Keep refs in sync on every render (no effect needed)
+  isSpeakingRef.current = isSpeaking;
+  mousePositionRef.current = mousePosition;
+  containerRefRef.current = containerRef;
+
+  // RAF loop runs ONCE — reads live state via refs
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -405,8 +415,6 @@ export default function MiloAvatar({
     const dpr = window.devicePixelRatio || 1;
     canvas.width = CW * dpr;
     canvas.height = CH * dpr;
-    canvas.style.width = `${size}px`;
-    canvas.style.height = `${size * (CH / CW)}px`;
 
     let rafId = 0;
     function animate() {
@@ -416,24 +424,32 @@ export default function MiloAvatar({
       if (!ctx) return;
 
       const st = stateRef.current;
+      const speaking = isSpeakingRef.current;
+      const mp = mousePositionRef.current;
       st.frame++;
 
       st.breathePhase += 0.018;
 
+      // Blink
       st.blinkTimer--;
       if (st.blinkTimer <= 0) {
         st.blinkTimer = 150 + Math.random() * 100;
         st.isBlinking = true;
+        st.blinkProgress = 0; // always start a fresh blink from open
       }
       if (st.isBlinking) {
         if (st.blinkProgress < 1) {
           st.blinkProgress = Math.min(1, st.blinkProgress + 0.18);
         } else {
           st.blinkProgress = Math.max(0, st.blinkProgress - 0.12);
-          if (st.blinkProgress === 0) st.isBlinking = false;
+          if (st.blinkProgress <= 0) {
+            st.blinkProgress = 0;
+            st.isBlinking = false;
+          }
         }
       }
 
+      // Head tilt
       st.headTiltTimer--;
       if (st.headTiltTimer <= 0) {
         st.headTiltTimer = 180 + Math.random() * 140;
@@ -441,16 +457,16 @@ export default function MiloAvatar({
       }
       st.headTilt += (st.headTiltTarget - st.headTilt) * 0.04;
 
-      if (mousePosition && containerRef?.current) {
+      // Eye tracking
+      if (mp && containerRefRef.current?.current) {
         const canvasRect = canvasEl.getBoundingClientRect();
         const charX = canvasRect.left + canvasRect.width / 2;
         const charY = canvasRect.top + canvasRect.height * 0.25;
-
-        const dx = mousePosition.x - charX;
-        const dy = mousePosition.y - charY;
+        const dx = mp.x - charX;
+        const dy = mp.y - charY;
         const dist = Math.sqrt(dx * dx + dy * dy);
         const maxInfluence = 400;
-        const factor = Math.min(1, dist / maxInfluence) * (dist < maxInfluence ? 1 : 0);
+        const factor = dist < maxInfluence ? Math.min(1, dist / maxInfluence) : 0;
         st.eyeOffsetXTarget = (dx / Math.max(dist, 1)) * 4 * factor;
         st.eyeOffsetYTarget = (dy / Math.max(dist, 1)) * 3 * factor;
       } else {
@@ -460,12 +476,14 @@ export default function MiloAvatar({
       st.eyeOffsetX += (st.eyeOffsetXTarget - st.eyeOffsetX) * 0.08;
       st.eyeOffsetY += (st.eyeOffsetYTarget - st.eyeOffsetY) * 0.08;
 
-      if (isSpeaking) {
+      // Mouth
+      if (speaking) {
         st.mouthOpenness = 0.4 + Math.sin(st.frame * 0.22) * 0.35;
       } else {
         st.mouthOpenness = Math.max(0, st.mouthOpenness - 0.06);
       }
 
+      // Scroll tilt
       const scrollNow = window.scrollY;
       const scrollDelta = Math.abs(scrollNow - lastScrollY.current);
       if (scrollDelta > 30) {
@@ -474,7 +492,7 @@ export default function MiloAvatar({
       }
       lastScrollY.current = scrollNow;
 
-      st.browRaise += ((isSpeaking ? 0.5 : 0) - st.browRaise) * 0.05;
+      st.browRaise += ((speaking ? 0.5 : 0) - st.browRaise) * 0.05;
 
       drawMilo(ctx, st, dpr);
       rafId = requestAnimationFrame(animate);
@@ -482,7 +500,8 @@ export default function MiloAvatar({
 
     rafId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(rafId);
-  }, [isSpeaking, mousePosition, containerRef, size]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const h = Math.round(size * (CH / CW));
 

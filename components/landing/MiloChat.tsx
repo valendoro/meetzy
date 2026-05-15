@@ -69,15 +69,14 @@ export default function MiloChat({
   );
   const msgsRef = useRef<HTMLDivElement>(null);
   const conversationId = useRef<string | undefined>(undefined);
-  const initialShown = useRef(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Show initial message with typewriter
   useEffect(() => {
-    if (!initialMessage || initialShown.current) return;
-    initialShown.current = true;
+    if (!initialMessage) return;
 
     setMessages([{ role: "agent", text: "", streaming: true }]);
+    setShowQuickReplies(false);
     let i = 0;
     const iv = setInterval(() => {
       i++;

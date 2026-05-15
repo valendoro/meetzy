@@ -1,16 +1,34 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MiloAvatar from "./MiloAvatar";
 import MiloChat from "./MiloChat";
 import { type BehaviorTrackerResult } from "@/lib/behavior-tracker";
+
+function useAvatarSize() {
+  const [size, setSize] = useState(260);
+  useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth;
+      if (w < 400) setSize(180);
+      else if (w < 640) setSize(210);
+      else if (w < 1024) setSize(240);
+      else setSize(290);
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+  return size;
+}
 
 export default function Hero({ tracker }: { tracker: BehaviorTrackerResult }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [chatOpen, setChatOpen] = useState(false);
   const [miloSpeaking, setMiloSpeaking] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const avatarSize = useAvatarSize();
 
   const initialMsg = tracker.triggerMessage
     ?? (tracker.context.isReturnVisitor
@@ -22,7 +40,7 @@ export default function Hero({ tracker }: { tracker: BehaviorTrackerResult }) {
       data-section="hero"
       style={{
         position: "relative",
-        minHeight: "100vh",
+        minHeight: "100dvh",
         display: "flex",
         alignItems: "center",
         paddingTop: "var(--nav-height)",
@@ -41,43 +59,29 @@ export default function Hero({ tracker }: { tracker: BehaviorTrackerResult }) {
         pointerEvents: "none",
       }} />
 
-      <div className="wrap" style={{ position: "relative", paddingTop: 48, paddingBottom: 80 }}>
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "1fr",
-          gap: "3rem",
-          alignItems: "center",
-        }}
-          className="hero-grid"
-        >
-          {/* ── LEFT ── */}
-          <div className="anim-slide-up" style={{ textAlign: "center" }}>
-            <div className="badge" style={{ marginBottom: 28, display: "inline-flex" }}>
+      <div className="wrap hero-wrap">
+        <div className="hero-grid">
+          {/* ── LEFT: copy ── */}
+          <div className="anim-slide-up hero-copy">
+            <div className="badge" style={{ marginBottom: 20, display: "inline-flex" }}>
               <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--c-accent)", animation: "glow-pulse 2s ease-in-out infinite" }} />
               La primera web que realmente entiende a cada visitante
             </div>
 
-            <h1 className="display display-xl" style={{ marginBottom: 24 }}>
+            <h1 className="display display-xl" style={{ marginBottom: 20 }}>
               Tu web<br />
               observa.<br />
               Entiende.<br />
               <span className="gradient-text">Responde.</span>
             </h1>
 
-            <p style={{
-              fontSize: "1.125rem",
-              fontWeight: 300,
-              color: "var(--c-muted)",
-              lineHeight: 1.7,
-              maxWidth: 460,
-              margin: "0 auto 32px",
-            }}>
+            <p className="hero-lead">
               Meetzy ve lo que cada visitante hace en tu sitio.
               Cuando habla, ya los conoce.
             </p>
 
-            <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap", marginBottom: 28 }}>
-              <Link href="/dashboard/new" className="btn-primary">
+            <div className="hero-btns">
+              <Link href="/dashboard/new" className="btn-primary hero-btn-primary">
                 Crear mi agente gratis
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
                   <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -91,11 +95,10 @@ export default function Hero({ tracker }: { tracker: BehaviorTrackerResult }) {
             </p>
           </div>
 
-          {/* ── RIGHT — MILO ── */}
+          {/* ── RIGHT: Milo ── */}
           <div
             ref={containerRef}
-            className="anim-fade-in"
-            style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 20 }}
+            className="anim-fade-in hero-avatar-col"
           >
             {/* Avatar */}
             <div style={{ position: "relative", display: "flex", justifyContent: "center" }}>
@@ -107,7 +110,7 @@ export default function Hero({ tracker }: { tracker: BehaviorTrackerResult }) {
                 onClick={() => { setChatOpen(true); tracker.clearTrigger(); }}
               >
                 <MiloAvatar
-                  size={300}
+                  size={avatarSize}
                   isSpeaking={miloSpeaking}
                   mousePosition={tracker.mousePosition}
                   containerRef={containerRef}
@@ -129,15 +132,15 @@ export default function Hero({ tracker }: { tracker: BehaviorTrackerResult }) {
               </div>
             </div>
 
-            {/* Status */}
+            {/* Status pill */}
             <div style={{
               display: "inline-flex", alignItems: "center", gap: 8,
-              padding: "8px 16px", borderRadius: 100,
+              padding: "7px 14px", borderRadius: 100,
               background: "var(--c-surface)",
               border: "1px solid var(--c-border)",
             }}>
               <span style={{
-                width: 8, height: 8, borderRadius: "50%", flexShrink: 0,
+                width: 7, height: 7, borderRadius: "50%", flexShrink: 0,
                 background: chatOpen ? "var(--c-accent)" : "var(--c-green)",
                 animation: "glow-pulse 2.5s ease-in-out infinite",
               }} />
@@ -180,7 +183,7 @@ export default function Hero({ tracker }: { tracker: BehaviorTrackerResult }) {
 
             {/* Chat */}
             {chatOpen && (
-              <div className="anim-slide-up" style={{ width: "100%", maxWidth: 360, height: 380 }}>
+              <div className="anim-slide-up hero-chat">
                 <MiloChat
                   initialMessage={initialMsg}
                   context={tracker.context}
@@ -193,22 +196,71 @@ export default function Hero({ tracker }: { tracker: BehaviorTrackerResult }) {
         </div>
       </div>
 
-      {/* Responsive grid */}
       <style>{`
+        .hero-wrap {
+          padding-top: clamp(2rem, 5vw, 3rem);
+          padding-bottom: clamp(2.5rem, 6vw, 5rem);
+        }
+        .hero-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 2.5rem;
+          align-items: center;
+        }
+        .hero-copy {
+          text-align: center;
+        }
+        .hero-lead {
+          font-size: clamp(0.9rem, 2.5vw, 1.125rem);
+          font-weight: 300;
+          color: var(--c-muted);
+          line-height: 1.7;
+          max-width: 460px;
+          margin: 0 auto 1.75rem;
+        }
+        .hero-btns {
+          display: flex;
+          gap: 10px;
+          justify-content: center;
+          flex-wrap: wrap;
+          margin-bottom: 1.5rem;
+        }
+        .hero-btn-primary {
+          flex: 1 1 auto;
+          max-width: 260px;
+          justify-content: center;
+        }
+        .hero-avatar-col {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 16px;
+        }
+        .hero-chat {
+          width: 100%;
+          max-width: 360px;
+          height: 340px;
+        }
+
+        @media (min-width: 640px) {
+          .hero-btn-primary { flex: none; }
+          .hero-chat { height: 380px; }
+        }
+
         @media (min-width: 1024px) {
           .hero-grid {
-            grid-template-columns: 1fr 1fr !important;
-            text-align: left !important;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
           }
-          .hero-grid > div:first-child {
-            text-align: left !important;
+          .hero-copy {
+            text-align: left;
           }
-          .hero-grid > div:first-child p {
-            margin-left: 0 !important;
-            margin-right: 0 !important;
+          .hero-lead {
+            margin-left: 0;
+            margin-right: 0;
           }
-          .hero-grid > div:first-child > div:nth-child(3) {
-            justify-content: flex-start !important;
+          .hero-btns {
+            justify-content: flex-start;
           }
         }
       `}</style>

@@ -77,14 +77,13 @@ export default function Pricing() {
           <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 16, maxWidth: 900, margin: "0 auto", alignItems: "start" }} className="pricing-grid">
             {PLANS.map((plan, i) => (
               <ScrollReveal key={plan.id} className={`reveal-d${i + 1}`}>
-                <div style={{
+                <div className={plan.highlighted ? "pricing-card-highlighted" : ""} style={{
                   position: "relative", borderRadius: 22, padding: plan.highlighted ? "2.25rem" : "1.75rem",
                   display: "flex", flexDirection: "column",
                   ...(plan.highlighted ? {
                     background: "linear-gradient(155deg, rgba(50,44,90,0.98) 0%, rgba(35,32,68,0.99) 50%, rgba(28,26,52,1) 100%)",
                     border: "1px solid rgba(124,108,255,0.45)",
                     boxShadow: "0 0 80px rgba(124,108,255,0.18), 0 32px 72px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04) inset",
-                    transform: "scale(1.03)",
                   } : {
                     background: "linear-gradient(155deg, rgba(24,23,36,0.98) 0%, rgba(18,17,28,0.99) 100%)",
                     border: "1px solid rgba(255,255,255,0.08)",
@@ -152,7 +151,16 @@ export default function Pricing() {
           </p>
         </div>
 
-        <style>{`@media (min-width: 768px) { .pricing-grid { grid-template-columns: repeat(3, 1fr) !important; } }`}</style>
+        <style>{`
+          @media (min-width: 768px) {
+            .pricing-grid { grid-template-columns: repeat(3, 1fr) !important; }
+          }
+          /* scale(1.03) on highlighted card breaks mobile single-col; only show on 3-col */
+          .pricing-card-highlighted { transform: none !important; }
+          @media (min-width: 768px) {
+            .pricing-card-highlighted { transform: scale(1.03) !important; }
+          }
+        `}</style>
       </section>
 
       {/* ── FAQ ── */}
@@ -177,7 +185,7 @@ export default function Pricing() {
         <div className="wrap">
           <ScrollReveal>
             <div style={{
-              position: "relative", borderRadius: 28, padding: "80px 48px", textAlign: "center", overflow: "hidden",
+              position: "relative", borderRadius: "clamp(16px, 4vw, 28px)", padding: "clamp(2rem, 8vw, 5rem) clamp(1.25rem, 6vw, 3rem)", textAlign: "center", overflow: "hidden",
               background: "linear-gradient(135deg, var(--c-surface) 0%, var(--c-bg-subtle) 100%)",
               border: "1px solid rgba(124,108,255,0.2)",
               boxShadow: "0 40px 100px rgba(0,0,0,0.5), inset 0 0 60px rgba(124,108,255,0.05)",

@@ -128,8 +128,8 @@ export default function HowItWorks() {
         <ScrollReveal style={{ marginTop: 36 }}>
           <div style={{
             background: "rgba(10,10,14,0.9)", border: "1px solid rgba(255,255,255,0.07)",
-            borderRadius: 16, padding: "20px 24px", maxWidth: 440, margin: "0 auto",
-            boxShadow: "0 8px 32px rgba(0,0,0,0.28)",
+            borderRadius: 16, padding: "16px clamp(14px, 4vw, 24px)", maxWidth: 440, margin: "0 auto",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.28)", overflow: "hidden",
           }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
               <div style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--c-green)", boxShadow: "0 0 8px rgba(61,214,143,0.6)" }} />
@@ -137,7 +137,7 @@ export default function HowItWorks() {
                 El script más simple del mundo
               </p>
             </div>
-            <pre style={{ fontFamily: "monospace", fontSize: "0.78rem", color: "rgba(236,234,229,0.6)", lineHeight: 1.85, overflow: "auto" }}>
+            <pre style={{ fontFamily: "monospace", fontSize: "clamp(0.68rem, 2vw, 0.78rem)", color: "rgba(236,234,229,0.6)", lineHeight: 1.85, overflow: "auto", margin: 0 }}>
               {`<script>
   window.MEETZYCONFIG = { siteId: `}
               <span style={{ color: "#86efac" }}>{'"tu-id"'}</span>

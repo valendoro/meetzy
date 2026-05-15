@@ -153,7 +153,7 @@ export default function UseCases() {
           <div
             key={active}
             className="use-case-detail anim-fade-in"
-            style={{ padding: "2rem", height: "100%" }}
+            style={{ padding: "clamp(1.25rem, 4vw, 2rem)", height: "100%" }}
           >
             <div style={{ display: "flex", alignItems: "flex-start", gap: 18, marginBottom: 24 }}>
               <div style={{

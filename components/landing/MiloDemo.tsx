@@ -1,8 +1,19 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import MiloAvatar from "./MiloAvatar";
 import { type BehaviorTrackerResult } from "@/lib/behavior-tracker";
+
+function useDemoAvatarSize() {
+  const [size, setSize] = useState(220);
+  useEffect(() => {
+    const update = () => setSize(window.innerWidth < 400 ? 160 : window.innerWidth < 640 ? 200 : 260);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+  return size;
+}
 
 interface MiloDemoProps {
   tracker: BehaviorTrackerResult;
@@ -10,6 +21,7 @@ interface MiloDemoProps {
 
 export default function MiloDemo({ tracker }: MiloDemoProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const demoAvatarSize = useDemoAvatarSize();
 
   return (
     <section id="demo" data-section="demo" className="section-y relative overflow-hidden">
@@ -67,7 +79,7 @@ export default function MiloDemo({ tracker }: MiloDemoProps) {
               }}
             />
             <MiloAvatar
-              size={300}
+              size={demoAvatarSize}
               mousePosition={tracker.mousePosition}
               containerRef={containerRef}
               className="relative z-10 milo-glow"

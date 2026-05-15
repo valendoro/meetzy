@@ -32,9 +32,20 @@
   --radius-xl: 26px;
 
   --wrap-max: 1200px;
-  --wrap-pad-x: 28px;
-  --nav-height: 72px;
-  --section-y: clamp(5rem, 11vw, 7.5rem);
+  /* mobile-first: 16px on small, scales up */
+  --wrap-pad-x: 16px;
+  --nav-height: 64px;
+  --section-y: clamp(4rem, 10vw, 7.5rem);
+}
+
+@media (min-width: 480px) {
+  :root { --wrap-pad-x: 20px; }
+}
+@media (min-width: 640px) {
+  :root { --wrap-pad-x: 24px; --nav-height: 68px; }
+}
+@media (min-width: 768px) {
+  :root { --wrap-pad-x: 28px; --nav-height: 72px; }
 }
 
 /* ══════════════════════════════════════
@@ -898,6 +909,126 @@ body::before {
   }
 }
 
+/* ══════════════════════════════════════
+   MOBILE NAV (hamburger + drawer)
+══════════════════════════════════════ */
+.landing-hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  flex-shrink: 0;
+  transition: background 0.15s ease;
+}
+.landing-hamburger:hover {
+  background: rgba(255,255,255,0.06);
+}
+@media (min-width: 900px) {
+  .landing-hamburger { display: none; }
+}
+.landing-hamburger-bar {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--c-muted);
+  border-radius: 2px;
+  transition: transform 0.25s ease, opacity 0.25s ease, background 0.15s ease;
+  transform-origin: center;
+}
+.landing-hamburger:hover .landing-hamburger-bar {
+  background: var(--c-text);
+}
+.landing-hamburger-bar--open-1 { transform: translateY(7px) rotate(45deg); }
+.landing-hamburger-bar--open-2 { opacity: 0; transform: scaleX(0); }
+.landing-hamburger-bar--open-3 { transform: translateY(-7px) rotate(-45deg); }
+
+/* Desktop-only auth row */
+.landing-nav-auth {
+  display: none;
+  align-items: center;
+  gap: 8px;
+}
+@media (min-width: 640px) {
+  .landing-nav-auth { display: flex; }
+}
+
+/* Mobile drawer overlay */
+.landing-mobile-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 49;
+  background: rgba(6,5,10,0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: fade-in 0.2s ease both;
+}
+@media (min-width: 900px) {
+  .landing-mobile-menu { display: none; }
+}
+.landing-mobile-menu-inner {
+  position: absolute;
+  top: var(--nav-height);
+  left: 0;
+  right: 0;
+  background: rgba(18,17,26,0.98);
+  border-bottom: 1px solid var(--c-border);
+  padding: 1.25rem var(--wrap-pad-x) 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  animation: slide-down 0.28s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.landing-mobile-link {
+  display: block;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--c-muted);
+  text-decoration: none;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--c-border);
+  transition: color 0.15s ease;
+}
+.landing-mobile-link:hover { color: var(--c-text); }
+.landing-mobile-auth {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 1.25rem;
+}
+.landing-mobile-signin {
+  width: 100%;
+  padding: 0.7rem;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--c-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+.landing-mobile-signin:hover { color: var(--c-text); }
+
+/* Ensure signup btn fills full width on mobile */
+.landing-mobile-auth .btn-primary {
+  width: 100%;
+  justify-content: center;
+  padding: 0.875rem 1.25rem;
+  font-size: 0.9375rem;
+}
+
 /* ── Dashboard (ambient depth + form chrome) ───────────────── */
 .dashboard-app {
   position: relative;
@@ -1463,13 +1594,13 @@ body::after {
   color: var(--c-text);
 }
 .display-xl {
-  font-size: clamp(3rem, 6.2vw, 5.75rem);
+  font-size: clamp(2.6rem, 6.2vw, 5.75rem);
 }
 .display-lg {
-  font-size: clamp(2.15rem, 4.2vw, 3.65rem);
+  font-size: clamp(1.9rem, 4.2vw, 3.65rem);
 }
 .display-md {
-  font-size: clamp(1.65rem, 2.8vw, 2.35rem);
+  font-size: clamp(1.5rem, 2.8vw, 2.35rem);
 }
 
 .gradient-text {
@@ -1507,7 +1638,7 @@ body::after {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 2rem;
+  gap: 0.75rem;
 }
 .landing-nav-links {
   display: none;
@@ -1727,7 +1858,7 @@ body::after {
   .stats-grid-desktop { grid-template-columns: repeat(4, 1fr); }
 }
 .stat-cell {
-  padding: 3rem 1.25rem;
+  padding: clamp(1.5rem, 5vw, 3rem) 1.25rem;
   position: relative;
 }
 @media (min-width: 640px) {

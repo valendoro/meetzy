@@ -44,15 +44,15 @@ export default function MiloWidget({ tracker }: { tracker: BehaviorTrackerResult
     <>
       {/* Widget flotante */}
       <div
-        className="fixed bottom-6 right-6 z-[900] flex flex-col items-end gap-3"
-        style={{ pointerEvents: "auto" }}
+        className="fixed z-[900] flex flex-col items-end gap-3"
+        style={{ pointerEvents: "auto", bottom: "clamp(16px, 4vw, 24px)", right: "clamp(12px, 4vw, 24px)" }}
       >
         {/* Panel de chat */}
         <div
           className="origin-bottom-right transition-all duration-500"
           style={{
-            width: 380,
-            height: 520,
+            width: "min(380px, calc(100vw - 24px))",
+            height: "min(520px, calc(100dvh - 96px))",
             opacity: phase === "open" ? 1 : 0,
             transform: phase === "open" ? "scale(1) translateY(0)" : "scale(0.92) translateY(16px)",
             pointerEvents: phase === "open" ? "auto" : "none",

@@ -54,7 +54,7 @@ export default function Testimonials() {
         <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: 16 }} className="testimonials-grid">
           {TESTIMONIALS.map((t, i) => (
             <ScrollReveal key={i} className={`reveal-d${i + 1}`}>
-              <div className="testimonial-card" style={{ padding: "1.75rem 2rem", display: "flex", flexDirection: "column" }}>
+              <div className="testimonial-card" style={{ padding: "clamp(1.25rem, 4vw, 1.75rem) clamp(1rem, 4vw, 2rem)", display: "flex", flexDirection: "column" }}>
                 <Stars />
 
                 <p style={{

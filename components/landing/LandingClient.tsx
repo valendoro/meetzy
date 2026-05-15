@@ -3,6 +3,7 @@
 import { useBehaviorTracker } from "@/lib/behavior-tracker";
 import Hero from "./Hero";
 import MiloDemo from "./MiloDemo";
+import MiloWidget from "./MiloWidget";
 
 export default function LandingClient() {
   const tracker = useBehaviorTracker();
@@ -11,6 +12,7 @@ export default function LandingClient() {
     <>
       <Hero tracker={tracker} />
       <MiloDemo tracker={tracker} />
+      <MiloWidget tracker={tracker} />
     </>
   );
 }

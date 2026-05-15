@@ -109,12 +109,20 @@ export default function MiloDemo({ tracker }: MiloDemoProps) {
 
           {/* Arrow pointing to bottom-right widget */}
           <p className="text-center text-xs text-[var(--c-muted2)] opacity-70 mt-2 flex items-center gap-2">
-            <span>Milo ya te habló</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.5 }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ opacity: 0.5, flexShrink: 0 }}>
               <path d="M7 17L17 7M17 7H7M17 7v10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
-            <span>buscalo en la esquina inferior derecha</span>
+            <span className="milo-demo-hint-desktop">Apareció en la esquina inferior derecha — hacé clic</span>
+            <span className="milo-demo-hint-mobile">Tocá el botón violeta abajo a la derecha</span>
           </p>
+          <style>{`
+            .milo-demo-hint-mobile { display: inline; }
+            .milo-demo-hint-desktop { display: none; }
+            @media (min-width: 640px) {
+              .milo-demo-hint-mobile { display: none; }
+              .milo-demo-hint-desktop { display: inline; }
+            }
+          `}</style>
         </div>
       </div>
     </section>

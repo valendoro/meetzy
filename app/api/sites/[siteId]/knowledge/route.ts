@@ -62,9 +62,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ sit
     return NextResponse.json({ error: "Título y contenido son requeridos." }, { status: 400 });
   }
 
-  const entry = await prisma.knowledgeEntry.create({
-    data: { siteId: site.id, title, content: content.slice(0, 12000), type, sourceUrl },
-  });
-
-  return NextResponse.json({ entry });
+  try {
+    const entry = await prisma.knowledgeEntry.create({
+      data: { siteId: site.id, title, content: content.slice(0, 12000), type, sourceUrl },
+    });
+    return NextResponse.json({ entry });
+  } catch (e) {
+    console.error("POST /api/sites/[siteId]/knowledge", e);
+    return NextResponse.json({ error: "Error al guardar la entrada." }, { status: 500 });
+  }
 }

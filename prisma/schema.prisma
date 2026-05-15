@@ -147,8 +147,19 @@ model VisitorProfile {
   topSource String?
 
   contactedAt DateTime?
+  notes       VisitorNote[]
 
   @@unique([visitorId, siteId])
+}
+
+model VisitorNote {
+  id        String         @id @default(cuid())
+  profileId String
+  profile   VisitorProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  content   String         @db.Text
+  createdAt DateTime       @default(now())
+
+  @@index([profileId])
 }
 
 model Message {

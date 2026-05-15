@@ -5,12 +5,13 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { X, Search, Download } from "lucide-react";
 import SiteSubnav from "@/components/dashboard/SiteSubnav";
 import IntentBadge from "@/components/dashboard/IntentBadge";
 import ConversationTranscript from "@/components/dashboard/ConversationTranscript";
 import { formatDurationSec } from "@/lib/format-duration";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface Row {
   id: string;
@@ -23,6 +24,7 @@ interface Row {
   country: string | null;
   device: string | null;
   visitorEmail: string | null;
+  visitorName: string | null;
   preview: string;
 }
 
@@ -38,9 +40,12 @@ export default function ConversationsClient({
   const [items, setItems] = useState<Row[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [intent, setIntent] = useState("all");
   const [hasEmail, setHasEmail] = useState("all");
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [activeRow, setActiveRow] = useState<Row | null>(null);
   const [transcript, setTranscript] = useState<{ role: string; content: string; createdAt: string }[] | null>(
@@ -48,18 +53,29 @@ export default function ConversationsClient({
   );
   const [transcriptLoading, setTranscriptLoading] = useState(false);
 
+  useEffect(() => {
+    const t = window.setTimeout(() => {
+      setDebouncedSearch(search.trim());
+      setPage(1);
+    }, 400);
+    return () => window.clearTimeout(t);
+  }, [search]);
+
   const load = useCallback(async () => {
     setLoading(true);
     const sp = new URLSearchParams({ page: String(page), intent });
     if (hasEmail !== "all") sp.set("hasEmail", hasEmail);
+    if (debouncedSearch) sp.set("search", debouncedSearch);
+
     const r = await fetch(`/api/sites/${sitePublicId}/conversations?${sp}`);
     if (r.ok) {
-      const j = (await r.json()) as { items: Row[]; totalPages: number };
+      const j = (await r.json()) as { items: Row[]; totalPages: number; total: number };
       setItems(j.items);
       setTotalPages(j.totalPages);
+      setTotal(j.total);
     }
     setLoading(false);
-  }, [sitePublicId, page, intent, hasEmail]);
+  }, [sitePublicId, page, intent, hasEmail, debouncedSearch]);
 
   useEffect(() => {
     void load();
@@ -166,6 +182,7 @@ export default function ConversationsClient({
             {activeRow && (
               <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border-subtle)] bg-[var(--bg-surface)] px-5 py-3">
                 <div className="flex flex-wrap gap-2 text-[11px] text-[var(--text-tertiary)]">
+                  {activeRow.visitorName && <span className="font-medium text-[var(--text-secondary)]">👤 {activeRow.visitorName}</span>}
                   {activeRow.country && <span>🌍 {activeRow.country}</span>}
                   {activeRow.device && <span>📱 {activeRow.device}</span>}
                   {activeRow.visitorEmail && (
@@ -185,6 +202,14 @@ export default function ConversationsClient({
       </Dialog.Root>
 
       <div className="dash-filter-bar">
+        <Input
+          type="search"
+          placeholder="Buscar por email o preview…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          leftIcon={<Search className="size-4 opacity-70" strokeWidth={2} />}
+          className="min-w-0 flex-1 sm:min-w-[200px]"
+        />
         <select
           value={intent}
           onChange={(e) => setIntent(e.target.value)}
@@ -206,6 +231,20 @@ export default function ConversationsClient({
           <option value="true">Con email</option>
           <option value="false">Sin email</option>
         </select>
+        {total !== null && (
+          <span className="shrink-0 text-[11px] tabular-nums text-[var(--text-tertiary)] whitespace-nowrap">
+            {total} resultado{total !== 1 ? "s" : ""}
+          </span>
+        )}
+        <a
+          href={`/api/sites/${sitePublicId}/emails?format=csv`}
+          download
+          className="flex shrink-0 items-center gap-1.5 rounded-[var(--radius-md)] border border-[var(--border-default)] bg-[var(--bg-overlay)] px-3 py-2 text-[12px] font-medium text-[var(--text-secondary)] transition-all hover:border-[var(--accent-border)] hover:text-[var(--accent)]"
+          title="Exportar emails capturados a CSV"
+        >
+          <Download className="size-3.5" />
+          <span className="hidden sm:inline">Exportar emails</span>
+        </a>
       </div>
 
       {loading ? (
@@ -246,6 +285,11 @@ export default function ConversationsClient({
 
                 {/* Center: preview + meta */}
                 <div className="min-w-0 flex-1">
+                  {(c.visitorName || c.visitorEmail) && (
+                    <p className="mb-0.5 truncate text-[11px] font-semibold text-[var(--text-secondary)]">
+                      {c.visitorName ?? c.visitorEmail}
+                    </p>
+                  )}
                   <p className="truncate text-[13px] font-medium text-[var(--text-primary)]">
                     {c.preview || <span className="text-[var(--text-tertiary)] italic">Sin preview</span>}
                   </p>
@@ -256,8 +300,11 @@ export default function ConversationsClient({
                     <span className="opacity-40">·</span>
                     <span>{c.messageCount} mensajes</span>
                     {c.country && <><span className="opacity-40">·</span><span>{c.country}</span></>}
-                    {c.visitorEmail && (
+                    {c.visitorEmail && !c.visitorName && (
                       <span className="text-emerald-400">✉ {c.visitorEmail}</span>
+                    )}
+                    {c.visitorEmail && c.visitorName && (
+                      <span className="text-emerald-400">✉</span>
                     )}
                   </div>
                 </div>

@@ -20,6 +20,7 @@ export default async function AgentTestPage({ params }: { params: Promise<{ site
       <AgentTestClient
         siteId={siteId}
         agentName={site.agentName}
+        agentType={site.agentType}
         welcomeMessage={site.welcomeMessage}
         brandColor={site.brandColor}
       />

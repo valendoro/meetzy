@@ -128,7 +128,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ site
       visitorId: true,
     } satisfies Prisma.ConversationSelect;
 
-    const [curr, prev] = await Promise.all([
+    const [curr, prev, emailsCurr, emailsPrev] = await Promise.all([
       prisma.conversation.findMany({
         where: { siteId: site.id, createdAt: { gte: from, lte: to } },
         orderBy: { createdAt: "desc" },
@@ -141,10 +141,19 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ site
         take: 10000,
         select,
       }),
+      prisma.conversation.count({
+        where: { siteId: site.id, createdAt: { gte: from, lte: to }, visitorEmail: { not: null } },
+      }),
+      prisma.conversation.count({
+        where: { siteId: site.id, createdAt: { gte: prevFrom, lte: prevTo }, visitorEmail: { not: null } },
+      }),
     ]);
 
     const a = aggregate(curr as ConvRow[]);
     const ap = aggregate(prev as ConvRow[]);
+
+    const emailRate = a.total === 0 ? 0 : Math.round((emailsCurr / a.total) * 1000) / 10;
+    const prevEmailRate = ap.total === 0 ? 0 : Math.round((emailsPrev / ap.total) * 1000) / 10;
 
     const chartFrom = range === "all" ? subDays(to, 89) : from;
     const byDayArr = eachDayOfInterval({ start: chartFrom, end: to }).map(
@@ -212,6 +221,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ site
       avgDuration: { value: a.avgDuration, change: pctChange(a.avgDuration, ap.avgDuration) },
       avgPagesVisited: { value: a.avgPages, change: pctChange(a.avgPages, ap.avgPages) },
       hotLeads: { total: a.hotLeads, change: pctChange(a.hotLeads, ap.hotLeads) },
+      emailCapture: { rate: emailRate, total: emailsCurr, change: pctChange(emailRate, prevEmailRate) },
       intentDistribution: a.intentDistribution,
       countries,
       sources,

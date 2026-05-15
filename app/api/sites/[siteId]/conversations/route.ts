@@ -19,6 +19,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ site
     const page = Math.max(1, Number.parseInt(sp.get("page") ?? "1", 10) || 1);
     const intent = sp.get("intent")?.trim();
     const hasEmail = sp.get("hasEmail");
+    const search = sp.get("search")?.trim();
     const minDur = sp.get("minDuration") ? Number.parseInt(sp.get("minDuration")!, 10) : undefined;
     const maxDur = sp.get("maxDuration") ? Number.parseInt(sp.get("maxDuration")!, 10) : undefined;
     const fromRaw = sp.get("from");
@@ -34,6 +35,13 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ site
       where.visitorEmail = { not: null };
     } else if (hasEmail === "false") {
       where.visitorEmail = null;
+    }
+    if (search) {
+      where.OR = [
+        { visitorEmail: { contains: search, mode: "insensitive" } },
+        { visitorName: { contains: search, mode: "insensitive" } },
+        { messages: { some: { role: "user", content: { contains: search, mode: "insensitive" } } } },
+      ];
     }
     const durFilter: Prisma.IntFilter = {};
     if (minDur !== undefined && !Number.isNaN(minDur)) {
@@ -81,6 +89,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ site
       country: c.country,
       device: c.device,
       visitorEmail: c.visitorEmail,
+      visitorName: c.visitorName,
       preview: c.messages[0]?.content ?? "",
     }));
 

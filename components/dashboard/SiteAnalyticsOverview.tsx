@@ -29,6 +29,7 @@ interface AnalyticsPayload {
   avgDuration: { value: number; change: number };
   avgPagesVisited: { value: number; change: number };
   hotLeads: { total: number; change: number };
+  emailCapture?: { rate: number; total: number; change: number };
   intentDistribution: Record<string, number>;
   countries: { country: string; count: number; flag?: string }[];
   sources: { source: string; count: number }[];
@@ -229,7 +230,7 @@ export default function SiteAnalyticsOverview({
 
       {data ? (
         <>
-          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-5">
             <MetricCard
               title={agentCfg.kpis.primary.label}
               value={data.sessions.total}
@@ -281,6 +282,20 @@ export default function SiteAnalyticsOverview({
                 </svg>
               }
             />
+            {data.emailCapture !== undefined && (
+              <MetricCard
+                title="Captura de email"
+                value={`${data.emailCapture.rate}%`}
+                change={data.emailCapture.change}
+                sub={`${data.emailCapture.total} conversaciones con email capturado.`}
+                icon={
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                    <polyline points="22,6 12,13 2,6" />
+                  </svg>
+                }
+              />
+            )}
           </div>
 
           <div className="grid gap-7 lg:grid-cols-2">

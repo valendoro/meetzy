@@ -32,6 +32,27 @@ export const metadata: Metadata = {
   description:
     "Meetzy observa lo que cada visitante hace en tu sitio y responde con precisión antes de que tenga que preguntar.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "https://meetzy.ai"),
+  openGraph: {
+    type: "website",
+    siteName: "Meetzy",
+    title: "Meetzy — La web que entiende.",
+    description:
+      "Meetzy observa lo que cada visitante hace en tu sitio y responde con precisión antes de que tenga que preguntar.",
+    url: process.env.NEXT_PUBLIC_APP_URL ?? "https://meetzy.ai",
+    locale: "es_AR",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Meetzy — La web que entiende.",
+    description:
+      "Meetzy observa lo que cada visitante hace en tu sitio y responde con precisión antes de que tenga que preguntar.",
+    creator: "@meetzyai",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

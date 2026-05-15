@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { generateAvatarPreview, isFalConfigured } from "@/lib/fal";
 import { avatarPreviewIpRatelimit } from "@/lib/redis";
+import { getDbUser } from "@/lib/auth";
 
 const AvatarConfigSchema = z.object({
   style: z.enum(["realistic", "cartoon", "object"]),
@@ -22,6 +23,9 @@ export const maxDuration = 60;
 
 export async function POST(req: Request) {
   try {
+    const dbUser = await getDbUser();
+    if (!dbUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
     const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
     const { success } = await avatarPreviewIpRatelimit.limit(ip || "unknown");
     if (!success) {

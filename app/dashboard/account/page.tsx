@@ -11,7 +11,7 @@ export const metadata = { title: "Mi cuenta" };
 const PLAN_CONFIG = {
   starter: { label: "Starter", color: "text-[var(--text-secondary)]", bg: "bg-[var(--bg-overlay)]", border: "border-[var(--border-default)]", limit: 1 },
   pro:     { label: "Pro",     color: "text-[var(--accent)]",          bg: "bg-[var(--accent-subtle)]", border: "border-[var(--accent-border)]", limit: 5 },
-  elite:   { label: "Elite",   color: "text-amber-400",                bg: "bg-amber-500/08",           border: "border-amber-500/30",           limit: 20 },
+  elite:   { label: "Elite",   color: "text-amber-400",                bg: "bg-amber-500/08",           border: "border-amber-500/30",           limit: -1 },
 } as const;
 
 export default async function AccountPage() {
@@ -92,17 +92,21 @@ export default async function AccountPage() {
             </div>
             <p className="font-syne text-[20px] font-bold text-[var(--text-primary)]">
               {sites.length}
-              <span className="ml-1 text-[13px] font-normal text-[var(--text-tertiary)]">/ {planCfg.limit}</span>
+              <span className="ml-1 text-[13px] font-normal text-[var(--text-tertiary)]">
+                {planCfg.limit === -1 ? "/ ∞" : `/ ${planCfg.limit}`}
+              </span>
             </p>
-            <div className="mt-2 h-1.5 rounded-full bg-[var(--bg-overlay)] overflow-hidden">
-              <div
-                className="h-full rounded-full transition-all"
-                style={{
-                  width: `${Math.min(100, (sites.length / planCfg.limit) * 100)}%`,
-                  background: "var(--accent)",
-                }}
-              />
-            </div>
+            {planCfg.limit > 0 && (
+              <div className="mt-2 h-1.5 rounded-full bg-[var(--bg-overlay)] overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all"
+                  style={{
+                    width: `${Math.min(100, (sites.length / planCfg.limit) * 100)}%`,
+                    background: "var(--accent)",
+                  }}
+                />
+              </div>
+            )}
           </div>
           <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-surface)] p-3">
             <div className="flex items-center gap-2 mb-1">
@@ -173,12 +177,14 @@ export default async function AccountPage() {
               <p className="text-[11px] text-[var(--text-tertiary)]">Stripe · suscripción activa</p>
             </div>
           </div>
-          <Link
-            href="/api/stripe/checkout"
-            className="text-[12px] font-medium text-[var(--accent)] hover:underline"
-          >
-            Gestionar →
-          </Link>
+          <form action="/api/stripe/portal" method="POST">
+            <button
+              type="submit"
+              className="text-[12px] font-medium text-[var(--accent)] hover:underline"
+            >
+              Gestionar →
+            </button>
+          </form>
         </div>
       )}
     </div>

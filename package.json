@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "prisma generate && npm run build:widget && next build",
     "build:widget": "node scripts/build-widget.mjs",
-    "start": "prisma migrate deploy && next start",
+    "start": "next start",
     "lint": "eslint",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate deploy",

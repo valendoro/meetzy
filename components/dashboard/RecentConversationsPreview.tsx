@@ -14,10 +14,15 @@ type Row = {
   sessionDuration: number;
   messageCount: number;
   visitorEmail: string | null;
+  visitorName: string | null;
   preview: string;
 };
 
 function initialsFromRow(row: Row): string {
+  if (row.visitorName?.trim()) {
+    const parts = row.visitorName.trim().split(/\s+/);
+    return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase() || "?";
+  }
   if (row.visitorEmail?.trim()) {
     return row.visitorEmail.slice(0, 2).toUpperCase();
   }
@@ -85,7 +90,7 @@ export default function RecentConversationsPreview({
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="truncate text-sm font-medium text-[var(--text-primary)]">
-                  {row.visitorEmail?.trim() || `Visitante ${row.visitorId.slice(-6)}`}
+                  {row.visitorName?.trim() || row.visitorEmail?.trim() || `Visitante ${row.visitorId.slice(-6)}`}
                 </span>
                 <IntentBadge label={row.intentLabel} />
               </div>

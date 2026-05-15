@@ -65,13 +65,13 @@ async function syncConversationAfterUserMessage(args: {
   utmSource?: string | null;
   utmMedium?: string | null;
   utmCampaign?: string | null;
-}): Promise<{ intentScore: number; intentLabel: string }> {
+}): Promise<{ intentScore: number; intentLabel: string; isNewHotLead: boolean; newEmailCaptured: boolean }> {
   const conv = await prisma.conversation.findUnique({
     where: { id: args.conversationId },
     include: { site: { include: { user: { select: { email: true, name: true } } } } },
   });
   if (!conv) {
-    return { intentScore: 0, intentLabel: "exploring" };
+    return { intentScore: 0, intentLabel: "exploring", isNewHotLead: false, newEmailCaptured: false };
   }
   const prevIntentLabel = conv.intentLabel;
 
@@ -111,6 +111,10 @@ async function syncConversationAfterUserMessage(args: {
   for (const t of texts) {
     hints = enrichFromMessage(t, hints);
   }
+
+  const newEmailCaptured = !conv.visitorEmail && !!hints.email;
+  const HOT_INTENTS = new Set(["hot_lead", "ready_to_buy"]);
+  const isNewHotLead = HOT_INTENTS.has(intentLabel) && !HOT_INTENTS.has(prevIntentLabel);
 
   const source = inferTrafficSource(
     args.referrer ?? args.visitorContext?.referrer ?? conv.referrer,
@@ -161,7 +165,7 @@ async function syncConversationAfterUserMessage(args: {
     source,
   });
 
-  return { intentScore, intentLabel };
+  return { intentScore, intentLabel, isNewHotLead, newEmailCaptured };
 }
 
 interface UIComponent {
@@ -400,7 +404,7 @@ export async function POST(req: NextRequest) {
             }
 
             if (finishReason === "stop" || finishReason === "tool_calls") {
-              let finalIntent = { intentScore: 0, intentLabel: "exploring" };
+              let finalIntent = { intentScore: 0, intentLabel: "exploring", isNewHotLead: false, newEmailCaptured: false };
               try {
                 await prisma.$transaction([
                   prisma.message.create({
@@ -448,33 +452,37 @@ export async function POST(req: NextRequest) {
               });
               controller.enqueue(encoder.encode(`data: ${doneData}\n\n`));
 
-              // Fire webhook only on high-intent events (hot_lead or ready_to_buy)
-              if (
-                site.webhookUrl &&
-                (finalIntent.intentLabel === "hot_lead" || finalIntent.intentLabel === "ready_to_buy")
-              ) {
-                const conv = await prisma.conversation.findUnique({
+              // Fire webhook: only on FIRST transition to hot_lead/ready_to_buy OR first email capture
+              if (site.webhookUrl && (finalIntent.isNewHotLead || finalIntent.newEmailCaptured)) {
+                const latestConv = await prisma.conversation.findUnique({
                   where: { id: conversation!.id },
                   select: { visitorName: true, visitorEmail: true, visitorCompany: true, country: true, source: true },
                 });
-                fetch(site.webhookUrl, {
+                const event = finalIntent.isNewHotLead ? finalIntent.intentLabel : "email_captured";
+                await fetch(site.webhookUrl, {
                   method: "POST",
-                  headers: { "Content-Type": "application/json" },
+                  headers: {
+                    "Content-Type": "application/json",
+                    "X-Meetzy-Event": event,
+                    "X-Meetzy-Site": siteId,
+                  },
                   body: JSON.stringify({
-                    event: finalIntent.intentLabel,
+                    event,
                     siteId,
-                    siteName: site.agentName,
+                    siteName: site.name,
+                    agentName: site.agentName,
                     conversationId: conversation!.id,
                     visitorId,
-                    visitorName: conv?.visitorName ?? null,
-                    visitorEmail: conv?.visitorEmail ?? null,
-                    visitorCompany: conv?.visitorCompany ?? null,
-                    country: conv?.country ?? null,
-                    source: conv?.source ?? null,
+                    visitorName: latestConv?.visitorName ?? null,
+                    visitorEmail: latestConv?.visitorEmail ?? null,
+                    visitorCompany: latestConv?.visitorCompany ?? null,
+                    country: latestConv?.country ?? null,
+                    source: latestConv?.source ?? null,
                     intentScore: finalIntent.intentScore,
                     intentLabel: finalIntent.intentLabel,
                     lastMessage: message,
                     agentResponse: fullContent,
+                    timestamp: new Date().toISOString(),
                     dashboardUrl: `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/dashboard/${siteId}/visitors`,
                   }),
                 }).catch(() => {});

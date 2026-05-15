@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useTransition } from "react";
-import { Send, RotateCcw, Bot } from "lucide-react";
+import { Send, RotateCcw, Bot, Lightbulb, Zap } from "lucide-react";
 
 interface Message {
   role: "user" | "assistant";
@@ -11,13 +11,53 @@ interface Message {
 interface Props {
   siteId: string;
   agentName: string;
+  agentType: string;
   welcomeMessage: string;
   brandColor: string;
 }
 
 const TEST_VISITOR_ID = "dashboard-test-preview";
 
-export default function AgentTestClient({ siteId, agentName, welcomeMessage, brandColor }: Props) {
+const SUGGESTIONS_BY_TYPE: Record<string, string[]> = {
+  vendedor: [
+    "¿Cuánto sale el plan Pro?",
+    "¿Qué incluye el precio?",
+    "¿Tienen prueba gratis?",
+    "Quiero una demo",
+    "¿Cómo me contacto con ventas?",
+  ],
+  guia: [
+    "¿Cómo funciona esto?",
+    "¿Para quién es ideal?",
+    "¿Cuáles son las características principales?",
+    "¿Hay documentación disponible?",
+    "¿Qué hace exactamente este producto?",
+  ],
+  soporte: [
+    "Tengo un problema con mi cuenta",
+    "¿Cómo lo resuelvo?",
+    "El sistema no me deja ingresar",
+    "Necesito hablar con alguien",
+    "¿Cuánto demoran en responder?",
+  ],
+  recepcionista: [
+    "Quiero reservar un turno",
+    "¿Cuál es la disponibilidad?",
+    "¿Cómo cancelo mi reserva?",
+    "¿Qué necesito llevar?",
+    "¿Aceptan pagos online?",
+  ],
+};
+
+const FALLBACK_SUGGESTIONS = [
+  "¿Qué hacen ustedes?",
+  "¿Cuánto cuesta?",
+  "¿Cómo me registro?",
+  "Quiero hablar con alguien",
+  "¿Tienen soporte en español?",
+];
+
+export default function AgentTestClient({ siteId, agentName, agentType, welcomeMessage, brandColor }: Props) {
   const [messages, setMessages] = useState<Message[]>([
     { role: "assistant", content: welcomeMessage },
   ]);
@@ -27,6 +67,8 @@ export default function AgentTestClient({ siteId, agentName, welcomeMessage, bra
   const [isPending, startTransition] = useTransition();
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  const suggestions = SUGGESTIONS_BY_TYPE[agentType] ?? FALLBACK_SUGGESTIONS;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -48,7 +90,7 @@ export default function AgentTestClient({ siteId, agentName, welcomeMessage, bra
           message: text,
           conversationId,
           visitorId: TEST_VISITOR_ID,
-          plan: "elite", // test mode always gets full features
+          plan: "elite",
         }),
       });
 
@@ -127,13 +169,15 @@ export default function AgentTestClient({ siteId, agentName, welcomeMessage, bra
     }
   }
 
+  const msgCount = messages.filter(m => m.role === "user").length;
+
   return (
-    <div className="flex flex-col lg:flex-row gap-6">
+    <div className="flex flex-col lg:flex-row gap-5">
       {/* Chat panel */}
-      <div className="flex-1 flex flex-col rounded-[var(--radius-xl)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] overflow-hidden min-h-[520px] max-h-[720px]">
+      <div className="flex-1 flex flex-col rounded-[var(--radius-xl)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] overflow-hidden min-h-[540px] max-h-[720px]">
         {/* Header */}
         <div
-          className="flex items-center gap-3 px-4 py-3 border-b border-[var(--border-subtle)]"
+          className="flex items-center gap-3 px-4 py-3.5 border-b border-[var(--border-subtle)]"
           style={{ background: `color-mix(in srgb, ${brandColor} 8%, transparent)` }}
         >
           <div
@@ -144,8 +188,14 @@ export default function AgentTestClient({ siteId, agentName, welcomeMessage, bra
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-syne text-[13px] font-bold text-[var(--text-primary)]">{agentName}</p>
-            <p className="text-[11px] text-[var(--text-tertiary)]">Modo prueba · no afecta analytics</p>
+            <div className="flex items-center gap-1.5">
+              <span className="inline-block size-1.5 rounded-full bg-emerald-400" style={{ boxShadow: "0 0 6px rgba(52,211,153,0.6)" }} />
+              <p className="text-[11px] text-[var(--text-tertiary)]">Modo prueba · no afecta analytics</p>
+            </div>
           </div>
+          {msgCount > 0 && (
+            <span className="text-[11px] tabular-nums text-[var(--text-tertiary)]">{msgCount} msg</span>
+          )}
           <button
             type="button"
             onClick={reset}
@@ -153,7 +203,7 @@ export default function AgentTestClient({ siteId, agentName, welcomeMessage, bra
             className="rounded p-1.5 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] transition-colors"
             title="Reiniciar conversación"
           >
-            <RotateCcw className="size-4" />
+            <RotateCcw className="size-3.5" />
           </button>
         </div>
 
@@ -162,17 +212,23 @@ export default function AgentTestClient({ siteId, agentName, welcomeMessage, bra
           {messages.map((msg, i) => (
             <div
               key={i}
-              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+              className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
             >
+              {msg.role === "assistant" && (
+                <div
+                  className="flex size-6 shrink-0 items-center justify-center rounded-full mt-1"
+                  style={{ background: brandColor }}
+                >
+                  <Bot className="size-3.5 text-white" />
+                </div>
+              )}
               <div
-                className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-[13px] leading-relaxed ${
+                className={`max-w-[78%] rounded-2xl px-3.5 py-2.5 text-[13px] leading-relaxed ${
                   msg.role === "user"
-                    ? "rounded-br-sm text-white"
-                    : "rounded-bl-sm bg-[var(--bg-overlay)] text-[var(--text-primary)]"
+                    ? "rounded-br-[4px] text-white"
+                    : "rounded-bl-[4px] border border-[var(--border-subtle)] bg-[var(--bg-overlay)] text-[var(--text-primary)]"
                 }`}
-                style={
-                  msg.role === "user" ? { background: brandColor } : undefined
-                }
+                style={msg.role === "user" ? { background: brandColor } : undefined}
               >
                 {msg.content || (
                   <span className="flex gap-1 items-center text-[var(--text-tertiary)]">
@@ -196,7 +252,7 @@ export default function AgentTestClient({ siteId, agentName, welcomeMessage, bra
             onKeyDown={handleKeyDown}
             disabled={streaming}
             rows={1}
-            placeholder="Escribí un mensaje para probar el agente..."
+            placeholder="Escribí para probar el agente… (Enter para enviar)"
             className="flex-1 resize-none rounded-[var(--radius-md)] border border-[var(--border-default)] bg-[var(--bg-surface)] px-3 py-2 text-[13px] text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] outline-none focus:border-[var(--accent)] transition-colors max-h-[100px] overflow-y-auto"
           />
           <button
@@ -211,44 +267,73 @@ export default function AgentTestClient({ siteId, agentName, welcomeMessage, bra
         </div>
       </div>
 
-      {/* Side hints */}
-      <div className="lg:w-72 space-y-4">
+      {/* Sidebar */}
+      <div className="lg:w-64 space-y-4">
+        {/* Suggestions */}
         <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-4">
-          <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)]">
-            Cosas para probar
-          </p>
-          <ul className="space-y-2 text-[13px] text-[var(--text-secondary)]">
-            {[
-              "¿Qué hacen ustedes?",
-              "¿Cuánto sale el plan Pro?",
-              "¿Cómo me registro?",
-              "Quiero hablar con un humano",
-              "¿Tienen soporte en español?",
-            ].map((q) => (
+          <div className="flex items-center gap-1.5 mb-3">
+            <Lightbulb className="size-3.5 text-[var(--accent)]" />
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)]">
+              Probá preguntando
+            </p>
+          </div>
+          <ul className="space-y-1.5">
+            {suggestions.map((q) => (
               <li key={q}>
                 <button
                   type="button"
-                  className="text-left w-full hover:text-[var(--accent)] transition-colors"
+                  className="text-left w-full rounded-[var(--radius-sm)] px-2.5 py-1.5 text-[12px] text-[var(--text-secondary)] hover:bg-[var(--bg-overlay)] hover:text-[var(--accent)] transition-colors"
                   onClick={() => {
                     setInput(q);
                     inputRef.current?.focus();
                   }}
                 >
-                  ↳ {q}
+                  {q}
                 </button>
               </li>
             ))}
           </ul>
         </div>
 
+        {/* Quick actions */}
+        <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-4">
+          <div className="flex items-center gap-1.5 mb-3">
+            <Zap className="size-3.5 text-amber-400" />
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)]">
+              Acciones rápidas
+            </p>
+          </div>
+          <ul className="space-y-1.5">
+            {[
+              "Quiero hablar con alguien",
+              "Tengo una queja",
+              "Necesito ayuda urgente",
+            ].map((q) => (
+              <li key={q}>
+                <button
+                  type="button"
+                  className="text-left w-full rounded-[var(--radius-sm)] px-2.5 py-1.5 text-[12px] text-[var(--text-secondary)] hover:bg-[var(--bg-overlay)] hover:text-amber-400 transition-colors"
+                  onClick={() => {
+                    setInput(q);
+                    inputRef.current?.focus();
+                  }}
+                >
+                  {q}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Info */}
         <div className="rounded-[var(--radius-lg)] border border-[var(--border-subtle)] bg-[var(--bg-elevated)] p-4">
           <p className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-[var(--text-tertiary)]">
             Modo prueba
           </p>
           <p className="text-[12px] leading-relaxed text-[var(--text-secondary)]">
-            Esta conversación <strong className="text-[var(--text-primary)]">no se guarda en analytics</strong>{" "}
-            y no impacta el comportamiento del agente en producción. Usala para validar respuestas después de
-            editar la configuración o la base de conocimiento.
+            Las conversaciones de prueba{" "}
+            <strong className="text-[var(--text-primary)]">no se guardan en analytics</strong>{" "}
+            y no afectan producción. Ideal para validar cambios en configuración o base de conocimiento.
           </p>
         </div>
       </div>

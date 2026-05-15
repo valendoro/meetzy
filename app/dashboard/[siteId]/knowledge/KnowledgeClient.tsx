@@ -73,10 +73,24 @@ export default function KnowledgeClient({ siteId, initialEntries, plan, limit }:
   }
 
   async function handleDelete(id: string) {
+    const entry = entries.find((e) => e.id === id);
+    const confirmed = window.confirm(
+      `¿Eliminar "${entry?.title ?? "esta entrada"}"? Esta acción no se puede deshacer.`
+    );
+    if (!confirmed) return;
     setDeletingId(id);
-    await fetch(`/api/sites/${siteId}/knowledge/${id}`, { method: "DELETE" });
-    setEntries((prev) => prev.filter((e) => e.id !== id));
-    setDeletingId(null);
+    try {
+      const res = await fetch(`/api/sites/${siteId}/knowledge/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        setError("No se pudo eliminar la entrada. Intentá de nuevo.");
+        return;
+      }
+      setEntries((prev) => prev.filter((e) => e.id !== id));
+    } catch {
+      setError("Error de red al intentar eliminar.");
+    } finally {
+      setDeletingId(null);
+    }
   }
 
   return (

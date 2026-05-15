@@ -19,47 +19,144 @@ function buildOpener(tracker: BehaviorTrackerResult): string {
 export default function MiloWidget({ tracker }: { tracker: BehaviorTrackerResult }) {
   const [phase, setPhase] = useState<"hidden" | "bubble" | "open">("hidden");
   const [opener, setOpener] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
   const firedRef = useRef(false);
 
-  // Aparece a los 5 segundos
+  useEffect(() => {
+    setIsMobile(window.innerWidth < 640);
+    const onResize = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  // Aparece a los 5 segundos y siempre se auto-abre
   useEffect(() => {
     if (firedRef.current) return;
     const t1 = setTimeout(() => {
       setOpener(buildOpener(tracker));
       setPhase("bubble");
-      firedRef.current = true;
-
-      // En desktop (≥640px) se auto-abre; en mobile el usuario toca la burbuja
-      if (window.innerWidth >= 640) {
-        const t2 = setTimeout(() => {
-          setPhase("open");
-        }, 1200);
-        return () => clearTimeout(t2);
-      }
+      const t2 = setTimeout(() => {
+        setPhase("open");
+        firedRef.current = true;
+      }, 1200);
+      return () => clearTimeout(t2);
     }, 5000);
     return () => clearTimeout(t1);
   }, [tracker]);
 
-  // Burbuja colapsada
+  // Lock scroll del body cuando el bottom sheet mobile está abierto
+  useEffect(() => {
+    if (isMobile && phase === "open") {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [isMobile, phase]);
+
   if (phase === "hidden") return null;
 
+  // ── MOBILE: bottom sheet ──────────────────────────────────────────
+  if (isMobile) {
+    return (
+      <>
+        {/* Overlay */}
+        {phase === "open" && (
+          <div
+            className="fixed inset-0 z-[899]"
+            style={{ background: "rgba(6,5,10,0.6)", backdropFilter: "blur(4px)", WebkitBackdropFilter: "blur(4px)" }}
+            onClick={() => setPhase("bubble")}
+          />
+        )}
+
+        {/* Bottom sheet */}
+        <div
+          className="fixed left-0 right-0 z-[900]"
+          style={{
+            bottom: 0,
+            transition: "transform 0.42s cubic-bezier(0.16,1,0.3,1)",
+            transform: phase === "open" ? "translateY(0)" : "translateY(110%)",
+            paddingBottom: "env(safe-area-inset-bottom, 0px)",
+          }}
+        >
+          {/* Handle bar */}
+          <div
+            style={{
+              background: "rgba(18,17,26,0.98)",
+              borderRadius: "20px 20px 0 0",
+              borderTop: "1px solid rgba(124,108,255,0.2)",
+              paddingTop: 10,
+            }}
+          >
+            <div style={{ width: 40, height: 4, borderRadius: 2, background: "rgba(255,255,255,0.12)", margin: "0 auto 0" }} />
+          </div>
+
+          {/* Chat */}
+          <div style={{ height: "72svh", background: "rgba(18,17,26,0.98)" }}>
+            <MiloChat
+              initialMessage={phase === "open" ? opener : undefined}
+              context={tracker.context}
+              onClose={() => setPhase("bubble")}
+            />
+          </div>
+        </div>
+
+        {/* Bubble FAB (visible cuando está cerrado) */}
+        {phase === "bubble" && (
+          <div
+            className="fixed z-[900]"
+            style={{
+              bottom: "max(20px, env(safe-area-inset-bottom, 20px))",
+              right: 16,
+            }}
+          >
+            <button
+              onClick={() => setPhase("open")}
+              className="relative w-16 h-16 rounded-full flex items-center justify-center shadow-2xl active:scale-95"
+              style={{
+                background: "linear-gradient(135deg, #7c6cff, #6057cc)",
+                boxShadow: "0 8px 32px rgba(124,108,255,0.55), 0 0 0 3px rgba(124,108,255,0.2)",
+              }}
+              aria-label="Hablar con Milo"
+            >
+              <MiloAvatarSmall size={52} />
+              <span
+                className="absolute inset-0 rounded-full"
+                style={{ background: "rgba(124,108,255,0.4)", animation: "widget-pulse 1.8s ease-out 3" }}
+              />
+            </button>
+          </div>
+        )}
+
+        <style>{`
+          @keyframes widget-pulse {
+            0%   { transform: scale(1);   opacity: 0.7; }
+            70%  { transform: scale(1.6); opacity: 0; }
+            100% { transform: scale(1.6); opacity: 0; }
+          }
+        `}</style>
+      </>
+    );
+  }
+
+  // ── DESKTOP: floating widget ──────────────────────────────────────
   return (
     <>
-      {/* Widget flotante */}
       <div
-        className="fixed z-[900] flex flex-col items-end widget-gap"
+        className="fixed z-[900] flex flex-col items-end"
         style={{
           pointerEvents: "auto",
-          bottom: "max(16px, env(safe-area-inset-bottom, 16px))",
-          right: "clamp(12px, 4vw, 24px)",
+          bottom: "max(24px, env(safe-area-inset-bottom, 24px))",
+          right: "clamp(16px, 3vw, 24px)",
+          gap: 12,
         }}
       >
-        {/* Panel de chat */}
+        {/* Panel */}
         <div
           className="origin-bottom-right transition-all duration-500"
           style={{
-            width: "min(380px, calc(100vw - 24px))",
-            height: "min(480px, calc(100svh - 120px))",
+            width: 380,
+            height: 520,
             opacity: phase === "open" ? 1 : 0,
             transform: phase === "open" ? "scale(1) translateY(0)" : "scale(0.92) translateY(16px)",
             pointerEvents: phase === "open" ? "auto" : "none",
@@ -72,7 +169,7 @@ export default function MiloWidget({ tracker }: { tracker: BehaviorTrackerResult
           />
         </div>
 
-        {/* Botón burbuja */}
+        {/* Bubble button */}
         <button
           onClick={() => setPhase(phase === "open" ? "bubble" : "open")}
           className="relative w-16 h-16 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-110 active:scale-95"
@@ -89,15 +186,10 @@ export default function MiloWidget({ tracker }: { tracker: BehaviorTrackerResult
           ) : (
             <MiloAvatarSmall size={52} />
           )}
-
-          {/* Pulso cuando está en burbuja (llama la atención) */}
           {phase === "bubble" && (
             <span
               className="absolute inset-0 rounded-full"
-              style={{
-                background: "rgba(124,108,255,0.4)",
-                animation: "widget-pulse 1.8s ease-out 3",
-              }}
+              style={{ background: "rgba(124,108,255,0.4)", animation: "widget-pulse 1.8s ease-out 3" }}
             />
           )}
         </button>
@@ -109,8 +201,6 @@ export default function MiloWidget({ tracker }: { tracker: BehaviorTrackerResult
           70%  { transform: scale(1.6); opacity: 0; }
           100% { transform: scale(1.6); opacity: 0; }
         }
-        .widget-gap { gap: 10px; }
-        @media (min-width: 640px) { .widget-gap { gap: 12px; } }
       `}</style>
     </>
   );

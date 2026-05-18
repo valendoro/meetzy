@@ -116,8 +116,6 @@ export default function Hero({ tracker }: { tracker: BehaviorTrackerResult }) {
                   animation="idle"
                   size={avatarSize}
                   isSpeaking={miloSpeaking}
-                  mousePosition={tracker.mousePosition}
-                  containerRef={containerRef}
                   className="milo-glow"
                 />
                 {hovered && !chatOpen && (

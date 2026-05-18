@@ -84,8 +84,6 @@ export default function MiloDemo({ tracker }: MiloDemoProps) {
               brandName="Meetzy"
               animation="idle"
               size={demoAvatarSize}
-              mousePosition={tracker.mousePosition}
-              containerRef={containerRef}
               className="relative z-10 milo-glow"
             />
           </div>

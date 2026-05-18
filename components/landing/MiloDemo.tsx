@@ -97,21 +97,9 @@ export default function MiloDemo({ tracker }: MiloDemoProps) {
             <span className="text-xs text-muted">Milo · observando esta página</span>
           </div>
 
-          {/* Intent badge */}
-          {tracker.context.inferredIntent !== "exploring" && (
-            <div
-              className="px-3 py-1 rounded-full"
-              style={{ background: "var(--c-accent-dim)", border: "1px solid rgba(124,108,255,0.22)" }}
-            >
-              <span className="text-[10px] font-mono" style={{ color: "rgba(183,176,255,0.9)" }}>
-                intent: {tracker.context.inferredIntent}
-              </span>
-            </div>
-          )}
-
-          {/* Arrow pointing to bottom-right widget */}
+          {/* Widget hint */}
           <p className="text-center text-xs text-[var(--c-muted2)] opacity-60 mt-2">
-            Milo ya te habló — aparece automáticamente
+            Milo ya te habló — mirá la burbuja abajo a la derecha
           </p>
         </div>
       </div>

@@ -203,8 +203,11 @@ export default function AvatarShowcase() {
           <h2 className="display display-lg mb-4">
             Tu agente tiene<br />tu identidad. No la nuestra.
           </h2>
-          <p className="text-muted font-light text-lg max-w-lg mx-auto leading-relaxed">
+          <p className="text-muted font-light text-lg max-w-lg mx-auto leading-relaxed hidden sm:block">
             Hover para verlos reaccionar. Clic para verlos hablar.
+          </p>
+          <p className="text-muted font-light text-lg max-w-lg mx-auto leading-relaxed sm:hidden">
+            Tocá un agente para verlo hablar.
           </p>
         </ScrollReveal>
 

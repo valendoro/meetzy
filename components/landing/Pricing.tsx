@@ -21,7 +21,7 @@ const PLANS = [
     id: "elite", name: "Elite", price: "$199",
     tagline: "La experiencia completa",
     features: ["Todo lo de Pro +", "El avatar habla con voz real", "Lip sync en tiempo real", "Agenda reuniones solo", "CRM automático", "Ilimitado · Sin branding"],
-    cta: "Hablar con el equipo", href: "/sign-in", highlighted: false,
+    cta: "Hablar con el equipo", href: "mailto:hola@meetzy.io?subject=Plan%20Elite", highlighted: false,
   },
 ];
 
@@ -30,7 +30,8 @@ const FAQ = [
   { q: "¿Cómo aprende mi negocio?", a: "Pegás la URL y Meetzy analiza todo automáticamente: productos, precios, horarios, servicios, tono." },
   { q: "¿El tracking no es invasivo?", a: "Trackea comportamiento anónimo de navegación — igual que Google Analytics. Sin datos personales sin consentimiento." },
   { q: "¿Qué pasa si no sabe responder algo?", a: "Lo reconoce y puede derivar a WhatsApp, email o llamada. Nunca inventa información." },
-  { q: "¿El avatar se puede personalizar?", a: "Completamente. Tipo, colores, logo. La naranja de tu frutería. La chomba con tu logo." },
+  { q: "¿El avatar se puede personalizar?", a: "Completamente. Colores, logo, nombre. La naranja de tu frutería. La chomba con tu logo." },
+  { q: "¿Puedo probarlo antes de pagar?", a: "Sí. El plan Starter es gratis para siempre. Sin tarjeta de crédito. Entrás, creás tu agente y lo probás en vivo." },
 ];
 
 function FaqItem({ q, a }: { q: string; a: string }) {
@@ -237,9 +238,9 @@ export default function Pricing() {
               {/* Social icons */}
               <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
                 {[
-                  { label: "Twitter / X", href: "#", path: "M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.631zm-1.161 17.52h1.833L7.084 4.126H5.117z" },
-                  { label: "LinkedIn", href: "#", path: "M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z M4 6a2 2 0 100-4 2 2 0 000 4z" },
-                  { label: "Instagram", href: "#", path: "M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zM17.5 6.5h.01M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5z" },
+                  { label: "Twitter / X", href: "https://x.com/meetzyai", path: "M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.631zm-1.161 17.52h1.833L7.084 4.126H5.117z" },
+                  { label: "LinkedIn", href: "https://linkedin.com/company/meetzy", path: "M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z M4 6a2 2 0 100-4 2 2 0 000 4z" },
+                  { label: "Instagram", href: "https://instagram.com/meetzyai", path: "M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zM17.5 6.5h.01M7 2h10a5 5 0 015 5v10a5 5 0 01-5 5H7a5 5 0 01-5-5V7a5 5 0 015-5z" },
                 ].map(({ label, href, path }) => (
                   <a key={label} href={href} aria-label={label} style={{
                     width: 36, height: 36, borderRadius: 10,
@@ -274,7 +275,7 @@ export default function Pricing() {
               <div>
                 <p style={{ fontSize: "0.72rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--c-muted2)", marginBottom: 16 }}>Legal</p>
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                  {[["Privacidad", "#"], ["Términos", "#"], ["Cookies", "#"], ["Contacto", "/sign-in"]].map(([l, h]) => (
+                  {[["Privacidad", "#"], ["Términos", "#"], ["Cookies", "#"], ["Contacto", "mailto:hola@meetzy.io"]].map(([l, h]) => (
                     <a key={l} href={h} style={{ fontSize: "0.875rem", color: "var(--c-muted)", textDecoration: "none", transition: "color 0.15s" }}
                       onMouseEnter={e => (e.currentTarget as HTMLElement).style.color = "var(--c-text)"}
                       onMouseLeave={e => (e.currentTarget as HTMLElement).style.color = "var(--c-muted)"}>{l}</a>
@@ -295,7 +296,7 @@ export default function Pricing() {
         <style>{`
           @media (min-width: 768px) {
             .footer-grid { grid-template-columns: 260px 1fr !important; }
-            .footer-links-grid { grid-template-columns: repeat(3, 1fr) !important; }
+            .footer-links-grid { grid-template-columns: repeat(2, 1fr) !important; }
           }
         `}</style>
       </footer>

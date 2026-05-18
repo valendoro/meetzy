@@ -1,39 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import BrandAvatar from "@/components/avatar/BrandAvatar";
-import MiloChat from "./MiloChat";
+import { useEffect, useState } from "react";
+import AgentFace from "@/components/avatar/AgentFace";
 import { type BehaviorTrackerResult } from "@/lib/behavior-tracker";
 
-function useAvatarSize() {
-  const [size, setSize] = useState(260);
-  useEffect(() => {
-    const update = () => {
-      const w = window.innerWidth;
-      if (w < 400) setSize(180);
-      else if (w < 640) setSize(210);
-      else if (w < 1024) setSize(240);
-      else setSize(290);
-    };
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, []);
-  return size;
-}
-
 export default function Hero({ tracker }: { tracker: BehaviorTrackerResult }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [chatOpen, setChatOpen] = useState(false);
-  const [miloSpeaking, setMiloSpeaking] = useState(false);
   const [hovered, setHovered] = useState(false);
-  const avatarSize = useAvatarSize();
+  const [pulse, setPulse]     = useState(false);
 
-  const initialMsg = tracker.triggerMessage
-    ?? (tracker.context.isReturnVisitor
-      ? "Bienvenido de vuelta. Ya sé lo que estuviste mirando."
-      : "Hola, soy Milo. Estoy observando tu comportamiento en la página ahora mismo. Preguntame lo que quieras.");
+  // Pulse the face once on mount to draw attention
+  useEffect(() => {
+    const t = setTimeout(() => setPulse(true), 1200);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Open the widget when "Hablale a Milo" is clicked
+  const openWidget = () => {
+    window.dispatchEvent(new CustomEvent("meetzy:open-widget"));
+  };
 
   return (
     <section
@@ -47,12 +32,11 @@ export default function Hero({ tracker }: { tracker: BehaviorTrackerResult }) {
         overflow: "hidden",
       }}
     >
-      {/* Deep glow */}
+      {/* Background glows */}
       <div style={{
         position: "absolute", inset: 0, pointerEvents: "none",
-        background: "radial-gradient(ellipse 75% 55% at 62% 42%, rgba(124,108,255,0.11) 0%, transparent 62%), radial-gradient(ellipse 50% 40% at 20% 70%, rgba(232,160,144,0.06) 0%, transparent 55%)",
+        background: "radial-gradient(ellipse 75% 55% at 65% 45%, rgba(124,108,255,0.10) 0%, transparent 62%), radial-gradient(ellipse 50% 40% at 20% 70%, rgba(232,160,144,0.05) 0%, transparent 55%)",
       }} />
-      {/* Bottom fade */}
       <div style={{
         position: "absolute", bottom: 0, left: 0, right: 0, height: 120,
         background: "linear-gradient(to top, var(--c-bg), transparent)",
@@ -61,6 +45,7 @@ export default function Hero({ tracker }: { tracker: BehaviorTrackerResult }) {
 
       <div className="wrap hero-wrap">
         <div className="hero-grid">
+
           {/* ── LEFT: copy ── */}
           <div className="anim-slide-up hero-copy">
             <div className="badge" style={{ marginBottom: 20, display: "inline-flex" }}>
@@ -87,7 +72,9 @@ export default function Hero({ tracker }: { tracker: BehaviorTrackerResult }) {
                   <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </Link>
-              <a href="#demo" className="btn-ghost">Hablale a Milo →</a>
+              <button onClick={openWidget} className="btn-ghost" style={{ cursor: "pointer" }}>
+                Hablale a Milo →
+              </button>
             </div>
 
             <p style={{ fontSize: "0.75rem", color: "var(--c-muted2)" }}>
@@ -95,105 +82,92 @@ export default function Hero({ tracker }: { tracker: BehaviorTrackerResult }) {
             </p>
           </div>
 
-          {/* ── RIGHT: Milo ── */}
-          <div
-            ref={containerRef}
-            className="anim-fade-in hero-avatar-col"
-          >
-            {/* Avatar */}
+          {/* ── RIGHT: agent face showcase ── */}
+          <div className="anim-fade-in hero-avatar-col">
+
+            {/* Glow halo behind face */}
             <div style={{ position: "relative", display: "flex", justifyContent: "center" }}>
               <div className="milo-halo" />
+
+              {/* Face bubble */}
               <div
-                style={{ position: "relative", zIndex: 1, cursor: "pointer" }}
+                className="hero-face-ring"
+                style={{
+                  transform: hovered ? "scale(1.04)" : "scale(1)",
+                  transition: "transform 0.35s cubic-bezier(0.34,1.56,0.64,1)",
+                  cursor: "pointer",
+                  position: "relative", zIndex: 1,
+                }}
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
-                onClick={() => { setChatOpen(true); tracker.clearTrigger(); }}
+                onClick={openWidget}
               >
-                <BrandAvatar
-                  character="alex"
-                  brandColor="#7c6cff"
-                  brandName="Meetzy"
-                  animation="idle"
-                  size={avatarSize}
-                  isSpeaking={miloSpeaking}
-                  className="milo-glow"
-                />
-                {hovered && !chatOpen && (
+                <AgentFace size={220} brandColor="#7c6cff" className="hero-face" />
+
+                {/* Tooltip on hover */}
+                {hovered && (
                   <div className="anim-fade-in" style={{
-                    position: "absolute", bottom: -4, left: "50%", transform: "translateX(-50%)",
+                    position: "absolute", bottom: -4, left: "50%",
+                    transform: "translateX(-50%)",
                     whiteSpace: "nowrap", padding: "6px 14px", borderRadius: 100,
                     background: "var(--c-surface2)",
                     border: "1px solid rgba(124,108,255,0.32)",
-                    fontSize: "0.72rem",
-                    color: "var(--c-muted)",
-                    zIndex: 10,
+                    fontSize: "0.72rem", color: "var(--c-muted)", zIndex: 10,
                   }}>
                     Hablame, ya sé lo que estuviste mirando
                   </div>
                 )}
               </div>
+
+              {/* Ring pulse animation on mount */}
+              {pulse && (
+                <div style={{
+                  position: "absolute", inset: -12, borderRadius: "50%",
+                  border: "2px solid rgba(124,108,255,0.4)",
+                  animation: "hero-ring-out 1.2s ease-out forwards",
+                  pointerEvents: "none",
+                }} />
+              )}
             </div>
 
             {/* Status pill */}
             <div style={{
               display: "inline-flex", alignItems: "center", gap: 8,
-              padding: "7px 14px", borderRadius: 100,
+              padding: "7px 16px", borderRadius: 100,
               background: "var(--c-surface)",
               border: "1px solid var(--c-border)",
             }}>
               <span style={{
                 width: 7, height: 7, borderRadius: "50%", flexShrink: 0,
-                background: chatOpen ? "var(--c-accent)" : "var(--c-green)",
+                background: "var(--c-green)",
                 animation: "glow-pulse 2.5s ease-in-out infinite",
               }} />
               <span style={{ fontSize: "0.72rem", color: "var(--c-muted)" }}>
-                {chatOpen ? "Conversando con Milo" : "Milo está observando esta página"}
+                Milo está observando esta página
               </span>
             </div>
 
-            {/* Proactive trigger */}
-            {tracker.triggerMessage && !chatOpen && (
-              <div className="anim-slide-up" style={{ width: "100%", maxWidth: 340 }}>
-                <div style={{
-                  padding: 16, borderRadius: "0 18px 18px 18px",
-                  background: "rgba(22,21,31,0.96)",
-                  border: "1px solid rgba(124,108,255,0.28)",
-                  boxShadow: "0 16px 48px rgba(0,0,0,0.4)",
-                }}>
-                  <p style={{ fontSize: "0.875rem", color: "var(--c-text)", lineHeight: 1.55, marginBottom: 12 }}>
-                    {tracker.triggerMessage}
-                  </p>
-                  <div style={{ display: "flex", gap: 8 }}>
-                    <button
-                      onClick={() => { setChatOpen(true); tracker.clearTrigger(); }}
-                      className="btn-primary"
-                      style={{ padding: "6px 14px", fontSize: "0.75rem" }}
-                    >
-                      Sí, contame
-                    </button>
-                    <button
-                      onClick={tracker.clearTrigger}
-                      className="btn-ghost"
-                      style={{ padding: "6px 14px", fontSize: "0.75rem" }}
-                    >
-                      Ahora no
-                    </button>
-                  </div>
-                </div>
+            {/* Widget preview hint */}
+            <div style={{
+              display: "flex", alignItems: "center", gap: 10,
+              padding: "10px 16px", borderRadius: 16,
+              background: "rgba(124,108,255,0.07)",
+              border: "1px solid rgba(124,108,255,0.18)",
+              maxWidth: 320,
+            }}>
+              <AgentFace size={36} brandColor="#7c6cff" />
+              <div>
+                <p suppressHydrationWarning style={{ fontSize: "0.78rem", color: "var(--c-text)", lineHeight: 1.45, margin: 0 }}>
+                  {tracker.context.isReturnVisitor
+                    ? "Bienvenido de vuelta. ¿Seguís evaluando?"
+                    : "Hola, soy Milo. Ya sé lo que estuviste mirando."}
+                </p>
+                <p style={{ fontSize: "0.66rem", color: "var(--c-muted2)", margin: "3px 0 0" }}>
+                  Así se ve tu agente en tu web →
+                </p>
               </div>
-            )}
+            </div>
 
-            {/* Chat */}
-            {chatOpen && (
-              <div className="anim-slide-up hero-chat">
-                <MiloChat
-                  initialMessage={initialMsg}
-                  context={tracker.context}
-                  onSpeakingChange={setMiloSpeaking}
-                  onClose={() => setChatOpen(false)}
-                />
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -209,9 +183,7 @@ export default function Hero({ tracker }: { tracker: BehaviorTrackerResult }) {
           gap: 2.5rem;
           align-items: center;
         }
-        .hero-copy {
-          text-align: center;
-        }
+        .hero-copy { text-align: center; }
         .hero-lead {
           font-size: clamp(0.9rem, 2.5vw, 1.125rem);
           font-weight: 300;
@@ -236,34 +208,35 @@ export default function Hero({ tracker }: { tracker: BehaviorTrackerResult }) {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 16px;
+          gap: 20px;
         }
-        .hero-chat {
-          width: 100%;
-          max-width: 360px;
-          height: 340px;
+        .hero-face-ring {
+          border-radius: 50%;
+          box-shadow:
+            0 0 0 3px rgba(124,108,255,0.25),
+            0 0 0 7px rgba(124,108,255,0.08),
+            0 20px 60px rgba(124,108,255,0.3);
+        }
+        .hero-face {
+          border-radius: 50%;
         }
 
         @media (min-width: 640px) {
           .hero-btn-primary { flex: none; }
-          .hero-chat { height: 380px; }
         }
-
         @media (min-width: 1024px) {
           .hero-grid {
             grid-template-columns: 1fr 1fr;
             gap: 4rem;
           }
-          .hero-copy {
-            text-align: left;
-          }
-          .hero-lead {
-            margin-left: 0;
-            margin-right: 0;
-          }
-          .hero-btns {
-            justify-content: flex-start;
-          }
+          .hero-copy { text-align: left; }
+          .hero-lead  { margin-left: 0; margin-right: 0; }
+          .hero-btns  { justify-content: flex-start; }
+        }
+
+        @keyframes hero-ring-out {
+          0%   { transform: scale(0.85); opacity: 0.8; }
+          100% { transform: scale(1.6);  opacity: 0; }
         }
       `}</style>
     </section>

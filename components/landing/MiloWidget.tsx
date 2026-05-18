@@ -101,19 +101,28 @@ export default function MiloWidget({ tracker }: { tracker: BehaviorTrackerResult
     return () => window.removeEventListener("resize", check);
   }, []);
 
-  // Aparece a los 5 s y se abre automáticamente — corre una sola vez al montar
+  // Aparece la burbuja a los 6 s — solo burbuja, no auto-abre el chat
+  // El usuario interactúa solo (o el Hero trigger lo abre)
   useEffect(() => {
     if (firedRef.current) return;
     const t1 = setTimeout(() => {
       setOpener(buildOpener(trackerRef.current));
       setPhase("bubble");
-      const t2 = setTimeout(() => {
-        setPhase("open");
-        firedRef.current = true;
-      }, 1200);
-      return () => clearTimeout(t2);
-    }, 5000);
+      firedRef.current = true;
+    }, 6000);
     return () => clearTimeout(t1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Escucha el evento global del Hero para abrir el widget directamente
+  useEffect(() => {
+    const handler = () => {
+      setOpener(buildOpener(trackerRef.current));
+      setPhase("open");
+      firedRef.current = true;
+    };
+    window.addEventListener("meetzy:open-widget", handler);
+    return () => window.removeEventListener("meetzy:open-widget", handler);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

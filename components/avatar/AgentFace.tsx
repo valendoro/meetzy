@@ -1,11 +1,9 @@
 "use client";
 
 /**
- * AgentFace — cara circular limpia para el widget de chat
- *
- * Solo la cara, sin cuerpo. Diseñada para funcionar bien en burbujas (40–80px).
- * Animaciones: blink (CSS), speaking (boca abre/cierra), idle (leve pulso).
- * El color de cabello/detalles toma el brandColor.
+ * AgentFace — cara circular minimalista para widget de chat
+ * Diseño limpio, moderno, amigable. CSS animations puras.
+ * brandColor → color del pelo + detalles de ropa.
  */
 
 interface AgentFaceProps {
@@ -21,111 +19,154 @@ export default function AgentFace({
   isSpeaking = false,
   className  = "",
 }: AgentFaceProps) {
-  // Paleta derivada del brandColor para pelo y detalles
-  const id = `face-${brandColor.replace("#", "")}`;
+  const darken = (hex: string, amt: number) => {
+    const n = parseInt(hex.slice(1), 16);
+    const r = Math.max(0, (n >> 16) - amt);
+    const g = Math.max(0, ((n >> 8) & 0xff) - amt);
+    const b = Math.max(0, (n & 0xff) - amt);
+    return `#${[r, g, b].map(v => v.toString(16).padStart(2, "0")).join("")}`;
+  };
+  const hairDark = darken(brandColor, 40);
 
   return (
     <div
       className={`relative inline-flex items-center justify-center rounded-full overflow-hidden ${className}`}
-      style={{ width: size, height: size, flexShrink: 0 }}
+      style={{ width: size, height: size, flexShrink: 0, background: "#f5c5a3" }}
     >
       <svg
         viewBox="0 0 100 100"
         width={size}
         height={size}
-        style={{ display: "block" }}
+        style={{ display: "block", position: "absolute", inset: 0 }}
         aria-hidden="true"
       >
-        {/* ── Fondo del círculo ── */}
-        <circle cx="50" cy="50" r="50" fill="#f5c9a0" />
+        {/* ─── Skin background ─── */}
+        <circle cx="50" cy="50" r="50" fill="#f5c5a3" />
 
-        {/* ── Cuello ── */}
-        <ellipse cx="50" cy="93" rx="13" ry="9" fill="#e8a87a" />
+        {/* ─── Neck ─── */}
+        <path d="M40 88 Q50 94 60 88 L60 100 L40 100Z" fill="#e8a87a" />
 
-        {/* ── Cara — sombra suave debajo del pelo ── */}
-        <ellipse cx="50" cy="58" rx="28" ry="30" fill="#f5c9a0" />
+        {/* ─── Jaw / lower face ─── */}
+        <ellipse cx="50" cy="68" rx="22" ry="20" fill="#f5c5a3" />
 
-        {/* ── Sombras laterales de la cara ── */}
-        <ellipse cx="24" cy="58" rx="5" ry="10" fill="#e8a87a" opacity="0.45" />
-        <ellipse cx="76" cy="58" rx="5" ry="10" fill="#e8a87a" opacity="0.45" />
+        {/* ─── Ear left ─── */}
+        <ellipse cx="22" cy="55" rx="5" ry="7" fill="#f0b88a" />
+        <ellipse cx="23" cy="55" rx="2.5" ry="4" fill="#e8a87a" />
 
-        {/* ── Pelo ── */}
-        <ellipse cx="50" cy="28" rx="30" ry="22" fill={brandColor} />
-        {/* Flequillo que baja sobre la frente */}
-        <ellipse cx="50" cy="38" rx="30" ry="14" fill={brandColor} />
-        {/* Pelo lateral izquierdo */}
-        <ellipse cx="22" cy="48" rx="9" ry="14" fill={brandColor} />
-        {/* Pelo lateral derecho */}
-        <ellipse cx="78" cy="48" rx="9" ry="14" fill={brandColor} />
+        {/* ─── Ear right ─── */}
+        <ellipse cx="78" cy="55" rx="5" ry="7" fill="#f0b88a" />
+        <ellipse cx="77" cy="55" rx="2.5" ry="4" fill="#e8a87a" />
 
-        {/* ── Frente de piel (sobre la base del pelo) ── */}
-        <ellipse cx="50" cy="52" rx="24" ry="22" fill="#f5c9a0" />
+        {/* ─── Hair base (back) ─── */}
+        <ellipse cx="50" cy="26" rx="31" ry="26" fill={brandColor} />
 
-        {/* ── Cejas ── */}
-        <path d="M33 42 Q38 39 43 41" stroke="#6b4226" strokeWidth="2" strokeLinecap="round" fill="none" />
-        <path d="M57 41 Q62 39 67 42" stroke="#6b4226" strokeWidth="2" strokeLinecap="round" fill="none" />
+        {/* ─── Face skin on top of hair base ─── */}
+        <ellipse cx="50" cy="52" rx="25" ry="27" fill="#f5c5a3" />
 
-        {/* ── Ojos ── */}
-        {/* ojo izquierdo */}
-        <g style={{ transformOrigin: "38px 52px" }}>
-          <ellipse cx="38" cy="52" rx="5.5" ry="5.5" fill="white" />
-          <ellipse cx="38" cy="52.5" rx="3.2" ry="3.2" fill="#3d2b1f" />
-          <circle cx="39.5" cy="51" r="1.1" fill="white" />
-          {/* párpado */}
-          <ellipse
-            cx="38" cy="49" rx="6" ry="3"
-            fill="#f5c9a0"
-            style={{ animation: "agentBlink 4s ease-in-out 1.5s infinite" }}
-          />
+        {/* ─── Forehead skin blending into hair ─── */}
+        <ellipse cx="50" cy="34" rx="24" ry="16" fill="#f5c5a3" />
+
+        {/* ─── Hair top / fringe ─── */}
+        <ellipse cx="50" cy="20" rx="31" ry="20" fill={brandColor} />
+        {/* Hair shadow under fringe */}
+        <ellipse cx="50" cy="35" rx="26" ry="7" fill={hairDark} opacity="0.35" />
+
+        {/* ─── Hair side left ─── */}
+        <ellipse cx="20" cy="46" rx="8" ry="18" fill={brandColor} />
+        {/* ─── Hair side right ─── */}
+        <ellipse cx="80" cy="46" rx="8" ry="18" fill={brandColor} />
+
+        {/* ─── Forehead (re-drawn over sides) ─── */}
+        <ellipse cx="50" cy="40" rx="22" ry="18" fill="#f5c5a3" />
+
+        {/* ─── Eyebrows ─── */}
+        <path d="M31 43 Q37.5 39.5 44 42" stroke="#7a4c2e" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+        <path d="M56 42 Q62.5 39.5 69 43" stroke="#7a4c2e" strokeWidth="2.2" strokeLinecap="round" fill="none" />
+
+        {/* ─── Eyes — whole group scales for blink ─── */}
+        {/* Eye left */}
+        <g
+          style={{
+            animation: "af-blink 5s ease-in-out 2s infinite",
+            transformOrigin: "37.5px 52px",
+          }}
+        >
+          <ellipse cx="37.5" cy="52" rx="6"   ry="6.5" fill="white" />
+          <ellipse cx="37.5" cy="53" rx="4"   ry="4"   fill="#3d2b1f" />
+          <circle  cx="39.5" cy="51.2"        r="1.3"  fill="white" />
+          <circle  cx="37.5" cy="54.5"        r="0.7"  fill="#6b3f2a" opacity="0.4" />
         </g>
-        {/* ojo derecho */}
-        <g style={{ transformOrigin: "62px 52px" }}>
-          <ellipse cx="62" cy="52" rx="5.5" ry="5.5" fill="white" />
-          <ellipse cx="62" cy="52.5" rx="3.2" ry="3.2" fill="#3d2b1f" />
-          <circle cx="63.5" cy="51" r="1.1" fill="white" />
-          {/* párpado */}
-          <ellipse
-            cx="62" cy="49" rx="6" ry="3"
-            fill="#f5c9a0"
-            style={{ animation: "agentBlink 4s ease-in-out 1.5s infinite" }}
-          />
+        {/* Upper eyelid mask — hides top of eye during blink */}
+        <ellipse cx="37.5" cy="45.5" rx="7" ry="3.5" fill="#f5c5a3" />
+
+        {/* Eye right */}
+        <g
+          style={{
+            animation: "af-blink 5s ease-in-out 2s infinite",
+            transformOrigin: "62.5px 52px",
+          }}
+        >
+          <ellipse cx="62.5" cy="52" rx="6"   ry="6.5" fill="white" />
+          <ellipse cx="62.5" cy="53" rx="4"   ry="4"   fill="#3d2b1f" />
+          <circle  cx="64.5" cy="51.2"        r="1.3"  fill="white" />
+          <circle  cx="62.5" cy="54.5"        r="0.7"  fill="#6b3f2a" opacity="0.4" />
         </g>
+        {/* Upper eyelid mask right */}
+        <ellipse cx="62.5" cy="45.5" rx="7" ry="3.5" fill="#f5c5a3" />
 
-        {/* ── Nariz ── */}
-        <ellipse cx="50" cy="60" rx="3" ry="2" fill="#e8a87a" opacity="0.7" />
+        {/* ─── Nose ─── */}
+        <ellipse cx="50" cy="62" rx="2.5" ry="1.8" fill="#d9906a" opacity="0.6" />
 
-        {/* ── Boca ── */}
+        {/* ─── Mouth ─── */}
         {isSpeaking ? (
-          // Boca abierta (hablando)
           <ellipse
-            cx="50" cy="69" rx="7" ry="4"
-            fill="#c47a5a"
-            style={{ animation: "agentTalk 0.35s ease-in-out infinite alternate" }}
+            cx="50" cy="71"
+            rx="6" ry="3"
+            fill="#c0675a"
+            style={{
+              animation: "af-talk 0.25s ease-in-out infinite alternate",
+              transformOrigin: "50px 71px",
+            }}
           />
         ) : (
-          // Sonrisa
-          <path
-            d="M43 67 Q50 74 57 67"
-            stroke="#c47a5a"
-            strokeWidth="2.2"
-            strokeLinecap="round"
-            fill="none"
-          />
+          <>
+            {/* Smile */}
+            <path
+              d="M42 68 Q50 76 58 68"
+              stroke="#c0675a"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              fill="none"
+            />
+            {/* Upper lip line */}
+            <path
+              d="M44.5 67.5 Q50 65.5 55.5 67.5"
+              stroke="#d4856e"
+              strokeWidth="1"
+              strokeLinecap="round"
+              fill="none"
+              opacity="0.6"
+            />
+          </>
         )}
 
-        {/* ── Rubor (mejillas) ── */}
-        <ellipse cx="29" cy="65" rx="6" ry="3.5" fill="#f0a0a0" opacity="0.35" />
-        <ellipse cx="71" cy="65" rx="6" ry="3.5" fill="#f0a0a0" opacity="0.35" />
+        {/* ─── Cheek blush ─── */}
+        <ellipse cx="27" cy="65" rx="7" ry="4" fill="#f08080" opacity="0.22" />
+        <ellipse cx="73" cy="65" rx="7" ry="4" fill="#f08080" opacity="0.22" />
+
+        {/* ─── Collar / shirt hint at bottom ─── */}
+        <path d="M28 98 Q35 88 50 92 Q65 88 72 98 L100 98 L100 100 L0 100 L0 98Z" fill={brandColor} opacity="0.9" />
       </svg>
 
       <style>{`
-        @keyframes agentBlink {
-          0%, 88%, 100% { ry: 3; }
-          92%, 96%      { ry: 6; }
+        @keyframes af-blink {
+          0%, 86%, 100% { transform: scaleY(1); }
+          88%            { transform: scaleY(0.08); }
+          90%            { transform: scaleY(1); }
         }
-        @keyframes agentTalk {
-          from { ry: 2.5; }
-          to   { ry: 5; }
+        @keyframes af-talk {
+          from { transform: scaleY(0.55); }
+          to   { transform: scaleY(1.6); }
         }
       `}</style>
     </div>

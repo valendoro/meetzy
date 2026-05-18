@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { BrandAvatarSmall } from "@/components/avatar/BrandAvatar";
+import AgentFace from "@/components/avatar/AgentFace";
 import { buildContextPrompt, type VisitorContext } from "@/lib/behavior-tracker";
 import DemoPanel from "./DemoPanel";
 
@@ -212,8 +212,8 @@ export default function MiloChat({
           className="flex items-center gap-3 px-5 py-3.5 flex-shrink-0"
           style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: "rgba(124,108,255,0.04)" }}
         >
-          <div className="w-9 h-9 rounded-full overflow-hidden bg-[#1a1a20] flex-shrink-0 ring-1 ring-[rgba(124,108,255,0.3)]">
-            <BrandAvatarSmall size={36} isSpeaking={streaming} character="alex" brandColor="#7c6cff" />
+          <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-[rgba(124,108,255,0.3)]">
+            <AgentFace size={36} brandColor="#7c6cff" isSpeaking={streaming} />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-syne font-bold text-white">Milo</p>
@@ -230,8 +230,8 @@ export default function MiloChat({
               title="Ver mis datos"
               className="flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-semibold transition-all hover:scale-105"
               style={{
-                background: "rgba(124,108,255,0.15)",
-                border: "1px solid rgba(124,108,255,0.3)",
+                background: "rgba(124,108,255,0.12)",
+                border: "1px solid rgba(124,108,255,0.25)",
                 color: "rgba(167,139,250,0.9)",
               }}
             >

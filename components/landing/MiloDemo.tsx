@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import MiloAvatar from "./MiloAvatar";
+import BrandAvatar from "@/components/avatar/BrandAvatar";
 import { type BehaviorTrackerResult } from "@/lib/behavior-tracker";
 
 function useDemoAvatarSize() {
@@ -78,7 +78,11 @@ export default function MiloDemo({ tracker }: MiloDemoProps) {
                 transform: "scale(1.6)",
               }}
             />
-            <MiloAvatar
+            <BrandAvatar
+              character="alex"
+              brandColor="#7c6cff"
+              brandName="Meetzy"
+              animation="idle"
               size={demoAvatarSize}
               mousePosition={tracker.mousePosition}
               containerRef={containerRef}

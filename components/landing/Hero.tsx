@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import MiloAvatar from "./MiloAvatar";
+import BrandAvatar from "@/components/avatar/BrandAvatar";
 import MiloChat from "./MiloChat";
 import { type BehaviorTrackerResult } from "@/lib/behavior-tracker";
 
@@ -109,7 +109,11 @@ export default function Hero({ tracker }: { tracker: BehaviorTrackerResult }) {
                 onMouseLeave={() => setHovered(false)}
                 onClick={() => { setChatOpen(true); tracker.clearTrigger(); }}
               >
-                <MiloAvatar
+                <BrandAvatar
+                  character="alex"
+                  brandColor="#7c6cff"
+                  brandName="Meetzy"
+                  animation="idle"
                   size={avatarSize}
                   isSpeaking={miloSpeaking}
                   mousePosition={tracker.mousePosition}

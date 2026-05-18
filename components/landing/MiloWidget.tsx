@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import MiloChat from "./MiloChat";
-import { MiloAvatarSmall } from "./MiloAvatar";
+import { BrandAvatarSmall } from "@/components/avatar/BrandAvatar";
 import { type BehaviorTrackerResult } from "@/lib/behavior-tracker";
 
 function buildOpener(tracker: BehaviorTrackerResult): string {
@@ -119,7 +119,7 @@ export default function MiloWidget({ tracker }: { tracker: BehaviorTrackerResult
               }}
               aria-label="Hablar con Milo"
             >
-              <MiloAvatarSmall size={52} />
+              <BrandAvatarSmall size={52} character="alex" brandColor="#7c6cff" />
               <span
                 className="absolute inset-0 rounded-full"
                 style={{ background: "rgba(124,108,255,0.4)", animation: "widget-pulse 1.8s ease-out 3" }}
@@ -184,7 +184,7 @@ export default function MiloWidget({ tracker }: { tracker: BehaviorTrackerResult
               <path d="M18 6L6 18M6 6l12 12" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
             </svg>
           ) : (
-            <MiloAvatarSmall size={52} />
+            <BrandAvatarSmall size={52} character="alex" brandColor="#7c6cff" />
           )}
           {phase === "bubble" && (
             <span

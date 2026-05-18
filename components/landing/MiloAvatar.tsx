@@ -87,25 +87,27 @@ function drawMilo(ctx: CanvasRenderingContext2D, state: MiloState, dpr: number) 
 
   const headCY = 90;
   const tiltRad = (state.headTilt * Math.PI) / 180;
-  const skin = "#f0be8a";
-  const skinDark = "#d49660";
-  const skinLight = "#fdd5a8";
+
+  // Skin palette — warmer, more saturated
+  const skin = "#f5c285";
+  const skinDark = "#d98a55";
+  const skinLight = "#fde0b5";
 
   // ── BODY ──────────────────────────────────────────────────
   const bodyTop = 178;
   const bodyH = 162;
 
   // Ground shadow
-  ctx.fillStyle = "rgba(0,0,0,0.14)";
+  ctx.fillStyle = "rgba(0,0,0,0.12)";
   ctx.beginPath();
-  ctx.ellipse(CX, bodyTop + bodyH + 8, 62, 10, 0, 0, Math.PI * 2);
+  ctx.ellipse(CX, bodyTop + bodyH + 6, 60, 9, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  // Jacket — dark with violet undertone
+  // Jacket — dark navy/violet
   const jacketGrad = ctx.createLinearGradient(CX - 74, bodyTop, CX + 74, bodyTop + bodyH);
-  jacketGrad.addColorStop(0, "#1c1a2c");
-  jacketGrad.addColorStop(0.45, "#131122");
-  jacketGrad.addColorStop(1, "#0c0b18");
+  jacketGrad.addColorStop(0, "#1e1c30");
+  jacketGrad.addColorStop(0.45, "#141228");
+  jacketGrad.addColorStop(1, "#0d0b1c");
   ctx.fillStyle = jacketGrad;
   ctx.beginPath();
   ctx.moveTo(CX - 55, bodyTop);
@@ -120,7 +122,7 @@ function drawMilo(ctx: CanvasRenderingContext2D, state: MiloState, dpr: number) 
   ctx.fill();
 
   // Jacket edge highlight (left)
-  const shineL = ctx.createLinearGradient(CX - 74, bodyTop, CX - 60, bodyTop);
+  const shineL = ctx.createLinearGradient(CX - 74, bodyTop, CX - 58, bodyTop);
   shineL.addColorStop(0, "rgba(255,255,255,0.06)");
   shineL.addColorStop(1, "rgba(255,255,255,0)");
   ctx.fillStyle = shineL;
@@ -133,9 +135,9 @@ function drawMilo(ctx: CanvasRenderingContext2D, state: MiloState, dpr: number) 
   ctx.closePath();
   ctx.fill();
 
-  // Collar / lapels
-  ctx.strokeStyle = "rgba(124,108,255,0.5)";
-  ctx.lineWidth = 1.5;
+  // Collar / lapels — violet accent
+  ctx.strokeStyle = "rgba(140,120,255,0.6)";
+  ctx.lineWidth = 1.6;
   ctx.beginPath();
   ctx.moveTo(CX - 22, bodyTop);
   ctx.bezierCurveTo(CX - 16, bodyTop + 18, CX - 6, bodyTop + 28, CX, bodyTop + 34);
@@ -145,7 +147,7 @@ function drawMilo(ctx: CanvasRenderingContext2D, state: MiloState, dpr: number) 
   ctx.bezierCurveTo(CX + 16, bodyTop + 18, CX + 6, bodyTop + 28, CX, bodyTop + 34);
   ctx.stroke();
 
-  // Inner shirt (visible between lapels)
+  // Inner shirt
   ctx.fillStyle = "#0e0c1a";
   ctx.beginPath();
   ctx.moveTo(CX - 18, bodyTop);
@@ -157,22 +159,22 @@ function drawMilo(ctx: CanvasRenderingContext2D, state: MiloState, dpr: number) 
   // Meetzy badge pill
   const badgeX = CX - 30;
   const badgeY = bodyTop + 58;
-  ctx.fillStyle = "rgba(124,108,255,0.14)";
+  ctx.fillStyle = "rgba(124,108,255,0.16)";
   roundRect(ctx, badgeX, badgeY, 60, 22, 11);
   ctx.fill();
-  ctx.strokeStyle = "rgba(124,108,255,0.45)";
+  ctx.strokeStyle = "rgba(140,120,255,0.5)";
   ctx.lineWidth = 1;
   roundRect(ctx, badgeX, badgeY, 60, 22, 11);
   ctx.stroke();
-  ctx.fillStyle = "rgba(183,172,255,0.92)";
+  ctx.fillStyle = "rgba(195,185,255,0.95)";
   ctx.font = `700 8.5px -apple-system, BlinkMacSystemFont, sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText("MEETZY", CX, badgeY + 11);
 
   // ── ARMS ──────────────────────────────────────────────────
-  // Left arm — tapers toward wrist at bottom
   ctx.fillStyle = "#131122";
+  // Left arm
   ctx.beginPath();
   ctx.moveTo(CX - 56, bodyTop + 12);
   ctx.bezierCurveTo(CX - 78, bodyTop + 22, CX - 86, bodyTop + 58, CX - 83, bodyTop + 92);
@@ -181,7 +183,6 @@ function drawMilo(ctx: CanvasRenderingContext2D, state: MiloState, dpr: number) 
   ctx.bezierCurveTo(CX - 68, bodyTop + 54, CX - 60, bodyTop + 22, CX - 44, bodyTop + 10);
   ctx.closePath();
   ctx.fill();
-
   // Right arm
   ctx.beginPath();
   ctx.moveTo(CX + 56, bodyTop + 12);
@@ -192,8 +193,8 @@ function drawMilo(ctx: CanvasRenderingContext2D, state: MiloState, dpr: number) 
   ctx.closePath();
   ctx.fill();
 
-  // ── HANDS (cartoon fist shapes) ───────────────────────────
-  // Sleeve cuffs — jacket color overlapping wrist area
+  // ── HANDS ────────────────────────────────────────────────
+  // Sleeve cuff overlap
   ctx.fillStyle = "#131122";
   ctx.beginPath();
   ctx.ellipse(CX - 78, bodyTop + 96, 11, 7, -0.18, 0, Math.PI * 2);
@@ -214,8 +215,7 @@ function drawMilo(ctx: CanvasRenderingContext2D, state: MiloState, dpr: number) 
     ctx.rotate(-0.18);
     roundRect(ctx, -13, -10, 24, 18, 9);
     ctx.fill();
-    // Knuckle lines
-    ctx.strokeStyle = "rgba(155,85,45,0.22)";
+    ctx.strokeStyle = "rgba(155,85,45,0.18)";
     ctx.lineWidth = 1;
     ctx.lineCap = "round";
     for (const x of [-4, 0, 4]) {
@@ -226,7 +226,6 @@ function drawMilo(ctx: CanvasRenderingContext2D, state: MiloState, dpr: number) 
     }
     ctx.restore();
   }
-
   // Right fist
   {
     const hx = CX + 78, hy = bodyTop + 102;
@@ -239,7 +238,7 @@ function drawMilo(ctx: CanvasRenderingContext2D, state: MiloState, dpr: number) 
     ctx.rotate(0.18);
     roundRect(ctx, -11, -10, 24, 18, 9);
     ctx.fill();
-    ctx.strokeStyle = "rgba(155,85,45,0.22)";
+    ctx.strokeStyle = "rgba(155,85,45,0.18)";
     ctx.lineWidth = 1;
     ctx.lineCap = "round";
     for (const x of [-4, 0, 4]) {
@@ -251,20 +250,20 @@ function drawMilo(ctx: CanvasRenderingContext2D, state: MiloState, dpr: number) 
     ctx.restore();
   }
 
-  // ── NECK ──────────────────────────────────────────────────
-  const neckGrad = ctx.createLinearGradient(CX - 15, 0, CX + 15, 0);
+  // ── NECK — wider for better proportions ───────────────────
+  const neckGrad = ctx.createLinearGradient(CX - 18, 0, CX + 18, 0);
   neckGrad.addColorStop(0, skinDark);
-  neckGrad.addColorStop(0.4, skin);
-  neckGrad.addColorStop(0.6, skinLight);
+  neckGrad.addColorStop(0.35, skin);
+  neckGrad.addColorStop(0.65, skinLight);
   neckGrad.addColorStop(1, skinDark);
   ctx.fillStyle = neckGrad;
-  roundRect(ctx, CX - 14, bodyTop - 34, 28, 40, 10);
+  roundRect(ctx, CX - 18, bodyTop - 36, 36, 42, 12);
   ctx.fill();
 
-  // Neck shadow at collar
-  ctx.fillStyle = "rgba(0,0,0,0.12)";
+  // Neck-collar shadow
+  ctx.fillStyle = "rgba(0,0,0,0.1)";
   ctx.beginPath();
-  ctx.ellipse(CX, bodyTop - 2, 18, 5, 0, 0, Math.PI * 2);
+  ctx.ellipse(CX, bodyTop - 2, 20, 5, 0, 0, Math.PI * 2);
   ctx.fill();
 
   // ── HEAD (with tilt) ──────────────────────────────────────
@@ -273,139 +272,137 @@ function drawMilo(ctx: CanvasRenderingContext2D, state: MiloState, dpr: number) 
   ctx.rotate(tiltRad);
 
   // Subtle violet aura
-  const aura = ctx.createRadialGradient(0, -10, 38, 0, -5, 90);
+  const aura = ctx.createRadialGradient(0, -8, 40, 0, -4, 92);
   aura.addColorStop(0, "rgba(124,108,255,0)");
-  aura.addColorStop(0.7, "rgba(124,108,255,0.04)");
+  aura.addColorStop(0.72, "rgba(124,108,255,0.04)");
   aura.addColorStop(1, "rgba(124,108,255,0.12)");
   ctx.fillStyle = aura;
   ctx.beginPath();
-  ctx.ellipse(0, -5, 90, 100, 0, 0, Math.PI * 2);
+  ctx.ellipse(0, -4, 92, 100, 0, 0, Math.PI * 2);
   ctx.fill();
 
   // Drop shadow
-  ctx.fillStyle = "rgba(0,0,0,0.13)";
+  ctx.fillStyle = "rgba(0,0,0,0.11)";
   ctx.beginPath();
-  ctx.ellipse(3, 6, 51, 61, 0, 0, Math.PI * 2);
+  ctx.ellipse(3, 6, 53, 62, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  // Face base (radial gradient for 3D depth)
-  const faceGrad = ctx.createRadialGradient(-10, -20, 8, 0, 0, 62);
-  faceGrad.addColorStop(0, "#fde2b8");
-  faceGrad.addColorStop(0.4, skin);
-  faceGrad.addColorStop(0.75, "#e4a474");
-  faceGrad.addColorStop(1, "#c88050");
+  // Face base — rounder, cleaner, friendlier
+  const faceGrad = ctx.createRadialGradient(-12, -20, 6, 0, 0, 62);
+  faceGrad.addColorStop(0, "#fde8c5");
+  faceGrad.addColorStop(0.42, skin);
+  faceGrad.addColorStop(0.78, "#e0955e");
+  faceGrad.addColorStop(1, "#c07448");
   ctx.fillStyle = faceGrad;
   ctx.beginPath();
-  ctx.ellipse(0, 0, 50, 58, 0, 0, Math.PI * 2);
+  // Rounder face — wider rx, rounder overall
+  ctx.ellipse(0, 2, 53, 57, 0, 0, Math.PI * 2);
   ctx.fill();
 
   // Jaw shadow
-  const jawShadow = ctx.createLinearGradient(0, 32, 0, 58);
+  const jawShadow = ctx.createLinearGradient(0, 34, 0, 58);
   jawShadow.addColorStop(0, "rgba(0,0,0,0)");
-  jawShadow.addColorStop(1, "rgba(0,0,0,0.09)");
+  jawShadow.addColorStop(1, "rgba(0,0,0,0.08)");
   ctx.fillStyle = jawShadow;
   ctx.beginPath();
-  ctx.ellipse(0, 42, 36, 18, 0, 0, Math.PI * 2);
+  ctx.ellipse(0, 44, 38, 18, 0, 0, Math.PI * 2);
   ctx.fill();
 
   // ── EARS ──────────────────────────────────────────────────
   const makeEar = (ex: number) => {
-    const g = ctx.createRadialGradient(ex < 0 ? ex + 4 : ex - 4, 0, 1, ex, 2, 14);
-    g.addColorStop(0, "#f0b880");
-    g.addColorStop(1, "#c07848");
-    ctx.fillStyle = g;
+    ctx.fillStyle = skin;
     ctx.beginPath();
-    ctx.ellipse(ex, 2, 10, 14, ex < 0 ? 0.12 : -0.12, 0, Math.PI * 2);
+    ctx.ellipse(ex, 4, 10, 13, ex < 0 ? 0.1 : -0.1, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = "rgba(140,70,40,0.22)";
+    // Inner ear
+    ctx.fillStyle = "rgba(185,108,62,0.2)";
     ctx.beginPath();
-    ctx.ellipse(ex, 3, 5, 8, ex < 0 ? 0.12 : -0.12, 0, Math.PI * 2);
+    ctx.ellipse(ex, 5, 5, 7, ex < 0 ? 0.1 : -0.1, 0, Math.PI * 2);
     ctx.fill();
   };
-  makeEar(-51);
-  makeEar(51);
+  makeEar(-53);
+  makeEar(53);
 
-  // ── HAIR ──────────────────────────────────────────────────
+  // ── HAIR — clean cartoon style ────────────────────────────
   ctx.fillStyle = "#1a1208";
 
-  // Main hair mass (top)
+  // Main hair mass
   ctx.beginPath();
-  ctx.moveTo(-50, -10);
-  ctx.bezierCurveTo(-56, -50, -32, -76, 0, -76);
-  ctx.bezierCurveTo(32, -76, 56, -50, 50, -10);
-  ctx.bezierCurveTo(36, -24, 18, -28, 0, -26);
-  ctx.bezierCurveTo(-18, -28, -36, -24, -50, -10);
+  ctx.moveTo(-52, -6);
+  ctx.bezierCurveTo(-58, -48, -36, -78, 0, -78);
+  ctx.bezierCurveTo(36, -78, 58, -48, 52, -6);
+  ctx.bezierCurveTo(38, -22, 20, -28, 0, -26);
+  ctx.bezierCurveTo(-20, -28, -38, -22, -52, -6);
   ctx.closePath();
   ctx.fill();
 
-  // Hair ellipse fill
+  // Hair cap fill
   ctx.beginPath();
-  ctx.ellipse(0, -36, 50, 33, 0, Math.PI, Math.PI * 2);
+  ctx.ellipse(0, -38, 51, 36, 0, Math.PI, Math.PI * 2);
   ctx.fill();
 
-  // Sideburns
+  // Slight hair volume on sides (no sideburns — too realistic)
   ctx.beginPath();
-  ctx.moveTo(-47, -10);
-  ctx.bezierCurveTo(-58, 8, -56, 28, -52, 32);
-  ctx.quadraticCurveTo(-48, 36, -44, 30);
-  ctx.quadraticCurveTo(-42, 12, -44, -4);
+  ctx.moveTo(-51, -6);
+  ctx.bezierCurveTo(-60, 4, -58, 16, -53, 20);
+  ctx.quadraticCurveTo(-50, 24, -47, 18);
+  ctx.quadraticCurveTo(-46, 8, -48, -2);
+  ctx.closePath();
+  ctx.fill();
+  ctx.beginPath();
+  ctx.moveTo(51, -6);
+  ctx.bezierCurveTo(60, 4, 58, 16, 53, 20);
+  ctx.quadraticCurveTo(50, 24, 47, 18);
+  ctx.quadraticCurveTo(46, 8, 48, -2);
   ctx.closePath();
   ctx.fill();
 
+  // Hair highlight — soft sheen
+  const hairShine = ctx.createRadialGradient(-16, -56, 1, -14, -52, 22);
+  hairShine.addColorStop(0, "rgba(255,255,255,0.13)");
+  hairShine.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = hairShine;
   ctx.beginPath();
-  ctx.moveTo(47, -10);
-  ctx.bezierCurveTo(58, 8, 56, 28, 52, 32);
-  ctx.quadraticCurveTo(48, 36, 44, 30);
-  ctx.quadraticCurveTo(42, 12, 44, -4);
-  ctx.closePath();
+  ctx.ellipse(-14, -52, 20, 12, -0.32, 0, Math.PI * 2);
   ctx.fill();
 
-  // Hair highlight
-  const hairGlow = ctx.createRadialGradient(-16, -54, 2, -14, -50, 24);
-  hairGlow.addColorStop(0, "rgba(255,255,255,0.1)");
-  hairGlow.addColorStop(1, "rgba(255,255,255,0)");
-  ctx.fillStyle = hairGlow;
-  ctx.beginPath();
-  ctx.ellipse(-14, -50, 22, 13, -0.35, 0, Math.PI * 2);
-  ctx.fill();
-
-  // ── EYEBROWS ──────────────────────────────────────────────
-  const browY = -22;
+  // ── EYEBROWS ── cleaner, friendlier arch ──────────────────
+  const browY = -25;
   const browLift = state.browRaise * 5;
-  ctx.strokeStyle = "#1a1208";
-  ctx.lineWidth = 3.8;
+  ctx.strokeStyle = "#2a1c0e";
+  ctx.lineWidth = 3.6;
   ctx.lineCap = "round";
-
-  // Left brow
+  // Left brow — natural arch
   ctx.beginPath();
-  ctx.moveTo(-30, browY - browLift);
-  ctx.bezierCurveTo(-22, browY - 6 - browLift, -14, browY - 5 - browLift, -7, browY - 1 - browLift);
+  ctx.moveTo(-29, browY - browLift);
+  ctx.bezierCurveTo(-21, browY - 6 - browLift, -13, browY - 5.5 - browLift, -7, browY - 1.5 - browLift);
   ctx.stroke();
   // Right brow
   ctx.beginPath();
-  ctx.moveTo(7, browY - 1 - browLift);
-  ctx.bezierCurveTo(14, browY - 5 - browLift, 22, browY - 6 - browLift, 30, browY - browLift);
+  ctx.moveTo(7, browY - 1.5 - browLift);
+  ctx.bezierCurveTo(13, browY - 5.5 - browLift, 21, browY - 6 - browLift, 29, browY - browLift);
   ctx.stroke();
 
-  // ── EYES ──────────────────────────────────────────────────
+  // ── EYES — bigger, rounder, OPEN ─────────────────────────
+  // Key changes: eyeH > eyeW (portrait oval = friendly), no resting eyelid
   const eyeY = -7;
-  const LEX = -19;
-  const REX = 19;
-  const eyeW = 15.5;
-  const eyeH = 13;
+  const LEX = -20;
+  const REX = 20;
+  const eyeW = 13.5;   // narrower base
+  const eyeH = 17;     // TALLER — portrait oval gives open, cute look
   const blinkH = Math.max(0.5, eyeH * (1 - state.blinkProgress));
 
-  // Eye socket shadow
-  ctx.fillStyle = "rgba(160,90,50,0.14)";
+  // Eye socket shadow (very subtle)
+  ctx.fillStyle = "rgba(155,85,48,0.1)";
   ctx.beginPath();
-  ctx.ellipse(LEX, eyeY + 1, eyeW + 5, eyeH + 5, 0, 0, Math.PI * 2);
+  ctx.ellipse(LEX, eyeY + 1, eyeW + 4, eyeH + 4, 0, 0, Math.PI * 2);
   ctx.fill();
   ctx.beginPath();
-  ctx.ellipse(REX, eyeY + 1, eyeW + 5, eyeH + 5, 0, 0, Math.PI * 2);
+  ctx.ellipse(REX, eyeY + 1, eyeW + 4, eyeH + 4, 0, 0, Math.PI * 2);
   ctx.fill();
 
-  // Eye whites
-  ctx.fillStyle = "#f8f6f2";
+  // Eye whites — bright, clean
+  ctx.fillStyle = "#fffef8";
   ctx.beginPath();
   ctx.ellipse(LEX, eyeY, eyeW, blinkH, 0, 0, Math.PI * 2);
   ctx.fill();
@@ -413,54 +410,62 @@ function drawMilo(ctx: CanvasRenderingContext2D, state: MiloState, dpr: number) 
   ctx.ellipse(REX, eyeY, eyeW, blinkH, 0, 0, Math.PI * 2);
   ctx.fill();
 
+  // Eye outline — thin, clean
+  ctx.strokeStyle = "rgba(50,25,8,0.3)";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.ellipse(LEX, eyeY, eyeW, blinkH, 0, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.ellipse(REX, eyeY, eyeW, blinkH, 0, 0, Math.PI * 2);
+  ctx.stroke();
+
   if (state.blinkProgress < 0.92) {
     const maxOff = 4;
     const ox = Math.max(-maxOff, Math.min(maxOff, state.eyeOffsetX));
     const oy = Math.max(-maxOff, Math.min(maxOff, state.eyeOffsetY));
-    const irisR = 9.5;
-    const irisH = Math.min(irisR, blinkH * 0.9);
+    const irisR = 11;
+    const irisH = Math.min(irisR, blinkH * 0.88);
 
-    // Iris glow (pre-draw blurred ring)
-    const glowR = irisR + 3;
-    const glowGL = ctx.createRadialGradient(LEX + ox, eyeY + oy, irisR - 1, LEX + ox, eyeY + oy, glowR + 4);
-    glowGL.addColorStop(0, "rgba(124,108,255,0.35)");
+    // Iris glow ring
+    const glowGL = ctx.createRadialGradient(LEX + ox, eyeY + oy, irisR - 1, LEX + ox, eyeY + oy, irisR + 5);
+    glowGL.addColorStop(0, "rgba(124,108,255,0.3)");
     glowGL.addColorStop(1, "rgba(124,108,255,0)");
     ctx.fillStyle = glowGL;
     ctx.beginPath();
-    ctx.ellipse(LEX + ox, eyeY + oy, glowR + 4, Math.min(glowR + 4, irisH + 4), 0, 0, Math.PI * 2);
+    ctx.ellipse(LEX + ox, eyeY + oy, irisR + 5, Math.min(irisR + 5, irisH + 5), 0, 0, Math.PI * 2);
     ctx.fill();
-
-    const glowGR = ctx.createRadialGradient(REX + ox, eyeY + oy, irisR - 1, REX + ox, eyeY + oy, glowR + 4);
-    glowGR.addColorStop(0, "rgba(124,108,255,0.35)");
+    const glowGR = ctx.createRadialGradient(REX + ox, eyeY + oy, irisR - 1, REX + ox, eyeY + oy, irisR + 5);
+    glowGR.addColorStop(0, "rgba(124,108,255,0.3)");
     glowGR.addColorStop(1, "rgba(124,108,255,0)");
     ctx.fillStyle = glowGR;
     ctx.beginPath();
-    ctx.ellipse(REX + ox, eyeY + oy, glowR + 4, Math.min(glowR + 4, irisH + 4), 0, 0, Math.PI * 2);
+    ctx.ellipse(REX + ox, eyeY + oy, irisR + 5, Math.min(irisR + 5, irisH + 5), 0, 0, Math.PI * 2);
     ctx.fill();
 
     // Iris — violet (signature)
-    const irisGradL = ctx.createRadialGradient(LEX + ox - 2.5, eyeY + oy - 2.5, 1, LEX + ox, eyeY + oy, irisR + 1);
-    irisGradL.addColorStop(0, "#a99aff");
-    irisGradL.addColorStop(0.45, "#7c6cff");
-    irisGradL.addColorStop(0.8, "#5840d8");
-    irisGradL.addColorStop(1, "#3a2aa8");
-    ctx.fillStyle = irisGradL;
+    const irisGL = ctx.createRadialGradient(LEX + ox - 2.5, eyeY + oy - 2.5, 1, LEX + ox, eyeY + oy, irisR + 1);
+    irisGL.addColorStop(0, "#b8aaff");
+    irisGL.addColorStop(0.42, "#7c6cff");
+    irisGL.addColorStop(0.78, "#5535e0");
+    irisGL.addColorStop(1, "#3620b0");
+    ctx.fillStyle = irisGL;
     ctx.beginPath();
     ctx.ellipse(LEX + ox, eyeY + oy, irisR, irisH, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    const irisGradR = ctx.createRadialGradient(REX + ox - 2.5, eyeY + oy - 2.5, 1, REX + ox, eyeY + oy, irisR + 1);
-    irisGradR.addColorStop(0, "#a99aff");
-    irisGradR.addColorStop(0.45, "#7c6cff");
-    irisGradR.addColorStop(0.8, "#5840d8");
-    irisGradR.addColorStop(1, "#3a2aa8");
-    ctx.fillStyle = irisGradR;
+    const irisGR = ctx.createRadialGradient(REX + ox - 2.5, eyeY + oy - 2.5, 1, REX + ox, eyeY + oy, irisR + 1);
+    irisGR.addColorStop(0, "#b8aaff");
+    irisGR.addColorStop(0.42, "#7c6cff");
+    irisGR.addColorStop(0.78, "#5535e0");
+    irisGR.addColorStop(1, "#3620b0");
+    ctx.fillStyle = irisGR;
     ctx.beginPath();
     ctx.ellipse(REX + ox, eyeY + oy, irisR, irisH, 0, 0, Math.PI * 2);
     ctx.fill();
 
     // Iris limbal ring
-    ctx.strokeStyle = "rgba(40,25,120,0.5)";
+    ctx.strokeStyle = "rgba(30,18,100,0.45)";
     ctx.lineWidth = 1.2;
     ctx.beginPath();
     ctx.ellipse(LEX + ox, eyeY + oy, irisR, irisH, 0, 0, Math.PI * 2);
@@ -470,49 +475,53 @@ function drawMilo(ctx: CanvasRenderingContext2D, state: MiloState, dpr: number) 
     ctx.stroke();
 
     // Pupil
-    ctx.fillStyle = "#08060f";
-    const pupilH = Math.min(6, irisH * 0.68);
+    ctx.fillStyle = "#06040e";
+    const pupilH = Math.min(7, irisH * 0.68);
     ctx.beginPath();
-    ctx.ellipse(LEX + ox, eyeY + oy, 5.5, pupilH, 0, 0, Math.PI * 2);
+    ctx.ellipse(LEX + ox, eyeY + oy, 6, pupilH, 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.beginPath();
-    ctx.ellipse(REX + ox, eyeY + oy, 5.5, pupilH, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Catchlight (main)
-    ctx.fillStyle = "rgba(255,255,255,0.88)";
-    ctx.beginPath();
-    ctx.ellipse(LEX + ox - 3.5, eyeY + oy - 3.2, 3.8, Math.min(3.4, irisH * 0.38), 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.ellipse(REX + ox - 3.5, eyeY + oy - 3.2, 3.8, Math.min(3.4, irisH * 0.38), 0, 0, Math.PI * 2);
+    ctx.ellipse(REX + ox, eyeY + oy, 6, pupilH, 0, 0, Math.PI * 2);
     ctx.fill();
 
-    // Catchlight (small secondary)
-    ctx.fillStyle = "rgba(255,255,255,0.42)";
+    // Catchlight (main — bright upper-left)
+    ctx.fillStyle = "rgba(255,255,255,0.92)";
     ctx.beginPath();
-    ctx.ellipse(LEX + ox + 3.2, eyeY + oy + 2.5, 1.8, Math.min(1.6, irisH * 0.22), 0, 0, Math.PI * 2);
+    ctx.ellipse(LEX + ox - 3.8, eyeY + oy - 4, 4.2, Math.min(3.8, irisH * 0.38), 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.beginPath();
-    ctx.ellipse(REX + ox + 3.2, eyeY + oy + 2.5, 1.8, Math.min(1.6, irisH * 0.22), 0, 0, Math.PI * 2);
+    ctx.ellipse(REX + ox - 3.8, eyeY + oy - 4, 4.2, Math.min(3.8, irisH * 0.38), 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Catchlight (small secondary — lower-right)
+    ctx.fillStyle = "rgba(255,255,255,0.38)";
+    ctx.beginPath();
+    ctx.ellipse(LEX + ox + 3.5, eyeY + oy + 2.8, 2, Math.min(1.8, irisH * 0.2), 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(REX + ox + 3.5, eyeY + oy + 2.8, 2, Math.min(1.8, irisH * 0.2), 0, 0, Math.PI * 2);
     ctx.fill();
   }
 
-  // Eyelid (skin over eye during blink)
-  const lidGrad = ctx.createLinearGradient(0, eyeY - eyeH, 0, eyeY + 2);
-  lidGrad.addColorStop(0, skin);
-  lidGrad.addColorStop(1, "#d49060");
-  ctx.fillStyle = lidGrad;
-  ctx.beginPath();
-  ctx.ellipse(LEX, eyeY - eyeH + (eyeH * 2 * state.blinkProgress), eyeW + 1, eyeH * state.blinkProgress + 2, 0, Math.PI, Math.PI * 2);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.ellipse(REX, eyeY - eyeH + (eyeH * 2 * state.blinkProgress), eyeW + 1, eyeH * state.blinkProgress + 2, 0, Math.PI, Math.PI * 2);
-  ctx.fill();
+  // Eyelid — ONLY drawn when actually blinking (fixes "sleepy at rest" bug)
+  if (state.blinkProgress > 0.01) {
+    const lidGrad = ctx.createLinearGradient(0, eyeY - eyeH, 0, eyeY + 2);
+    lidGrad.addColorStop(0, skin);
+    lidGrad.addColorStop(1, "#d08555");
+    ctx.fillStyle = lidGrad;
+    const lidCY = eyeY - eyeH + eyeH * 2 * state.blinkProgress;
+    const lidH = Math.max(0, eyeH * state.blinkProgress);
+    ctx.beginPath();
+    ctx.ellipse(LEX, lidCY, eyeW + 1.5, lidH, 0, Math.PI, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(REX, lidCY, eyeW + 1.5, lidH, 0, Math.PI, Math.PI * 2);
+    ctx.fill();
+  }
 
-  // Lash line (top arc)
-  ctx.strokeStyle = "rgba(15,8,5,0.75)";
-  ctx.lineWidth = 2.2;
+  // Top lash line — thinner, lighter stroke (not the "heavy lid" look)
+  ctx.strokeStyle = "rgba(18,8,4,0.55)";
+  ctx.lineWidth = 1.8;
   ctx.lineCap = "round";
   ctx.beginPath();
   ctx.ellipse(LEX, eyeY, eyeW, blinkH, 0, Math.PI, Math.PI * 2);
@@ -521,81 +530,62 @@ function drawMilo(ctx: CanvasRenderingContext2D, state: MiloState, dpr: number) 
   ctx.ellipse(REX, eyeY, eyeW, blinkH, 0, Math.PI, Math.PI * 2);
   ctx.stroke();
 
-  // ── NOSE ──────────────────────────────────────────────────
-  // Subtle: just bridge shadow + nostril dots
-  ctx.strokeStyle = "rgba(150,85,45,0.18)";
-  ctx.lineWidth = 1.8;
-  ctx.lineCap = "round";
+  // ── NOSE — cute button, minimal ───────────────────────────
+  // Just two soft nostril dots — clean cartoon style
+  ctx.fillStyle = "rgba(155,88,50,0.24)";
   ctx.beginPath();
-  ctx.moveTo(-3, 5);
-  ctx.bezierCurveTo(-7, 12, -7, 16, -5, 18);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(3, 5);
-  ctx.bezierCurveTo(7, 12, 7, 16, 5, 18);
-  ctx.stroke();
-  // Nostril dots
-  ctx.fillStyle = "rgba(140,75,42,0.28)";
-  ctx.beginPath();
-  ctx.ellipse(-5.5, 18, 4.5, 3.2, 0.35, 0, Math.PI * 2);
+  ctx.ellipse(-5, 18, 4.5, 3, 0.32, 0, Math.PI * 2);
   ctx.fill();
   ctx.beginPath();
-  ctx.ellipse(5.5, 18, 4.5, 3.2, -0.35, 0, Math.PI * 2);
+  ctx.ellipse(5, 18, 4.5, 3, -0.32, 0, Math.PI * 2);
   ctx.fill();
 
   // ── MOUTH ─────────────────────────────────────────────────
-  const mouthY = 32;
+  const mouthY = 33;
   const mouthOpen = state.mouthOpenness;
 
   if (mouthOpen > 0.05) {
     // Speaking — open mouth with teeth
-    ctx.fillStyle = "#2e0e0e";
+    ctx.fillStyle = "#2a0c0c";
     ctx.beginPath();
-    ctx.ellipse(0, mouthY + mouthOpen * 5, 17, 5 + mouthOpen * 9, 0, 0, Math.PI * 2);
+    ctx.ellipse(0, mouthY + mouthOpen * 5, 16, 4.5 + mouthOpen * 9, 0, 0, Math.PI * 2);
     ctx.fill();
     // Upper teeth
     ctx.fillStyle = "#f5f0e8";
     ctx.beginPath();
-    ctx.ellipse(0, mouthY + mouthOpen * 1.5, 15, 3.5 + mouthOpen * 3, 0, 0, Math.PI);
+    ctx.ellipse(0, mouthY + mouthOpen * 1.5, 14, 3 + mouthOpen * 3, 0, 0, Math.PI);
     ctx.fill();
     // Lower teeth
     ctx.fillStyle = "#eae5dc";
     ctx.beginPath();
-    ctx.ellipse(0, mouthY + mouthOpen * 9, 12, 2.5 + mouthOpen * 2, 0, Math.PI, Math.PI * 2);
+    ctx.ellipse(0, mouthY + mouthOpen * 9, 11, 2 + mouthOpen * 2, 0, Math.PI, Math.PI * 2);
     ctx.fill();
   } else {
-    // Natural smile — bezier curve
-    ctx.strokeStyle = "#9a5040";
-    ctx.lineWidth = 2.6;
+    // Friendly smile — wider, more cheerful
+    ctx.strokeStyle = "#8a3a30";
+    ctx.lineWidth = 2.8;
     ctx.lineCap = "round";
     ctx.beginPath();
-    ctx.moveTo(-17, mouthY);
-    ctx.bezierCurveTo(-10, mouthY + 10, 10, mouthY + 10, 17, mouthY);
+    ctx.moveTo(-15, mouthY);
+    ctx.bezierCurveTo(-8, mouthY + 11, 8, mouthY + 11, 15, mouthY);
     ctx.stroke();
-    // Upper lip cupid's bow shadow
-    ctx.strokeStyle = "rgba(155,80,55,0.22)";
-    ctx.lineWidth = 1.5;
+    // Dimples
+    ctx.fillStyle = "rgba(215,120,85,0.18)";
     ctx.beginPath();
-    ctx.moveTo(-11, mouthY - 3);
-    ctx.bezierCurveTo(-5, mouthY - 6, 5, mouthY - 6, 11, mouthY - 3);
-    ctx.stroke();
-    // Smile dimples
-    ctx.fillStyle = "rgba(155,80,50,0.16)";
-    ctx.beginPath();
-    ctx.ellipse(-18, mouthY + 2, 3.5, 2.8, 0.4, 0, Math.PI * 2);
+    ctx.ellipse(-17, mouthY + 2, 3.5, 2.8, 0.4, 0, Math.PI * 2);
     ctx.fill();
     ctx.beginPath();
-    ctx.ellipse(18, mouthY + 2, 3.5, 2.8, -0.4, 0, Math.PI * 2);
+    ctx.ellipse(17, mouthY + 2, 3.5, 2.8, -0.4, 0, Math.PI * 2);
     ctx.fill();
   }
 
-  // Cheek blush
-  ctx.fillStyle = "rgba(235,135,105,0.09)";
+  // Cheek blush — warm, subtle
+  ctx.fillStyle = "rgba(235,130,100,0.11)";
   ctx.beginPath();
-  ctx.ellipse(-36, 16, 14, 9, 0.2, 0, Math.PI * 2);
+  ctx.ellipse(-36, 16, 14, 9, 0.15, 0, Math.PI * 2);
   ctx.fill();
   ctx.beginPath();
-  ctx.ellipse(36, 16, 14, 9, -0.2, 0, Math.PI * 2);
+  ctx.ellipse(36, 16, 14, 9, -0.15, 0, Math.PI * 2);
   ctx.fill();
 
   ctx.restore(); // head tilt

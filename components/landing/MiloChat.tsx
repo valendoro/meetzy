@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { MiloAvatarSmall } from "./MiloAvatar";
+import { BrandAvatarSmall } from "@/components/avatar/BrandAvatar";
 import { buildContextPrompt, type VisitorContext } from "@/lib/behavior-tracker";
 import DemoPanel from "./DemoPanel";
 
@@ -213,7 +213,7 @@ export default function MiloChat({
           style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", background: "rgba(124,108,255,0.04)" }}
         >
           <div className="w-9 h-9 rounded-full overflow-hidden bg-[#1a1a20] flex-shrink-0 ring-1 ring-[rgba(124,108,255,0.3)]">
-            <MiloAvatarSmall size={36} isSpeaking={streaming} />
+            <BrandAvatarSmall size={36} isSpeaking={streaming} character="alex" brandColor="#7c6cff" />
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-syne font-bold text-white">Milo</p>

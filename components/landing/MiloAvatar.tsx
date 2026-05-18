@@ -171,43 +171,85 @@ function drawMilo(ctx: CanvasRenderingContext2D, state: MiloState, dpr: number) 
   ctx.fillText("MEETZY", CX, badgeY + 11);
 
   // ── ARMS ──────────────────────────────────────────────────
-  // Left arm
+  // Left arm — tapers toward wrist at bottom
   ctx.fillStyle = "#131122";
   ctx.beginPath();
   ctx.moveTo(CX - 56, bodyTop + 12);
-  ctx.bezierCurveTo(CX - 78, bodyTop + 22, CX - 88, bodyTop + 60, CX - 86, bodyTop + 95);
-  ctx.quadraticCurveTo(CX - 84, bodyTop + 102, CX - 76, bodyTop + 100);
-  ctx.quadraticCurveTo(CX - 68, bodyTop + 96, CX - 68, bodyTop + 88);
-  ctx.bezierCurveTo(CX - 68, bodyTop + 55, CX - 60, bodyTop + 22, CX - 44, bodyTop + 10);
+  ctx.bezierCurveTo(CX - 78, bodyTop + 22, CX - 86, bodyTop + 58, CX - 83, bodyTop + 92);
+  ctx.quadraticCurveTo(CX - 82, bodyTop + 100, CX - 74, bodyTop + 99);
+  ctx.quadraticCurveTo(CX - 66, bodyTop + 96, CX - 67, bodyTop + 86);
+  ctx.bezierCurveTo(CX - 68, bodyTop + 54, CX - 60, bodyTop + 22, CX - 44, bodyTop + 10);
   ctx.closePath();
   ctx.fill();
 
   // Right arm
   ctx.beginPath();
   ctx.moveTo(CX + 56, bodyTop + 12);
-  ctx.bezierCurveTo(CX + 78, bodyTop + 22, CX + 88, bodyTop + 60, CX + 86, bodyTop + 95);
-  ctx.quadraticCurveTo(CX + 84, bodyTop + 102, CX + 76, bodyTop + 100);
-  ctx.quadraticCurveTo(CX + 68, bodyTop + 96, CX + 68, bodyTop + 88);
-  ctx.bezierCurveTo(CX + 68, bodyTop + 55, CX + 60, bodyTop + 22, CX + 44, bodyTop + 10);
+  ctx.bezierCurveTo(CX + 78, bodyTop + 22, CX + 86, bodyTop + 58, CX + 83, bodyTop + 92);
+  ctx.quadraticCurveTo(CX + 82, bodyTop + 100, CX + 74, bodyTop + 99);
+  ctx.quadraticCurveTo(CX + 66, bodyTop + 96, CX + 67, bodyTop + 86);
+  ctx.bezierCurveTo(CX + 68, bodyTop + 54, CX + 60, bodyTop + 22, CX + 44, bodyTop + 10);
   ctx.closePath();
   ctx.fill();
 
-  // Hands
-  const handGradL = ctx.createRadialGradient(CX - 80, bodyTop + 102, 2, CX - 80, bodyTop + 102, 12);
-  handGradL.addColorStop(0, skinLight);
-  handGradL.addColorStop(1, skinDark);
-  ctx.fillStyle = handGradL;
+  // ── HANDS (cartoon fist shapes) ───────────────────────────
+  // Sleeve cuffs — jacket color overlapping wrist area
+  ctx.fillStyle = "#131122";
   ctx.beginPath();
-  ctx.ellipse(CX - 80, bodyTop + 102, 11, 10, -0.15, 0, Math.PI * 2);
+  ctx.ellipse(CX - 78, bodyTop + 96, 11, 7, -0.18, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.ellipse(CX + 78, bodyTop + 96, 11, 7, 0.18, 0, Math.PI * 2);
   ctx.fill();
 
-  const handGradR = ctx.createRadialGradient(CX + 80, bodyTop + 102, 2, CX + 80, bodyTop + 102, 12);
-  handGradR.addColorStop(0, skinLight);
-  handGradR.addColorStop(1, skinDark);
-  ctx.fillStyle = handGradR;
-  ctx.beginPath();
-  ctx.ellipse(CX + 80, bodyTop + 102, 11, 10, 0.15, 0, Math.PI * 2);
-  ctx.fill();
+  // Left fist
+  {
+    const hx = CX - 78, hy = bodyTop + 102;
+    const hg = ctx.createLinearGradient(hx - 13, hy - 10, hx + 5, hy + 12);
+    hg.addColorStop(0, skinLight);
+    hg.addColorStop(1, skinDark);
+    ctx.fillStyle = hg;
+    ctx.save();
+    ctx.translate(hx, hy);
+    ctx.rotate(-0.18);
+    roundRect(ctx, -13, -10, 24, 18, 9);
+    ctx.fill();
+    // Knuckle lines
+    ctx.strokeStyle = "rgba(155,85,45,0.22)";
+    ctx.lineWidth = 1;
+    ctx.lineCap = "round";
+    for (const x of [-4, 0, 4]) {
+      ctx.beginPath();
+      ctx.moveTo(x, -10);
+      ctx.lineTo(x, -4);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  // Right fist
+  {
+    const hx = CX + 78, hy = bodyTop + 102;
+    const hg = ctx.createLinearGradient(hx - 5, hy - 10, hx + 13, hy + 12);
+    hg.addColorStop(0, skinLight);
+    hg.addColorStop(1, skinDark);
+    ctx.fillStyle = hg;
+    ctx.save();
+    ctx.translate(hx, hy);
+    ctx.rotate(0.18);
+    roundRect(ctx, -11, -10, 24, 18, 9);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(155,85,45,0.22)";
+    ctx.lineWidth = 1;
+    ctx.lineCap = "round";
+    for (const x of [-4, 0, 4]) {
+      ctx.beginPath();
+      ctx.moveTo(x, -10);
+      ctx.lineTo(x, -4);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
 
   // ── NECK ──────────────────────────────────────────────────
   const neckGrad = ctx.createLinearGradient(CX - 15, 0, CX + 15, 0);

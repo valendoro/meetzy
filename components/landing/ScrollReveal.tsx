@@ -16,6 +16,12 @@ export default function ScrollReveal({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    // If element is already in viewport (e.g. user navigated via anchor link), reveal immediately
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      el.classList.add("visible");
+      return;
+    }
     const obs = new IntersectionObserver(
       ([entry]) => { if (entry?.isIntersecting) { el.classList.add("visible"); obs.unobserve(el); } },
       { threshold: 0.1 }

@@ -121,7 +121,8 @@ export default function AgentTestClient({ siteId, agentName, agentType, welcomeM
             if (data === "[DONE]") continue;
             try {
               const parsed = JSON.parse(data) as {
-                text?: string;
+                type?: string;
+                content?: string;
                 conversationId?: string;
                 done?: boolean;
               };
@@ -129,8 +130,8 @@ export default function AgentTestClient({ siteId, agentName, agentType, welcomeM
                 newConvId = parsed.conversationId;
                 setConversationId(newConvId);
               }
-              if (parsed.text) {
-                assistantText += parsed.text;
+              if (parsed.content) {
+                assistantText += parsed.content;
                 setMessages((prev) => {
                   const updated = [...prev];
                   updated[updated.length - 1] = { role: "assistant", content: assistantText };

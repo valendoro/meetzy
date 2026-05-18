@@ -744,6 +744,22 @@ export default function CreateAgentWizard({ variant, userPlan, isGuest, onReques
                 )}
               </div>
               {macroStep < 4 ? (
+                <div className="flex flex-col items-end gap-1">
+                  {macroStep === 1 && url.trim() && businessName.trim() && agentName.trim() && !systemPrompt.trim() && !analyzeSkipped && !analyzeError ? (
+                    <p className="text-[11px] text-[var(--text-tertiary)]">
+                      Analizá el sitio o{" "}
+                      <button
+                        type="button"
+                        className="underline text-[var(--accent)] hover:text-[var(--accent-hover)] transition-colors"
+                        onClick={() => {
+                          setAnalyzeSkipped(true);
+                          setSystemPrompt("Sos un asistente amable que representa el negocio del sitio web del cliente. Respondé con claridad y en el idioma del visitante.");
+                        }}
+                      >
+                        saltear
+                      </button>
+                    </p>
+                  ) : null}
                 <Button
                   type="button"
                   disabled={
@@ -773,6 +789,7 @@ export default function CreateAgentWizard({ variant, userPlan, isGuest, onReques
                     </>
                   )}
                 </Button>
+                </div>
               ) : null}
             </footer>
           </div>

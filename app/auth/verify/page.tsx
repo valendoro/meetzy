@@ -42,7 +42,7 @@ export default function VerifyPage() {
       </div>
 
       <Link
-        href="/auth/signin"
+        href="/sign-in"
         className="mt-8 text-sm font-light text-[var(--text-secondary)] transition-colors duration-150 hover:text-[var(--text-primary)]"
       >
         ← Usar otra cuenta

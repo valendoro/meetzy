@@ -5,11 +5,82 @@
  *
  * 4 personajes profesionales seleccionables × cualquier brandColor
  * Animations: idle (loop), wave (saludo), thinking (mientras escribe), talking (mientras responde)
- * La ropa/badge toma el brandColor automáticamente via CSS overlay
+ * La ropa toma el brandColor automáticamente via reemplazo de colores en el JSON de animación
  */
 
 import Lottie, { type LottieRefCurrentProps } from "lottie-react";
 import { useEffect, useRef, useState } from "react";
+
+// ── Brand clothing color engine ────────────────────────────
+
+// Hex colors that correspond to clothing in each character's Lottie JSON.
+// Identified by extracting all unique fill colors and excluding skin/hair/neutral tones.
+const CHAR_CLOTHING: Record<string, string[]> = {
+  // Alex & Jordan share the same character base (waving man):
+  //   Jacket = dark maroon shades; Pants = dark navy shades
+  alex:   ["#3a2025", "#292025", "#1b1326", "#1d1c31", "#1f3c7d", "#1f3c49"],
+  jordan: ["#3a2025", "#292025", "#1b1326", "#1d1c31", "#1f3c7d", "#1f3c49"],
+  // Sam: light blue dress/outfit
+  sam:    ["#80b2d5", "#9ed4e3", "#c3e7f3"],
+  // Mia: hot pink outfit
+  mia:    ["#f31470", "#f54693"],
+};
+
+function parseHex(hex: string): [number, number, number] {
+  return [
+    parseInt(hex.slice(1, 3), 16) / 255,
+    parseInt(hex.slice(3, 5), 16) / 255,
+    parseInt(hex.slice(5, 7), 16) / 255,
+  ];
+}
+
+function perceivedLum(r: number, g: number, b: number): number {
+  return 0.299 * r + 0.587 * g + 0.114 * b;
+}
+
+type ColorEntry = { orig: [number, number, number]; next: [number, number, number] };
+
+function buildColorMap(clothingHexes: string[], brandHex: string): ColorEntry[] {
+  const [br, bg, bb] = parseHex(brandHex);
+  const brandLum = perceivedLum(br, bg, bb);
+  return clothingHexes.map(hex => {
+    const [or, og, ob] = parseHex(hex);
+    const scale = brandLum > 0 ? perceivedLum(or, og, ob) / brandLum : 0;
+    return {
+      orig: [or, og, ob],
+      next: [Math.min(1, br * scale), Math.min(1, bg * scale), Math.min(1, bb * scale)],
+    };
+  });
+}
+
+function replaceColorsInObj(obj: unknown, map: ColorEntry[], tol = 0.015): void {
+  if (typeof obj !== "object" || obj === null) return;
+  if (Array.isArray(obj)) { obj.forEach(i => replaceColorsInObj(i, map, tol)); return; }
+  const o = obj as Record<string, unknown>;
+
+  // Static fill/stroke: { c: { a: 0, k: [r, g, b, a] } }
+  const c = o.c as Record<string, unknown> | undefined;
+  if (c && typeof c === "object" && !Array.isArray(c) && c.a === 0 && Array.isArray(c.k) && (c.k as number[]).length >= 3) {
+    const k = c.k as number[];
+    for (const { orig, next } of map) {
+      if (Math.abs(k[0] - orig[0]) < tol && Math.abs(k[1] - orig[1]) < tol && Math.abs(k[2] - orig[2]) < tol) {
+        c.k = [next[0], next[1], next[2], ...k.slice(3)];
+        break;
+      }
+    }
+  }
+
+  for (const key of Object.keys(o)) replaceColorsInObj(o[key], map, tol);
+}
+
+function applyBrandColors(animData: object, character: string, brandHex: string): object {
+  const clothing = CHAR_CLOTHING[character];
+  if (!clothing?.length) return animData;
+  const map = buildColorMap(clothing, brandHex);
+  const clone = JSON.parse(JSON.stringify(animData)) as object;
+  replaceColorsInObj(clone, map);
+  return clone;
+}
 
 // ── Types ─────────────────────────────────────────────────
 export type AvatarCharacter = "alex" | "sam" | "jordan" | "mia";
@@ -55,15 +126,19 @@ export default function BrandAvatar({
   const [animData, setAnimData] = useState<object | null>(null);
   const [loaded, setLoaded] = useState(false);
 
-  // Load the JSON for this character
+  // Load the JSON for this character and apply brand clothing colors
   useEffect(() => {
     setLoaded(false);
     setAnimData(null);
     fetch(`/avatars/${character}.json`)
       .then(r => r.json())
-      .then(d => { setAnimData(d); setLoaded(true); })
+      .then(d => {
+        const branded = applyBrandColors(d as object, character, brandColor);
+        setAnimData(branded);
+        setLoaded(true);
+      })
       .catch(() => setLoaded(false));
-  }, [character]);
+  }, [character, brandColor]);
 
   // Set playback speed based on animation state
   useEffect(() => {
